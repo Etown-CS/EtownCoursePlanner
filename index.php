@@ -13,8 +13,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-      <!-- Include the navbar -->
-      <?php include 'navbar.php'; ?>
+    
+    <h1>Test Header</h1>
+    <?php include 'navbar.php'; ?>
+    <p>Test Paragraph</p>
+
     <h1 class="crete-round-regular">Etown Course Planner coming soon!</h1> <!--Contribution-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
