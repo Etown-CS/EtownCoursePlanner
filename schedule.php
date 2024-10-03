@@ -13,6 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1 class="crete-round-regular">Report page coming soon!</h1> <!--Contribution-->
+    <?php include 'navbar.php'; ?>
+    <h1 class="crete-round-regular">Schedule page coming soon!</h1> <!--Contribution-->
 </body>
 </html>
