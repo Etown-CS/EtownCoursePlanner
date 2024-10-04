@@ -14,7 +14,8 @@
 </head>
 <body>
     <?php include 'navbar.php'; ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
     <h1 class="crete-round-regular">Report page coming soon!</h1> <!--Contribution-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
