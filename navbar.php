@@ -11,10 +11,10 @@
           <a class="nav-link active" href="index.php">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="schedule.html">Schedule</a>
+          <a class="nav-link" href="schedule.php">Schedule</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="report.html">Report</a>
+          <a class="nav-link" href="report.php">Report</a>
         </li>
       </ul>
     </div>

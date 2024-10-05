@@ -15,7 +15,9 @@
 <body>
     <?php include 'navbar.php'; ?>
 
-    <h1 class="crete-round-regular">Welcome to the Etown Course Planner</h1> <!--Contribution-->
+    <section id="welcome-msg">
+        <h1 class="crete-round-regular">Welcome to the Etown Course Planner</h1> <!--Contribution-->
+    </section>
 
     <section id="basic-instructions">
         <h1 class="crete-round-regular">Want to learn more about the project?</h1>
