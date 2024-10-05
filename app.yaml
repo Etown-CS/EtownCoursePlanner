@@ -1,0 +1,13 @@
+runtime: nodejs20
+
+service: default
+env: standard
+
+handlers:
+- url: /
+  static_files: index.html
+  upload: index.html
+
+- url: /style.css
+  static_files: style.css
+  upload: style.css
