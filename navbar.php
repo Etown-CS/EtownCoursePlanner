@@ -6,15 +6,20 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
+      <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link active" href="index.php">Home</a>
+          <a class="nav-link" href="index.php">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="schedule.php">Schedule</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="report.php">Report</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="report.php"> 
+            <img src="images/profile.png" alt="Profile" style="height:30px;">
+          </a>
         </li>
       </ul>
     </div>
