@@ -38,3 +38,7 @@ HEX #C8C8C8 (Light Gray)
 .nav-color{
   background-color: #0A2240
 }
+
+.nav-item{
+  text-decoration-color: white;
+}
