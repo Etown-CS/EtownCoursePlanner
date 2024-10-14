@@ -1,7 +1,7 @@
 <!-- navbar.php -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg nav-color">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">YourBrand</a>
+    <a class="navbar-brand" href="#">Etown Course Planner</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -11,10 +11,10 @@
           <a class="nav-link active" href="index.php">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="schedule.html">Schedule</a>
+          <a class="nav-link" href="schedule.php">Schedule</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="report.html">Report</a>
+          <a class="nav-link" href="report.php">Report</a>
         </li>
       </ul>
     </div>

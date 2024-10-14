@@ -18,3 +18,23 @@ HEX #C8C8C8 (Light Gray)
     font-style: normal;
   }
 
+#welcome-msg {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#basic-instructions, #about-project {
+  background-color: #3DB5E6;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#basic-instructions p, #about-project p {
+  text-align: left;
+}
+
+.nav-color{
+  background-color: #0A2240
+}
