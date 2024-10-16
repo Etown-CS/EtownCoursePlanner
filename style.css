@@ -45,7 +45,9 @@ HEX #C8C8C8 (Light Gray)
 }
 
 .nav-link.active {
-  background-color: #E1261C; /* Change this to your desired color */
+  background-color: #3DB5E6; /* Light Blue */
+  color: white;
+  border-radius: 5px; /* Optional: Rounded corners */
 }
 
 #get-started{
