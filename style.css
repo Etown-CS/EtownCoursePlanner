@@ -59,6 +59,6 @@ HEX #C8C8C8 (Light Gray)
   background-color: red;
   border: none;
 }
-.btn-primary.hover{
+.btn-primary:hover{
   background-color: #0A2240;
 }
