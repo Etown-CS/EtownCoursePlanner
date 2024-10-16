@@ -1,21 +1,37 @@
-runtime: php83
+runtime: nodejs20
 
 service: default
 env: standard
 
 handlers:
-- url: /
-  script: index.php
+  - url: /
+    static_files: index.html
+    upload: index.html
 
-- url: /navbar.php
-  script: navbar.php
+  - url: /style.css
+    static_files: style.css
+    upload: style.css
+  
+  - url: /navbar.html
+    static_files: navbar.html
+    upload: navbar.html
 
-- url: /report.php
-  script: report.php
+  - url: /images/profile.png
+    static_files: images/profile.png
+    upload: images/profile.png
 
-- url: /schedule.php
-  script: schedule.php
+  - url: /main.js
+    static_files: main.js
+    upload: main.js
+  
+  - url: /report.html
+    static_files: report.html
+    upload: report.html
 
-- url: /style.css
-  static_files: style.css
-  upload: style.css
+  - url: /schedule.html
+    static_files: schedule.html
+    upload: schedule.html
+
+  - url: /login.html
+    static_files: login.html
+    upload: login.html
