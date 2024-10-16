@@ -47,3 +47,7 @@ HEX #C8C8C8 (Light Gray)
 .nav-link.active {
   background-color: #E1261C; /* Change this to your desired color */
 }
+
+#get-started{
+  margin: auto;
+}
