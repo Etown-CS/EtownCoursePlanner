@@ -20,9 +20,20 @@
 <body>
     <header id="navbar"></header>
 
-<section id="Create_btn_section">
-    <button type="button" class="btn btn-primary">create New</button>
-</section>
+    <section id="Create_btn_section">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                Sort By
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="#">Newest</a></li>
+                <li><a class="dropdown-item" href="#">Oldest</a></li>
+                <li><a class="dropdown-item" href="#">Starred</a></li>
+            </ul>
+        </div>
+        <button type="button" class="btn btn-primary"id="createNew">Create New</button>
+    </section>
+
 <section class="schedules">
     <div class="Schedule">
         <div class="Schedule_display">

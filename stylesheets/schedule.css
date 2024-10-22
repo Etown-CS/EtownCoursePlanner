@@ -34,8 +34,14 @@ HEX #C8C8C8 (Light Gray)
 
 #Create_btn_section{
   margin: 3%;
+  margin-left: 5%;
+  margin-right 5%;
   display: flex;
-  justify-content: right; /* Centers the button horizontally */
+  justify-content: space-between; /* Centers the button horizontally */
+}
+.dropdown-toggle{
+  background-color: #3DB5E6!important;
+  border: none !important;
 }
 .btn-primary{
   background-color: red !important;
