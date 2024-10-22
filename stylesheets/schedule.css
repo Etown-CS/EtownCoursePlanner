@@ -31,3 +31,44 @@ HEX #C8C8C8 (Light Gray)
   color: white;
   border-radius: 5px; /* Optional: Rounded corners */
 }
+
+#Create_btn_section{
+  margin: 3%;
+  display: flex;
+  justify-content: right; /* Centers the button horizontally */
+}
+.btn-primary{
+  background-color: red !important;
+  border: none !important;
+}
+.btn-primary:hover{
+  background-color: #0A2240 !important;
+}
+.schedules {
+  display: grid;
+  margin-left: 10%;
+  margin-right: 10%;
+  grid-template-columns: repeat(2, 1fr); /* Two columns of equal width */
+  grid-gap: 16px; /* Optional: Adds space between the grid items */
+}
+
+.Schedule {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.Schedule_display {
+  margin-top: 3%; /* Optional: Adjust spacing above the button */
+  width: 300px;
+  height: 300px;
+  background-color: black;
+}
+.sched_btn {
+  display: flex;
+  margin-top: 3%; /* Optional: Adjust spacing above the button */
+  align-items: center;
+  justify-content: center;
+}
