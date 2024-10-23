@@ -31,3 +31,18 @@ HEX #C8C8C8 (Light Gray)
   color: white;
   border-radius: 5px; /* Optional: Rounded corners */
 }
+
+#prog-bar, #credits {
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#classes-needed, #completed-classes, #major-credits, #core-credits, #minor-credits {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#classes-needed thead th, #completed-classes thead th {
+  padding: 5px;
+}
