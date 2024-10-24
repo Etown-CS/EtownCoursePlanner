@@ -35,7 +35,7 @@ HEX #C8C8C8 (Light Gray)
 #Create_btn_section{
   margin: 3%;
   margin-left: 5%;
-  margin-right 5%;
+  margin-right: 5%;
   display: flex;
   justify-content: space-between; /* Centers the button horizontally */
 }
@@ -116,4 +116,10 @@ HEX #C8C8C8 (Light Gray)
 #sug_classes{
   margin: 3%;
 
+
+footer {
+  padding: 10px;
+  background-color: #0A2240;
+  text-align: center;
+  color: white;
 }

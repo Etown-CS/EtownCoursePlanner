@@ -32,3 +32,9 @@ HEX #C8C8C8 (Light Gray)
   border-radius: 5px; /* Optional: Rounded corners */
 }
 
+footer {
+  padding: 10px;
+  background-color: #0A2240;
+  text-align: center;
+  color: white;
+}

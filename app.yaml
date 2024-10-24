@@ -5,33 +5,52 @@ env: standard
 
 handlers:
   - url: /
-    static_files: index.html
-    upload: index.html
-
-  - url: /style.css
-    static_files: style.css
-    upload: style.css
+    static_files: web_src/index.html
+    upload: web_src/index.html
   
-  - url: /navbar.html
-    static_files: navbar.html
-    upload: navbar.html
+  - url: /index.html
+    static_files: web_src/index.html
+    upload: web_src/index.html
+
+  # Stylesheet links
+  - url: /stylesheets/index.css
+    static_files: stylesheets/index.css
+    upload: stylesheets/index.css
+
+  - url: /stylesheets/login.css
+    static_files: stylesheets/login.css
+    upload: stylesheets/login.css
+
+  - url: /stylesheets/report.css
+    static_files: stylesheets/report.css
+    upload: stylesheets/report.css
+
+  - url: /stylesheets/schedule.css
+    static_files: stylesheets/schedule.css
+    upload: stylesheets/schedule.css
+  
+  # Inclusion links
+  - url: /includes/navbar.html
+    static_files: web_src/includes/navbar.html
+    upload: web_src/includes/navbar.html
 
   - url: /images/profile.png
     static_files: images/profile.png
     upload: images/profile.png
 
-  - url: /main.js
-    static_files: main.js
-    upload: main.js
+  - url: /includes/main.js
+    static_files: web_src/includes/main.js
+    upload: web_src/includes/main.js
   
+  # Page links
   - url: /report.html
-    static_files: report.html
-    upload: report.html
+    static_files: web_src/report.html
+    upload: web_src/report.html
 
   - url: /schedule.html
-    static_files: schedule.html
-    upload: schedule.html
+    static_files: web_src/schedule.html
+    upload: web_src/schedule.html
 
   - url: /login.html
-    static_files: login.html
-    upload: login.html
+    static_files: web_src/login.html
+    upload: web_src/login.html
