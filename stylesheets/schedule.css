@@ -39,12 +39,16 @@ HEX #C8C8C8 (Light Gray)
   display: flex;
   justify-content: space-between; /* Centers the button horizontally */
 }
+#createNew{
+  background-color: red !important;
+  border: none !important;
+}
 .dropdown-toggle{
   background-color: #3DB5E6!important;
   border: none !important;
 }
 .btn-primary{
-  background-color: red !important;
+  background-color: #3DB5E6 !important;
   border: none !important;
 }
 .btn-primary:hover{
@@ -77,4 +81,39 @@ HEX #C8C8C8 (Light Gray)
   margin-top: 3%; /* Optional: Adjust spacing above the button */
   align-items: center;
   justify-content: center;
+}
+#schedule_Maker{
+  display: flex;
+  margin: 3%;
+  align-items: center;
+  justify-content: center;
+}
+
+#Course_grid{
+  display: flex;;
+  flex-direction: column;
+  align-items: center;
+}
+
+#filter_btns{
+  padding: 3%;
+  display: flex;
+  flex-direction: column;
+}
+#gen{
+  margin: 3%;
+}
+#msg_btn{
+  background-color: red !important;
+  border: none !important;
+}
+#sug_head{
+  background-color: #3DB5E6;
+  padding-left: 3%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+}
+#sug_classes{
+  margin: 3%;
+
 }
