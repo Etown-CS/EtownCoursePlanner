@@ -46,3 +46,10 @@ HEX #C8C8C8 (Light Gray)
 #classes-needed thead th, #completed-classes thead th {
   padding: 5px;
 }
+
+footer {
+  padding: 10px;
+  background-color: #0A2240;
+  text-align: center;
+  color: white;
+}

@@ -60,3 +60,31 @@ HEX #C8C8C8 (Light Gray)
 .btn-primary:hover{
   background-color: #0A2240;
 }
+
+footer {
+  padding: 10px;
+  background-color: #0A2240;
+  text-align: center;
+  color: white;
+}
+
+
+/* Logged in home page */
+#progress_title, #recent_schedules {
+  background-color: #3DB5E6;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#progress_titl, #recent_schedules {
+  text-align: center;
+}
+
+.card1 {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  justify-items: center;
+}
