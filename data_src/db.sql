@@ -26,11 +26,13 @@ CREATE TABLE IF NOT EXISTS user (
 	id INT AUTO_INCREMENT PRIMARY KEY, -- Add password (hashed)
     username VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL,
-    major VARCHAR(255) DEFAULT ("Undecided"), --img
+    major VARCHAR(255) DEFAULT ("Undecided"), -- img
     minor VARCHAR(255), # Multiple minors?
     advisor_id INT,
     FOREIGN KEY (advisor_id) REFERENCES advisor(id) ON DELETE SET NULL
 );
+
+ALTER TABLE user ADD COLUMN password VARCHAR(255) NOT NULL; -- Hashed pwd field
 
 CREATE TABLE IF NOT EXISTS prerequisite (
 	id INT AUTO_INCREMENT PRIMARY KEY,
