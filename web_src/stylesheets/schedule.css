@@ -84,7 +84,7 @@ HEX #C8C8C8 (Light Gray)
 }
 #schedule_Maker{
   display: flex;
-  margin: 3%;
+
   align-items: center;
   justify-content: center;
 }
@@ -117,9 +117,23 @@ HEX #C8C8C8 (Light Gray)
   margin: 3%;
 
 }
+#save{
+  margin-bottom:3%;
+  float: right;
+  background-color: red !important;
+  border: none !important;
+}
 footer {
   padding: 10px;
   background-color: #0A2240;
   text-align: center;
   color: white;
+}
+main{
+  margin: 3%;
+}
+#titleText{
+  font-size: x-large;
+  margin-bottom: 3%;
+  
 }
