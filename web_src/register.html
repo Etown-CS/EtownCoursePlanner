@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etown Course Planner Login</title>
+
+    <!-- Etown Font look-alike -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crete+Round&display=swap" rel="stylesheet">
+    <link href="stylesheets/login.css" rel="stylesheet"> <!-- Change stylesheet?-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Jquery -->
+    <script src="https://releases.jquery.com/git/jquery-git.min.js"></script>
+
+    <script src="includes/main.js"></script>
+</head>
+<body>
+    <header id="navbar"></header>
+
+    <h1 class="crete-round-regular">Register</h1>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="form-container">
+        <form action="/login.html" method="POST"> <!-- class="was-validated" -->
+            <div class="mb-3 mt-3">
+                <label for="major" class="form-label">Major:</label>
+                <input type="text" class="form-control" id="major" placeholder="Enter major" name="major">
+            </div>
+            <div class="mb-3 mt-3">
+                <label for="minor" class="form-label">Minor:</label>
+                <input type="text" class="form-control" id="minor" placeholder="Enter minor" name="minor">
+            </div>
+            <div class="mb-3 mt-3">
+                <label for="advisor" class="form-label">Advisor:</label>
+                <input type="text" class="form-control" id="advisor" placeholder="Advisor" name="advisor">
+            </div> <!--Dropdown , populate from database -->
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>Powered by Etown CS 401/402</p>
+        <p>Connect with us: <br>
+            <a href="https://www.facebook.com/etowncollege/" class="fa fa-facebook" target="_blank" aria-label="Facebook"></a>
+            <a href="https://www.instagram.com/etowncollege/" class="fa fa-instagram" target="_blank" aria-label="Instagram"></a>
+            <a href="https://twitter.com/EtownCollege?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" class="fa fa-twitter" target="_blank" aria-label="Twitter"></a>
+            <a href="https://www.linkedin.com/school/elizabethtown-college/" class="fa fa-linkedin" target="_blank" aria-label="LinkedIn"></a>
+        </p>
+    </footer>
+</body>
+</html>
