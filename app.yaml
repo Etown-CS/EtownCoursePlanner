@@ -58,3 +58,11 @@ handlers:
   - url: /login.html
     static_files: web_src/login.html
     upload: web_src/login.html
+
+  - url: /register.html
+    static_files: web_src/register.html
+    upload: web_src/register.html
+
+  - url: /create.html
+    static_files: web_src/create.html
+    upload: web_src/create.html
