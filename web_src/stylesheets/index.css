@@ -61,14 +61,6 @@ HEX #C8C8C8 (Light Gray)
   background-color: #0A2240;
 }
 
-footer {
-  padding: 10px;
-  background-color: #0A2240;
-  text-align: center;
-  color: white;
-}
-
-
 /* Logged in home page */
 #progress_title, #recent_schedules {
   background-color: #3DB5E6;
@@ -82,9 +74,80 @@ footer {
   text-align: center;
 }
 
+/* Key Features */
 .card1 {
   text-align: center;
   margin-top: 10px;
   margin-bottom: 10px;
   justify-items: center;
 }
+
+.features-section {
+  padding: 20px;
+  text-align: center;
+}
+
+.features-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background-color: #3DB5E6;
+  color: white;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 10px;
+  width: 200px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+/*Testimonies */
+
+.testimonials-section {
+  background-color: #C8C8C8;
+  color: #0A2240;
+  padding: 20px;
+  text-align: center;
+}
+
+.testimonial {
+  margin: 20px 0;
+  padding: 15px;
+  border-left: 5px solid #E1261C;
+}
+
+blockquote {
+  font-style: italic;
+}
+
+
+/*Contact */
+
+.contact-section {
+  background-color: #3DB5E6;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.contact-link {
+  color: white;
+  text-decoration: none;
+}
+
+.contact-link:hover {
+  text-decoration: underline;
+}
+

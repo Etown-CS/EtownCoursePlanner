@@ -12,6 +12,11 @@
                 }
             });
         });
+
+        // Load the footer
+        $('#footer').load('includes/footer.html');
+
+
         document.getElementById("createNew").addEventListener("click", function() {
             // Redirect to the desired page
             window.location.href = "create.html"; // Replace 'newPage.html' with your desired URL
