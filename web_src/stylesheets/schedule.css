@@ -123,12 +123,8 @@ HEX #C8C8C8 (Light Gray)
   background-color: red !important;
   border: none !important;
 }
-footer {
-  padding: 10px;
-  background-color: #0A2240;
-  text-align: center;
-  color: white;
-}
+
+
 main{
   margin: 3%;
 }
