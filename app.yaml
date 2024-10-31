@@ -14,25 +14,29 @@ handlers:
 
   # Stylesheet links
   - url: /stylesheets/index.css
-    static_files: stylesheets/index.css
-    upload: stylesheets/index.css
+    static_files: web_src/stylesheets/index.css
+    upload: web_src/stylesheets/index.css
 
   - url: /stylesheets/login.css
-    static_files: stylesheets/login.css
-    upload: stylesheets/login.css
+    static_files: web_src/stylesheets/login.css
+    upload: web_src/stylesheets/login.css
 
   - url: /stylesheets/report.css
-    static_files: stylesheets/report.css
-    upload: stylesheets/report.css
+    static_files: web_src/stylesheets/report.css
+    upload: web_src/stylesheets/report.css
 
   - url: /stylesheets/schedule.css
-    static_files: stylesheets/schedule.css
-    upload: stylesheets/schedule.css
+    static_files: web_src/stylesheets/schedule.css
+    upload: web_src/stylesheets/schedule.css
   
   # Inclusion links
   - url: /includes/navbar.html
     static_files: web_src/includes/navbar.html
     upload: web_src/includes/navbar.html
+
+  - url: /includes/footer.html
+    static_files: web_src/includes/footer.html
+    upload: web_src/includes/footer.html
 
   - url: /images/profile.png
     static_files: images/profile.png

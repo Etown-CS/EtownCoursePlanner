@@ -1,6 +1,6 @@
 "use strict";
 document.addEventListener("DOMContentLoaded", function () {
-    const URL = "https://https://etown-course-planner.ue.r.appspot.com/courses"
+    const URL = "https://etown-course-planner.ue.r.appspot.com/courses"
     // Fetch courses when the page loads
     fetch(URL)
         .then(response => {
