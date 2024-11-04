@@ -45,3 +45,19 @@ input.form-control {
   width: 500px;
 }
 
+main {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+footer {
+  padding: 10px;
+  background-color: #0A2240;
+  text-align: center;
+  color: white;
+}
+
+#register-form {
+  border: solid 2px black;
+  padding: 10px;
+}
