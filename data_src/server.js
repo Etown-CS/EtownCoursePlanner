@@ -34,6 +34,21 @@ app.get('/courses', async (req, res) => {
     }
 });
 
+app.get('/advisors', async (req, res) => {
+    try {
+        const db = await getDBConnection();
+        const query = "SELECT DISTINCT name FROM advisor"; // Adjust 'courses' to your table name
+        const advisors = await db.all(query); // Fetch all rows from courses table
+
+        await db.close();
+        res.type('json').send(advisors); // Send results as JSON
+
+    } catch (error) {
+        console.error("Error retrieving advisors:", error);
+        res.status(500).send('Error on the server. Please try again later.');
+    }
+})
+
 /**
  * Establishes a database connection to the database and returns the database object.
  * Any errors that occur should be caught in the function that calls this one.

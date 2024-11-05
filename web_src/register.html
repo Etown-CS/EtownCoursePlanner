@@ -18,6 +18,7 @@
     <script src="https://releases.jquery.com/git/jquery-git.min.js"></script>
 
     <script src="includes/main.js"></script>
+    <script src="includes/register.js"></script>
 </head>
 <body>
     <header id="navbar"></header>
@@ -39,7 +40,9 @@
 
                 <div class="mb-3 mt-3">
                     <label for="major" class="form-label">Major:</label>
-                    <input type="text" class="form-control" id="major" placeholder="Enter major" name="major">
+                    <select class="form-control" id="major" name="major">
+                        <option value="Computer Science">Computer Science</option>
+                    </select>
                 </div>
 
                 <div class="mb-3 mt-3">
@@ -49,7 +52,7 @@
 
                 <div class="mb-3 mt-3">
                     <label for="advisor" class="form-label">Advisor:</label>
-                    <input type="text" class="form-control" id="advisor" placeholder="Advisor" name="advisor">
+                    <select class="form-control" id="advisor" name="advisor"></select>
                 </div> <!--Dropdown , populate from database -->
 
                 <div class="mb-3 mt-3">
