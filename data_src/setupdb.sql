@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS advisor (
 CREATE TABLE IF NOT EXISTS user (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
     major TEXT DEFAULT "Undecided",
     minor TEXT,
     advisor_id INTEGER,
