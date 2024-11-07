@@ -133,3 +133,71 @@ main{
   margin-bottom: 3%;
   
 }
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.calendar-container {
+  display: flex;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.time-column, .calendar {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-column {
+  width: 10%;
+  text-align: center;
+  color: #888;
+}
+
+.hour-slot {
+  height: 50px;
+  border-top: 1px solid #ddd;
+  font-size: 0.8em;
+}
+
+.calendar {
+  display: flex;
+  width: 90%;
+  flex-direction: row;
+}
+
+.day {
+  position: relative;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  flex: 1;
+}
+
+.today {
+  background-color: #cce5ff;
+}
+
+.day-name {
+  font-size: 1.2em;
+  text-align: center;
+  background-color: #f0f0f0;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.event {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  background-color: #e7f3fe;
+  border: 1px solid #b3d7ff;
+  border-radius: 3px;
+  padding: 2px 5px;
+  font-size: 0.8em;
+}
+
+.event-form {
+  margin: 20px 0;
+  text-align: center;
+}
