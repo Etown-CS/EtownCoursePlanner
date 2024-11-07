@@ -172,10 +172,10 @@ body {
 }
 
 .day {
-  position: relative;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
-  flex: 1;
+  flex: 1; /* Each column takes equal space */
+  border: 1px solid #ddd;
+  padding: 10px;
+  box-sizing: border-box; /* Includes padding and border in the width */
 }
 
 .today {
