@@ -27,7 +27,7 @@
         <h1 class="crete-round-regular">Register</h1>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <div class="form-container">
-            <form action="/login.html" method="POST" id="register-form"> <!-- class="was-validated" -->
+            <form id="register-form"> <!-- class="was-validated" -->
                 <div class="mb-3 mt-3">
                     <label for="name" class="form-label">Name:</label>
                     <input type="name" class="form-control" id="name" placeholder="Enter your name" name="name">
@@ -81,8 +81,11 @@
                     <input type="password" class="form-control" id="password" placeholder="Enter your password" name="password">
                 </div> <!-- Add second box for password matching?? -->
 
-                <button type="submit" class="submit-btn">Submit</button>
+                <button type="button" class="submit-btn" id="register">Submit</button>
             </form>
+        </div>
+        <div class="row mb-4">
+            <p id="message"></p>
         </div>
     </main>
 

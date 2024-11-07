@@ -5,7 +5,7 @@ const app = express();
 const multer = require('multer');
 const sqlite3 = require('sqlite3');
 const sqlite = require('sqlite');
-//const bcrypt = require('bcrypt'); // Password Hashing
+const bcrypt = require('bcrypt'); // Password Hashing
 const bodyParser = require('body-parser'); // Parses form body
 const dbPath = 'course_planner.db';
 const PORT = process.env.PORT || 8080;
@@ -48,6 +48,90 @@ app.get('/advisors', async (req, res) => {
         res.status(500).send('Error on the server. Please try again later.');
     }
 })
+
+app.post('/register', async function (req, res) {
+    try {
+        const username = req.body.username;
+        const email = req.body.email;
+        const password = req.body.password;
+
+        // Username, email, and password are all required, so if any are missing, return error.
+        if (!username || !email || !password) {
+            return res.status(400).json({
+                message: "Missing required field."
+            });
+        }
+
+        // Checking if username is already in table
+        const user = await getUser(username);
+
+        // Usernames must be unique, so if it already exists, return error.
+        if (user) {
+            return res.status(400).json({
+                message: "Username already in use, try again."
+            });
+        }
+
+        // Password encryption - security!
+        const encrypted_pw = await bcrypt.hash(password, 10);
+
+        // Create user in table and register them, using encrypted password.
+        const result = await createUser(username, email, encrypted_pw);
+
+        // Check to see all went as planned, res 200
+        if (result) {
+            return res.status(200).json({
+                message: "Account created successfully."
+            });
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Error."
+        })
+    };
+});
+
+// Functions for registration and login purposes.
+
+/**
+ * Find the User by username
+ * Any errors that occur should be caught in the function that calls this one.
+ * @param {string} username - The username of the user to find.
+ * @returns {object} - The user stored in the database.
+ */
+async function getUser(username) {
+    const db = await getDBConnection();
+
+    const query = "SELECT * FROM user WHERE username = ?";
+    const user = await db.get(query, [username]);
+
+    await db.close();
+
+    return user;
+}
+
+/**
+ * Create the new account by email and password
+ * Any errors that occur should be caught in the function that calls this one.
+ * @param {string} email - The email of the user to insert.
+ * @param {string} username - The username of the user to insert.
+ * @param {string} ecrypt_password - The encoded password of the user to insert.
+ * @returns {object} - The user stored in the database.
+ */
+async function createUser(username, email, encrypt_password) {
+    const db = await getDBConnection();
+
+    const query = "INSERT INTO user (username, email, password) VALUES (?, ?, ?);";
+    const res = await db.run(query, [username, email, encrypt_password]);
+
+    const user = await getUser(username);
+    await db.close();
+
+    return user;
+}
 
 /**
  * Establishes a database connection to the database and returns the database object.
