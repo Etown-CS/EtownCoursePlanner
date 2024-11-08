@@ -26,6 +26,43 @@
         'Saturday': []
     };
 
+    // Add event to multiple days or week
+    function addEvent() {
+        const titleInput = document.getElementById('event-title');
+        const startTimeInput = document.getElementById('event-start-time');
+        const endTimeInput = document.getElementById('event-end-time');
+        const dayInputs = document.querySelectorAll('.event-day:checked');  // Get checked checkboxes
+        const weekInput = document.getElementById('event-week'); // Get week checkbox
+        
+        const title = titleInput.value;
+        const startTime = startTimeInput.value;
+        const endTime = endTimeInput.value;
+
+        // Collect selected days
+        let selectedDays = [];
+        if (weekInput.checked) {
+            selectedDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        } else {
+            dayInputs.forEach(day => selectedDays.push(day.value));
+        }
+
+        // Add event to all selected days
+        selectedDays.forEach(day => {
+            if (title && startTime && endTime) {
+                events[day].push({ title, startTime, endTime });
+            }
+        });
+
+        // Clear the inputs
+        titleInput.value = '';
+        startTimeInput.value = '';
+        endTimeInput.value = '';
+        document.querySelectorAll('.event-day').forEach(cb => cb.checked = false);
+        weekInput.checked = false;
+
+        updateTimeRange();
+    }
+
     function displayTimes(startTime, endTime) {
         const timeColumn = document.getElementById('time-column');
         timeColumn.innerHTML = '';
@@ -75,7 +112,7 @@
 
     function displayEvents(day, dayDiv, defaultStartTime, defaultEndTime) {
         const dayEvents = events[day];
-        dayEvents.forEach(event => {
+        dayEvents.forEach((event, index) => {
             const eventStart = dayjs().hour(event.startTime.split(":")[0]).minute(event.startTime.split(":")[1]);
             const eventEnd = dayjs().hour(event.endTime.split(":")[0]).minute(event.endTime.split(":")[1]);
 
@@ -91,8 +128,34 @@
             eventDiv.style.height = `${eventHeight}px`;
             eventDiv.textContent = `${event.startTime} - ${event.endTime}: ${event.title}`;
 
+            // Add Edit button
+            const editButton = document.createElement('button');
+            editButton.className = 'edit-btn';
+            editButton.textContent = 'Edit';
+            editButton.addEventListener('click', function () {
+                editEvent(day, index); // Pass the day and index of the event to edit
+            });
+
+            // Add Delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-btn';
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', function () {
+                deleteEvent(day, index); // Pass the day and index of the event to delete
+            });
+
+            eventDiv.appendChild(editButton);
+            eventDiv.appendChild(deleteButton);
             dayDiv.appendChild(eventDiv);
         });
+    }
+
+    function deleteEvent(day, index) {
+        // Remove the event from the events array
+        events[day].splice(index, 1);
+
+        // Re-render the calendar after deletion
+        updateTimeRange();
     }
 
     function updateTimeRange() {
@@ -111,29 +174,6 @@
 
         displayTimes(minTime, maxTime);
         displayWeek(minTime, maxTime);
-    }
-
-    function addEvent() {
-        const titleInput = document.getElementById('event-title');
-        const startTimeInput = document.getElementById('event-start-time');
-        const endTimeInput = document.getElementById('event-end-time');
-        const dayInput = document.getElementById('event-day');
-
-        const title = titleInput.value;
-        const startTime = startTimeInput.value;
-        const endTime = endTimeInput.value;
-        const day = dayInput.value;
-
-        if (title && startTime && endTime && day) {
-            events[day].push({ title, startTime, endTime });
-
-            titleInput.value = '';
-            startTimeInput.value = '';
-            endTimeInput.value = '';
-            dayInput.value = '';
-
-            updateTimeRange();
-        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
