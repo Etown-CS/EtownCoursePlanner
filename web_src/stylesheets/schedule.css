@@ -1,99 +1,68 @@
-/* Etown Branding Color References
+/* Etown Branding Color References */
+/* .primary-color {
+  color: #004B98; /* Primary Etown Blue */
+/*  
+.secondary-dark-blue {
+  color: #0A2240;
+}
+.secondary-light-blue {
+  color: #3DB5E6;
+}
+.secondary-red {
+  color: #E1261C;
+}
+.secondary-green {
+  color: #61BF1A;
+}
+.secondary-light-gray {
+  color: #C8C8C8;
+} */
 
-Primary Color (Etown Blue): 
-HEX #004B98
-
-Secondary Colors: 
-HEX #0A2240 (Dark Blue), 
-HEX #3DB5E6 (Light Blue),
-HEX #E1261C (Red), 
-HEX #61BF1A (Green),
-HEX #C8C8C8 (Light Gray)
-
-*/
-
+/* Fonts */
 .crete-round-regular {
-    font-family: "Crete Round", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-
-.nav-color{
-  background-color: #0A2240
+  font-family: "Crete Round", serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
-.nav-link, .navbar-brand{
+/* Navbar Styling */
+.nav-color {
+  background-color: #0A2240;
+}
+
+.nav-link, .navbar-brand {
   color: white !important;
 }
 
 .nav-link.active {
-  background-color: #3DB5E6; /* Light Blue */
+  background-color: #3DB5E6;
   color: white;
-  border-radius: 5px; /* Optional: Rounded corners */
+  border-radius: 5px;
 }
 
-#Create_btn_section{
+/* Create Button Section */
+#Create_btn_section {
   margin: 3%;
   margin-left: 5%;
   margin-right: 5%;
   display: flex;
-  justify-content: space-between; /* Centers the button horizontally */
+  justify-content: space-between;
 }
-#createNew{
+
+#createNew {
   background-color: red !important;
   border: none !important;
 }
-.dropdown-toggle{
-  background-color: #3DB5E6!important;
-  border: none !important;
-}
-.btn-primary{
+
+.dropdown-toggle, .btn-primary {
   background-color: #3DB5E6 !important;
   border: none !important;
 }
-.btn-primary:hover{
+
+.btn-primary:hover {
   background-color: #0A2240 !important;
 }
-.schedules {
-  display: grid;
-  margin-left: 10%;
-  margin-right: 10%;
-  grid-template-columns: repeat(2, 1fr); /* Two columns of equal width */
-  grid-gap: 16px; /* Optional: Adds space between the grid items */
-}
-
-.Schedule {
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  align-items: center;
-  justify-content: center;
-}
-
-.Schedule_display {
-  margin-top: 3%; /* Optional: Adjust spacing above the button */
-  width: 300px;
-  height: 300px;
-  background-color: black;
-}
-.sched_btn {
-  display: flex;
-  margin-top: 3%; /* Optional: Adjust spacing above the button */
-  align-items: center;
-  justify-content: center;
-}
-#schedule_Maker{
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-}
-
-#Course_grid{
-  display: flex;;
-  flex-direction: column;
-  align-items: center;
-}
+_____________________________________________________________________________________
 
 #filter_btns{
   padding: 3%;
@@ -123,81 +92,145 @@ HEX #C8C8C8 (Light Gray)
   background-color: red !important;
   border: none !important;
 }
+__________________________________________________________________
+/* Schedules Grid */
+.schedules {
+  display: grid;
+  margin-left: 10%;
+  margin-right: 10%;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 16px;
+}
 
+/* Individual Schedule */
+.Schedule {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.Schedule_display {
+  margin-top: 3%;
+  width: 300px;
+  height: 300px;
+  background-color: black;
+}
+
+.sched_btn {
+  display: flex;
+  margin-top: 3%;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container for the entire calendar */
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+/* Header Row for Days of the Week */
+.header {
+  display: flex;
+  justify-content: space-around;
+  background-color: #004B98; /* Primary Etown Blue */
+  color: white;
+  padding: 10px 0;
+  z-index: 10; /* Keep it on top */
+}
+
+/* Individual Day Headers (the names of the days like Monday, Tuesday, etc.) */
+.header .day-header {
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+  padding: 5px;
+}
 
 main{
   margin: 3%;
 }
-#titleText{
-  font-size: x-large;
-  margin-bottom: 3%;
-  
-}
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-}
 
-.calendar-container {
+/* Main Container for Time Column and Calendar (Week Container) */
+.week-container {
   display: flex;
-  max-width: 1000px;
-  margin: 0 auto;
+  width: 100%;
+  background-color: #f9f9f9;
 }
 
-.time-column, .calendar {
+.time-header {
+  flex: 0 0 80px; /* Fixed width for time header */
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  background-color: #004B98; /* Match primary color */
+  color: white;
+}
+
+/* Time Column for Hourly Slots */
+.time-column {
+  width: 80px; /* Fixed width for time labels */
+  background-color: #C8C8C8; /* Light gray background for time column */
+  padding: 10px 0;
+  border-right: 1px solid #ddd;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
-.time-column {
-  width: 10%;
-  text-align: center;
-  color: #888;
-}
-
+/* Hourly Slot for Time Labels */
 .hour-slot {
-  height: 50px;
-  border-top: 1px solid #ddd;
-  font-size: 0.8em;
+  height: 50px; /* Height of each hourly slot */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em;
+  color: #004B98; /* Primary Etown Blue for time text */
 }
 
+/* Calendar Area for Day Columns */
 .calendar {
   display: flex;
-  width: 90%;
-  flex-direction: row;
+  flex: 1;
+  background-color: #f9f9f9;
+  position: relative;
 }
 
-.day {
-  flex: 1; /* Each column takes equal space */
-  border: 1px solid #ddd;
-  padding: 10px;
-  box-sizing: border-box; /* Includes padding and border in the width */
+/* Each Day Column (for events on specific days) */
+.day-column {
+  flex: 1;
+  position: relative;
+  border-right: 1px solid #ddd;
+  min-height: 400px;
+  background-color: #f9f9f9;
+  padding-top: 30px; /* Space for event titles */
 }
 
-.today {
-  background-color: #cce5ff;
+.day-column:last-child {
+  border-right: none; /* Remove border for the last column */
 }
 
-.day-name {
-  font-size: 1.2em;
-  text-align: center;
-  background-color: #f0f0f0;
-  padding: 10px 0;
-  border-bottom: 1px solid #ccc;
-}
-
+/* Event Styles */
 .event {
   position: absolute;
-  left: 10%;
-  right: 10%;
-  background-color: #e7f3fe;
-  border: 1px solid #b3d7ff;
+  left: 10px;
+  right: 10px;
+  background-color: #61BF1A; /* Green color for events */
+  color: white;
+  padding: 5px;
+  font-size: 0.9em;
   border-radius: 3px;
-  padding: 2px 5px;
-  font-size: 0.8em;
-}
-
-.event-form {
-  margin: 20px 0;
   text-align: center;
+}
+/* Footer */
+footer {
+  padding: 10px;
+  background-color: #0A2240; /* Dark Blue */
+  text-align: center;
+  color: white;
 }
