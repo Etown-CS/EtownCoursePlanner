@@ -1,13 +1,10 @@
 (function () {
     "use strict";
 
-    // Wait until the window is fully loaded
     window.addEventListener("load", init);
-    
+
     function init() {
-        // Load the navbar dynamically
         $('#navbar').load('includes/navbar.html', function() {
-            // Once the navbar is loaded, apply the "active" class to the current page
             document.querySelectorAll('.nav-link').forEach(link => {
                 if (link.href === window.location.href) {
                     link.classList.add('active');
@@ -15,13 +12,10 @@
             });
         });
 
-
-        // Initialize the display of times and the weekly schedule
         updateTimeRange();
         document.getElementById("add").addEventListener("click", addEvent);
     }
 
-    // Event data for each day of the week
     const events = {
         'Sunday': [],
         'Monday': [],
@@ -32,10 +26,9 @@
         'Saturday': []
     };
 
-    // Function to display times between start and end time
     function displayTimes(startTime, endTime) {
         const timeColumn = document.getElementById('time-column');
-        timeColumn.innerHTML = ''; // Clear existing times
+        timeColumn.innerHTML = '';
 
         let currentTime = startTime;
         while (currentTime.isBefore(endTime)) {
@@ -47,28 +40,39 @@
         }
     }
 
-    // Function to display the full week with events
     function displayWeek(startTime, endTime) {
-        const now = dayjs();
         const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        const header = document.getElementById('header');
+        header.innerHTML = ''; // Clear the header
+
+        // Add "Time" header to align with time column
+        const timeHeader = document.createElement('div');
+        timeHeader.className = 'time-header';
+        timeHeader.textContent = 'Time';
+        header.appendChild(timeHeader);
+
+        // Append day headers to the header row
+        daysOfWeek.forEach(day => {
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'day-header';
+            dayHeader.textContent = day;
+            header.appendChild(dayHeader);
+        });
+
         const calendar = document.getElementById('calendar');
         calendar.innerHTML = ''; // Clear the calendar
 
+        // Append each day column to the calendar row
         daysOfWeek.forEach(day => {
             const dayDiv = document.createElement('div');
-            dayDiv.className = 'day' + (day === now.format('dddd') ? ' today' : '');
+            dayDiv.className = 'day-column';
 
-            const dayName = document.createElement('div');
-            dayName.className = 'day-name';
-            dayName.textContent = day;
-            dayDiv.appendChild(dayName);
-
-            calendar.appendChild(dayDiv);
             displayEvents(day, dayDiv, startTime, endTime);
+            calendar.appendChild(dayDiv);
         });
     }
 
-    // Function to display events for each day
     function displayEvents(day, dayDiv, defaultStartTime, defaultEndTime) {
         const dayEvents = events[day];
         dayEvents.forEach(event => {
@@ -76,7 +80,7 @@
             const eventEnd = dayjs().hour(event.endTime.split(":")[0]).minute(event.endTime.split(":")[1]);
 
             const totalHours = defaultEndTime.diff(defaultStartTime, 'hour');
-            const pixelsPerHour = 50; // Each hour takes up 50px
+            const pixelsPerHour = 50;
 
             const topPosition = (eventStart.diff(defaultStartTime, 'minute') / 60) * pixelsPerHour;
             const eventHeight = (eventEnd.diff(eventStart, 'minute') / 60) * pixelsPerHour;
@@ -91,7 +95,6 @@
         });
     }
 
-    // Function to update the time range based on events
     function updateTimeRange() {
         let minTime = dayjs().hour(8).minute(0);
         let maxTime = dayjs().hour(18).minute(0);
@@ -110,7 +113,6 @@
         displayWeek(minTime, maxTime);
     }
 
-    // Function to add a new event
     function addEvent() {
         const titleInput = document.getElementById('event-title');
         const startTimeInput = document.getElementById('event-start-time');
@@ -125,21 +127,17 @@
         if (title && startTime && endTime && day) {
             events[day].push({ title, startTime, endTime });
 
-            // Clear the inputs after the event is added
             titleInput.value = '';
             startTimeInput.value = '';
             endTimeInput.value = '';
             dayInput.value = '';
 
-            // Update the time range and events display
             updateTimeRange();
         }
     }
 
-    // Event listener to initialize display after DOM content is loaded
     document.addEventListener('DOMContentLoaded', () => {
         displayTimes(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
         displayWeek(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
     });
-
 })();
