@@ -14,6 +14,8 @@
 
         updateTimeRange();
         document.getElementById("add").addEventListener("click", addEvent);
+        document.getElementById("manual_add").addEventListener("click", manualAdd);
+
     }
 
     const events = {
@@ -134,6 +136,73 @@
 
             updateTimeRange();
         }
+    }
+
+    function manualAdd(){
+        // Create the modal elements
+    const modalDiv = document.createElement("div");
+    modalDiv.className = "modal fade";
+    modalDiv.setAttribute("tabindex", "-1");
+    modalDiv.setAttribute("role", "dialog");
+    modalDiv.id = "manualAddModal";
+
+    const modalDialog = document.createElement("div");
+    modalDialog.className = "modal-dialog";
+    modalDialog.setAttribute("role", "document");
+
+    const modalContent = document.createElement("div");
+    modalContent.className = "modal-content";
+
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "modal-header";
+
+    const modalTitle = document.createElement("h5");
+    modalTitle.className = "modal-title";
+    modalTitle.textContent = "Add an Event";
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "close";
+    closeButton.setAttribute("type", "button");
+    closeButton.setAttribute("data-bs-dismiss", "modal");
+    closeButton.setAttribute("aria-label", "Close");
+    closeButton.innerHTML = '<span aria-hidden="true">&times;</span>';
+
+    const modalBody = document.createElement("div");
+    modalBody.className = "modal-body";
+    modalBody.innerHTML = "<p>Modal body text goes here.</p>";
+
+    const modalFooter = document.createElement("div");
+    modalFooter.className = "modal-footer";
+
+    const saveButton = document.createElement("button");
+    saveButton.className = "btn btn-primary";
+    saveButton.textContent = "Add";
+
+    const closeFooterButton = document.createElement("button");
+    closeFooterButton.className = "btn btn-secondary";
+    closeFooterButton.setAttribute("data-bs-dismiss", "modal");
+    closeFooterButton.textContent = "Close";
+
+    // Append all elements in order
+    modalHeader.appendChild(modalTitle);
+    modalHeader.appendChild(closeButton);
+
+    modalFooter.appendChild(saveButton);
+    modalFooter.appendChild(closeFooterButton);
+
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(modalBody);
+    modalContent.appendChild(modalFooter);
+
+    modalDialog.appendChild(modalContent);
+    modalDiv.appendChild(modalDialog);
+
+    document.body.appendChild(modalDiv);
+
+    // Show the modal using Bootstrap's JavaScript API
+    const manualAddModal = new bootstrap.Modal(modalDiv);
+    manualAddModal.show();
+
     }
 
     document.addEventListener('DOMContentLoaded', () => {

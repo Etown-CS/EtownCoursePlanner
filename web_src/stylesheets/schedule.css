@@ -62,12 +62,17 @@
 .btn-primary:hover {
   background-color: #0A2240 !important;
 }
-_____________________________________________________________________________________
 
 #filter_btns{
   padding: 3%;
   display: flex;
   flex-direction: column;
+}
+#Course_grid{
+  display: flex;;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 #gen{
   margin: 3%;
@@ -92,7 +97,13 @@ ________________________________________________________________________________
   background-color: red !important;
   border: none !important;
 }
-__________________________________________________________________
+
+#schedule_Maker{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Schedules Grid */
 .schedules {
   display: grid;
@@ -155,7 +166,6 @@ __________________________________________________________________
 main{
   margin: 3%;
 }
-
 /* Main Container for Time Column and Calendar (Week Container) */
 .week-container {
   display: flex;
