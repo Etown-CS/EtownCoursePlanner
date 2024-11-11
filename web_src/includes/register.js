@@ -37,6 +37,14 @@
         params.append("email", id("email").value);
         params.append("password", id("password").value);
 
+        let pwd = id('password').value;
+        let vpwd = id('confirm_password').value;
+
+        if (pwd != vpwd) {
+            id('message').textContent = "Passwords do not match. Try again."
+            return;
+        }
+
         const options = {method: "POST", body: params};
 
         fetch(url, options)

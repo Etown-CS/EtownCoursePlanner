@@ -54,21 +54,22 @@ app.post('/register', async function (req, res) {
         const username = req.body.username;
         const email = req.body.email;
         const password = req.body.password;
+        const v_password = req.body.confirm_password;
 
         // Username, email, and password are all required, so if any are missing, return error.
-        if (!username || !email || !password) {
+        if (!username || !email || !password || !v_password) {
             return res.status(400).json({
-                message: "Missing required field."
+                'message': "Missing required field."
             });
         }
 
-        // Checking if username is already in table
-        const user = await getUser(username);
+        // Checking if email is already in table
+        const user = await getUser(email);
 
         // Usernames must be unique, so if it already exists, return error.
         if (user) {
             return res.status(400).json({
-                message: "Username already in use, try again."
+                'message': "Username already in use, try again."
             });
         }
 
@@ -81,7 +82,7 @@ app.post('/register', async function (req, res) {
         // Check to see all went as planned, res 200
         if (result) {
             return res.status(200).json({
-                message: "Account created successfully."
+                'message': "Account created successfully."
             });
         }
 
@@ -89,24 +90,57 @@ app.post('/register', async function (req, res) {
     } catch (error) {
         console.log(error);
         return res.status(500).json({
-            message: "Error."
+            'message': "Error."
         })
     };
+});
+
+app.post('/login', async function (req, res) {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                'message': "Missing required field."
+            });
+        }
+
+        const user = await getUser(email);
+        if (!user) {
+            return res.status(400).json({
+                'message': "User not found. Try again."
+            });
+        }
+
+        const result = await bcrypt.compare(password, user.password);
+        if (result) {
+            return res.status(200).json({
+                'message': "Login successful!"
+            });
+        } else {
+            return res.status(400).json({
+                'message': "Password incorrect. Try again."
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 // Functions for registration and login purposes.
 
 /**
- * Find the User by username
+ * Find the User by email
  * Any errors that occur should be caught in the function that calls this one.
- * @param {string} username - The username of the user to find.
+ * @param {string} email - The email of the user to find.
  * @returns {object} - The user stored in the database.
  */
-async function getUser(username) {
+async function getUser(email) {
     const db = await getDBConnection();
 
-    const query = "SELECT * FROM user WHERE username = ?";
-    const user = await db.get(query, [username]);
+    const query = "SELECT * FROM user WHERE email = ?";
+    const user = await db.get(query, [email]);
 
     await db.close();
 
