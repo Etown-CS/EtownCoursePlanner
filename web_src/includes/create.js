@@ -13,9 +13,7 @@
         });
 
         updateTimeRange();
-        document.getElementById("add").addEventListener("click", addEvent);
         document.getElementById("manual_add").addEventListener("click", manualAdd);
-
     }
 
     const events = {
@@ -48,13 +46,11 @@
         const header = document.getElementById('header');
         header.innerHTML = ''; // Clear the header
 
-        // Add "Time" header to align with time column
         const timeHeader = document.createElement('div');
         timeHeader.className = 'time-header';
         timeHeader.textContent = 'Time';
         header.appendChild(timeHeader);
 
-        // Append day headers to the header row
         daysOfWeek.forEach(day => {
             const dayHeader = document.createElement('div');
             dayHeader.className = 'day-header';
@@ -65,7 +61,6 @@
         const calendar = document.getElementById('calendar');
         calendar.innerHTML = ''; // Clear the calendar
 
-        // Append each day column to the calendar row
         daysOfWeek.forEach(day => {
             const dayDiv = document.createElement('div');
             dayDiv.className = 'day-column';
@@ -123,6 +118,7 @@
 
         const title = titleInput.value;
         const startTime = startTimeInput.value;
+        console.log(startTime);
         const endTime = endTimeInput.value;
         const day = dayInput.value;
 
@@ -139,70 +135,79 @@
     }
 
     function manualAdd(){
-        // Create the modal elements
-    const modalDiv = document.createElement("div");
-    modalDiv.className = "modal fade";
-    modalDiv.setAttribute("tabindex", "-1");
-    modalDiv.setAttribute("role", "dialog");
-    modalDiv.id = "manualAddModal";
+        const modalDiv = document.createElement("div");
+        modalDiv.className = "modal fade";
+        modalDiv.setAttribute("tabindex", "-1");
+        modalDiv.setAttribute("role", "dialog");
+        modalDiv.id = "manualAddModal";
 
-    const modalDialog = document.createElement("div");
-    modalDialog.className = "modal-dialog";
-    modalDialog.setAttribute("role", "document");
+        const modalDialog = document.createElement("div");
+        modalDialog.className = "modal-dialog";
+        modalDialog.setAttribute("role", "document");
 
-    const modalContent = document.createElement("div");
-    modalContent.className = "modal-content";
+        const modalContent = document.createElement("div");
+        modalContent.className = "modal-content";
 
-    const modalHeader = document.createElement("div");
-    modalHeader.className = "modal-header";
+        const modalHeader = document.createElement("div");
+        modalHeader.className = "modal-header";
 
-    const modalTitle = document.createElement("h5");
-    modalTitle.className = "modal-title";
-    modalTitle.textContent = "Add an Event";
+        const modalTitle = document.createElement("h5");
+        modalTitle.className = "modal-title";
+        modalTitle.textContent = "Add an Event";
 
-    const closeButton = document.createElement("button");
-    closeButton.className = "close";
-    closeButton.setAttribute("type", "button");
-    closeButton.setAttribute("data-bs-dismiss", "modal");
-    closeButton.setAttribute("aria-label", "Close");
-    closeButton.innerHTML = '<span aria-hidden="true">&times;</span>';
+        const closeButton = document.createElement("button");
+        closeButton.className = "close";
+        closeButton.setAttribute("type", "button");
+        closeButton.setAttribute("data-bs-dismiss", "modal");
+        closeButton.setAttribute("aria-label", "Close");
+        closeButton.innerHTML = '<span aria-hidden="true">&times;</span>';
 
-    const modalBody = document.createElement("div");
-    modalBody.className = "modal-body";
-    modalBody.innerHTML = "<p>Modal body text goes here.</p>";
+        const modalBody = document.createElement("div");
+        modalBody.className = "modal-body";
+        modalBody.innerHTML = `
+            <div class="event-form">
+                <select id="event-day">
+                    <option value="">Select Day</option>
+                    <option value="Sunday">Sunday</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                </select>
+                <input type="time" id="event-start-time" placeholder="Start Time">
+                <input type="time" id="event-end-time" placeholder="End Time">
+                <input type="text" id="event-title" placeholder="Event Title">
+                <button id="modal-add-event" class="btn btn-primary mt-2">Add Event</button>
+            </div>
+        `;
 
-    const modalFooter = document.createElement("div");
-    modalFooter.className = "modal-footer";
+        const modalFooter = document.createElement("div");
+        modalFooter.className = "modal-footer";
+        const closeFooterButton = document.createElement("button");
+        closeFooterButton.className = "btn btn-secondary";
+        closeFooterButton.setAttribute("data-bs-dismiss", "modal");
+        closeFooterButton.textContent = "Close";
 
-    const saveButton = document.createElement("button");
-    saveButton.className = "btn btn-primary";
-    saveButton.textContent = "Add";
+        modalFooter.appendChild(closeFooterButton);
 
-    const closeFooterButton = document.createElement("button");
-    closeFooterButton.className = "btn btn-secondary";
-    closeFooterButton.setAttribute("data-bs-dismiss", "modal");
-    closeFooterButton.textContent = "Close";
+        modalContent.appendChild(modalHeader);
+        modalContent.appendChild(modalBody);
+        modalContent.appendChild(modalFooter);
+        modalHeader.appendChild(modalTitle);
+        modalHeader.appendChild(closeButton);
+        modalDialog.appendChild(modalContent);
+        modalDiv.appendChild(modalDialog);
+        document.body.appendChild(modalDiv);
 
-    // Append all elements in order
-    modalHeader.appendChild(modalTitle);
-    modalHeader.appendChild(closeButton);
+        const manualAddModal = new bootstrap.Modal(modalDiv);
+        manualAddModal.show();
 
-    modalFooter.appendChild(saveButton);
-    modalFooter.appendChild(closeFooterButton);
-
-    modalContent.appendChild(modalHeader);
-    modalContent.appendChild(modalBody);
-    modalContent.appendChild(modalFooter);
-
-    modalDialog.appendChild(modalContent);
-    modalDiv.appendChild(modalDialog);
-
-    document.body.appendChild(modalDiv);
-
-    // Show the modal using Bootstrap's JavaScript API
-    const manualAddModal = new bootstrap.Modal(modalDiv);
-    manualAddModal.show();
-
+        document.getElementById("modal-add-event").addEventListener("click", () => {
+            addEvent();
+            manualAddModal.hide();
+        });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
