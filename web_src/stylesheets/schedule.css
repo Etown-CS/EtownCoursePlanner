@@ -234,3 +234,86 @@ footer {
   text-align: center;
   color: white;
 }
+
+
+/* Etown Branding Color References */
+:root {
+  --primary-color: #004B98; /* Primary Etown Blue */
+  --dark-blue: #0A2240;
+  --light-blue: #3DB5E6;
+  --red: #E1261C;
+  --green: #61BF1A;
+  --light-gray: #C8C8C8;
+  --white: #ffffff;
+  --black: #000000;
+}
+
+
+.event-form {
+  background-color: var(--white);
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.event-form h2 {
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.checkbox-group label {
+  color: var(--dark-blue);
+}
+
+.select-week {
+  margin-bottom: 15px;
+}
+
+.select-week label {
+  color: var(--dark-blue);
+  font-weight: bold;
+}
+
+.time-inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+#event-start-time,
+#event-end-time,
+#event-title {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid var(--light-blue);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#add {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#add:hover {
+  background-color: var(--dark-blue);
+}
+
