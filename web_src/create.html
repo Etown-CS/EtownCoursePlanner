@@ -27,10 +27,11 @@
     <header id="navbar"></header>
     <main>
         <button type="button" class="btn btn-primary" id="save">Save</button>
-    <section id="schedule_Maker">
-        <section id="Course_grid">
-            <input type="text" placeholder="Untitled" id="titleText">
+        <section id="schedule_Maker">
+            <section id="Course_grid">
+                <input type="text" placeholder="Untitled" id="titleText">
 
+<<<<<<< HEAD
         <div class="calendar-container">
             <div id="header" class="header"></div>
             <div class="week-container">
@@ -38,11 +39,59 @@
                 <div id="calendar" class="calendar"></div>
             </div>
         </div>
+=======
+                <div class="event-form">
+                    <!-- Checkboxes for each day of the week -->
+                    <label><input type="checkbox" class="event-day" value="Sunday"> Sunday</label>
+                    <label><input type="checkbox" class="event-day" value="Monday"> Monday</label>
+                    <label><input type="checkbox" class="event-day" value="Tuesday"> Tuesday</label>
+                    <label><input type="checkbox" class="event-day" value="Wednesday"> Wednesday</label>
+                    <label><input type="checkbox" class="event-day" value="Thursday"> Thursday</label>
+                    <label><input type="checkbox" class="event-day" value="Friday"> Friday</label>
+                    <label><input type="checkbox" class="event-day" value="Saturday"> Saturday</label>
+                    <br>
+
+                    <!-- Option to select the entire week -->
+                    <label><input type="checkbox" id="event-week"> Select Entire Week</label>
+                    <br>
+
+                    <input type="time" id="event-start-time" placeholder="Start Time">
+                    <input type="time" id="event-end-time" placeholder="End Time">
+                    <input type="text" id="event-title" placeholder="Event Title">
+                    <button id="add">Add Event</button>
+                </div>
+                <div class="calendar-container">
+                    <div id="header" class="header"></div>
+                    <div class="week-container">
+                        <div id="time-column" class="time-column"></div>
+                        <div id="calendar" class="calendar"></div>
+                    </div>
+                </div>
+>>>>>>> ScheduleFeature2
 
                 <div id="gen">
-            <button type="button" class="btn btn-primary sched_btn" id="msg_btn">Generate</button>
+                    <button type="button" class="btn btn-primary sched_btn" id="msg_btn">Generate</button>
+                </div>
+            </section>
+            <section id="filter_btns">
+                <button type="button" class="btn btn-primary sched_btn">Filters</button>
+                <button type="button" class="btn btn-primary sched_btn">Swap</button>
+                <button type="button" class="btn btn-primary sched_btn">Manual add</button>
+                <button type="button" class="btn btn-primary sched_btn">colors</button>
+                <button type="button" class="btn btn-primary sched_btn" id="msg_btn">Mesage Advisor</button>
+            </section>
+        </section>
+        <section id="suggested">
+            <div id="sug_head">
+                <h1>Suggested classes</h1>
+            </div>
+            <div id="sug_classes">
+                <h5> Random class</h5>
+                <h5> Random class</h5>
+                <h5> Random class</h5>
             </div>
         </section>
+<<<<<<< HEAD
         <section id="filter_btns">
             <button type="button" class="btn btn-primary sched_btn">Filters</button>
             <button type="button" class="btn btn-primary sched_btn">Swap</button>
@@ -63,6 +112,8 @@
 
         
     </section>
+=======
+>>>>>>> ScheduleFeature2
     </main>
     <footer>
         <p>Powered by Etown CS 401/402</p>
