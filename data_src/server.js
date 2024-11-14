@@ -25,7 +25,7 @@ app.use(express.static('./../web_src'));
 app.get('/courses', async (req, res) => {
     try {
         const db = await getDBConnection();
-        const query = "SELECT * FROM course"; // Adjust 'courses' to your table name
+        const query = "SELECT * FROM course"; 
         const courses = await db.all(query); // Fetch all rows from courses table
 
         await db.close();
@@ -76,7 +76,7 @@ app.get('/major', async (req, res) => {
 app.get('/advisors', async (req, res) => {
     try {
         const db = await getDBConnection();
-        const query = "SELECT DISTINCT name, id FROM advisor"; // Adjust 'courses' to your table name
+        const query = "SELECT DISTINCT name, id FROM advisor";
         const advisors = await db.all(query); // Fetch all rows from courses table
 
         await db.close();
