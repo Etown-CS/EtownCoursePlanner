@@ -35,6 +35,8 @@
         let params = new FormData();
         params.append("username", id("name").value);
         params.append("email", id("email").value);
+        params.append("major", id("major").value);
+        // params.append("advisor", id("advisor").value);
         params.append("password", id("password").value);
 
         let pwd = id('password').value;
