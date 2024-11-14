@@ -76,7 +76,7 @@ app.get('/major', async (req, res) => {
 app.get('/advisors', async (req, res) => {
     try {
         const db = await getDBConnection();
-        const query = "SELECT DISTINCT name FROM advisor"; // Adjust 'courses' to your table name
+        const query = "SELECT DISTINCT name, id FROM advisor"; // Adjust 'courses' to your table name
         const advisors = await db.all(query); // Fetch all rows from courses table
 
         await db.close();
@@ -155,7 +155,7 @@ app.post('/register', async function (req, res) {
         const username = req.body.username;
         const email = req.body.email;
         const major = req.body.major;
-        // const advisor = req.body.advisor;
+        const advisor = req.body.advisor;
         const password = req.body.password;
 
         // Username, email, and password are all required, so if any are missing, return error.
@@ -179,7 +179,7 @@ app.post('/register', async function (req, res) {
         const encrypted_pw = await bcrypt.hash(password, 10);
 
         // Create user in table and register them, using encrypted password.
-        const result = await createUser(username, email, major, encrypted_pw);
+        const result = await createUser(username, email, major, advisor, encrypted_pw);
 
         // Check to see all went as planned, res 200
         if (result) {
@@ -270,11 +270,11 @@ async function getUser(email) {
  * @param {string} ecrypt_password - The encoded password of the user to insert.
  * @returns {object} - The user stored in the database.
  */
-async function createUser(username, email, major, encrypt_password) {
+async function createUser(username, email, major, advisor, encrypt_password) {
     const db = await getDBConnection();
 
-    const query = "INSERT INTO user (username, email, major, password) VALUES (?, ?, ?, ?);";
-    const res = await db.run(query, [username, email, major, encrypt_password]);
+    const query = "INSERT INTO user (username, email, major, advisor_id, password) VALUES (?, ?, ?, ?, ?);";
+    const res = await db.run(query, [username, email, major, advisor, encrypt_password]);
 
     const user = await getUser(email);
     await db.close();

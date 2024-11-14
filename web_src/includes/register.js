@@ -21,8 +21,9 @@
         .then(data => {
             const dropdown = document.getElementById(id);
             data.forEach(element => {
+                console.log(element);
                 const option = document.createElement('option');
-                option.value = element[fieldName];
+                option.value = element.id;
                 option.text = element[fieldName];
                 dropdown.appendChild(option);
             });
@@ -36,7 +37,7 @@
         params.append("username", id("name").value);
         params.append("email", id("email").value);
         params.append("major", id("major").value);
-        // params.append("advisor", id("advisor").value);
+        params.append("advisor", id("advisor").value);
         params.append("password", id("password").value);
 
         let pwd = id('password').value;
