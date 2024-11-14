@@ -34,6 +34,23 @@ app.get('/courses', async (req, res) => {
     }
 });
 
+app.get('/courses-completed', async (req, res) => {
+    const userId = 1; // Hard code user for now
+    try {
+        const db = await getDBConnection();
+        const query = `SELECT c.course_code, c.name, c.department, c.credits 
+            FROM completed_course cc JOIN course c ON cc.course_id = c.id 
+            WHERE cc.user_id = ?;`;
+        const completedCourses = await db.all(query, [userId]);
+        await db.close();
+
+        res.type('json').send(completedCourses);
+    } catch (error) {
+        console.error("Error fetching completed courses data:", error);
+        res.status(500).send("Error on server. Please try again later.");
+    }
+});
+
 app.get('/advisors', async (req, res) => {
     try {
         const db = await getDBConnection();
@@ -47,7 +64,69 @@ app.get('/advisors', async (req, res) => {
         console.error("Error retrieving advisors:", error);
         res.status(500).send('Error on the server. Please try again later.');
     }
-})
+});
+
+app.get('/progress', async (req, res) => {
+    const userId = 1; // Hard code user for now
+    try {
+        const db = await getDBConnection();
+        const query = `SELECT c.course_code, c.name, c.credits, c.core 
+        FROM completed_course cc 
+        JOIN course c ON cc.course_id = c.id 
+        WHERE cc.user_id = ?;`;
+        const completedCourses = await db.all(query, [userId]);
+        await db.close();
+
+        const coreRequirements = {
+            "PLE" : 1,
+            "PLO" : 1,
+            "MA" : 1,
+            "CE" : 4,
+            "WCH" : 1,
+            "NCH" : 1,
+            "NPS" : 1,
+            "NPSL" : 1,
+            "SSC" : 1,
+            "HUM" : 1,
+            "SLE" : 2
+        };
+        
+        const coreFulfilled = {};
+        let ceCredits = 0;
+        const completedCoreCourses = [];
+
+        completedCourses.forEach(course => {
+            const coreType = course.core;
+            if (coreType && coreType in coreRequirements) {
+                completedCoreCourses.push(course);
+
+                if (coreType === "CE") {
+                    ceCredits += course.credits;
+                } else {
+                    coreFulfilled[coreType] = true;
+                }
+            }
+        });
+
+        if (ceCredits >= coreRequirements["CE"]) {
+            coreFulfilled["CE"] = true;
+        }
+
+        const totalCoreCategories = Object.keys(coreRequirements).length;
+        const fulfilledCoreCategories = Object.keys(coreFulfilled).length;
+        const progressPercentage = Math.round((fulfilledCoreCategories/totalCoreCategories)*100);
+
+        res.type('json').send({
+            completedCoreCourses,
+            fulfilledCoreCategories,
+            totalCoreCategories,
+            progressPercentage
+        });
+    } catch (error) {
+        console.error("Error fetching progress data:", error);
+        res.status(500).send("Error on server. Please try again later.");
+    }
+});
 
 app.post('/register', async function (req, res) {
     try {

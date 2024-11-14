@@ -1,22 +1,52 @@
-"use strict";
-document.addEventListener("DOMContentLoaded", function () {
-    const URL = "http://localhost:8080/courses"; //"https://etown-course-planner.ue.r.appspot.com/courses"
-    // Fetch courses when the page loads
-    fetch(URL)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); // Parse the JSON data from the response
+
+(function () {
+    "use strict";
+
+    const BASE_URL = "http://localhost:8080"; //"https://etown-course-planner.ue.r.appspot.com/courses"
+    window.addEventListener("load", init);
+
+    function init() {
+        loadCoreProgress();
+    }
+    
+    async function loadCoreProgress() {
+        try {
+            const response = await fetch(BASE_URL+"/progress");
+            const data = await response.json();
+            const percentage = data.progressPercentage;
+            const bar = document.getElementById("core-progress-bar");
+            bar.style.width = `${percentage}%`;
+            bar.setAttribute('aria-valuenow', percentage);
+            bar.innerText = `${percentage}% Completed`;
+            const coreCreditsInfo = document.getElementById("core-credits-info");
+            coreCreditsInfo.innerText = `${data.fulfilledCoreCategories} out of ${data.totalCoreCategories} core completed.`;
+
+            populateCompletedTable();
+
+        } catch (error) {
+            console.error("Error loading progress:", error);
+        }
+    }
+
+    /**
+     * Populates Completed Courses table with data.
+     */
+    function populateCompletedTable() {
+        // Populate the table with course data
+        const url = BASE_URL + "/courses-completed";
+        fetch(url)
+        .then(res => {
+            if(!res.ok) throw new Error('Response not ok');
+            return res.json();
         })
         .then(data => {
-            // Populate the table with course data
-            const classNeededTable = document.getElementById('class-completed-tbl');
+            const tableBody = document.getElementById('completed-classes-body');
+            tableBody.innerHTML = "";
             data.forEach(course => {
                 const row = document.createElement('tr');
 
                 const idCell = document.createElement('td');
-                idCell.innerText = course.id;
+                idCell.innerText = course.course_code;
                 row.appendChild(idCell);
 
                 const nameCell = document.createElement('td');
@@ -27,10 +57,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 fieldCell.innerText = course.department;
                 row.appendChild(fieldCell);
 
-                classNeededTable.appendChild(row);
-            });
-        })
-        .catch(error => {
-            console.error('Issue with the fetch operation:', error);
-        });
-});
+                const creditCell = document.createElement('td');
+                creditCell.innerText = course.credits;
+                row.appendChild(creditCell);
+
+                tableBody.appendChild(row);
+                });
+            })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+})();
