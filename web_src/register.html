@@ -18,29 +18,81 @@
     <script src="https://releases.jquery.com/git/jquery-git.min.js"></script>
 
     <script src="includes/main.js"></script>
+    <script src="includes/register.js"></script>
 </head>
 <body>
     <header id="navbar"></header>
 
-    <h1 class="crete-round-regular">Register</h1>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <div class="form-container">
-        <form action="/login.html" method="POST"> <!-- class="was-validated" -->
-            <div class="mb-3 mt-3">
-                <label for="major" class="form-label">Major:</label>
-                <input type="text" class="form-control" id="major" placeholder="Enter major" name="major">
-            </div>
-            <div class="mb-3 mt-3">
-                <label for="minor" class="form-label">Minor:</label>
-                <input type="text" class="form-control" id="minor" placeholder="Enter minor" name="minor">
-            </div>
-            <div class="mb-3 mt-3">
-                <label for="advisor" class="form-label">Advisor:</label>
-                <input type="text" class="form-control" id="advisor" placeholder="Advisor" name="advisor">
-            </div> <!--Dropdown , populate from database -->
-            <button type="submit" class="submit-btn">Submit</button>
-        </form>
-    </div>
+    <main>
+        <h1 class="crete-round-regular">Register</h1>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="form-container">
+            <form id="register-form"> <!-- class="was-validated" -->
+                <div class="mb-3 mt-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="name" class="form-control" id="name" placeholder="Enter your name" name="name" required>
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter Etown email" name="email" required>
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label for="major" class="form-label">Major:</label>
+                    <select class="form-control" id="major" name="major">
+                        <option value="Computer Science">Computer Science</option>
+                    </select>
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label for="minor" class="form-label">Minor:</label>
+                    <input type="text" class="form-control" id="minor" placeholder="Enter minor" name="minor">
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label for="advisor" class="form-label">Advisor:</label>
+                    <select class="form-control" id="advisor" name="advisor"></select>
+                </div> <!--Dropdown , populate from database -->
+
+                <div class="mb-3 mt-3">
+                    <label for="grad-year" class="form-label">Intended Grad Year:</label>
+                    <input type="number" class="form-control" id="grad-year" placeholder="Enter intended graduation year" name="grad-year">
+                </div>
+                
+                <div class="mb-3 mt-3">
+                    <label for="course-catalog" class="form-label">Course Catalog:</label>
+                    <input type="text" class="form-control" id="course-catalog" placeholder="Enter course catalog" name="course-catalog">
+                </div> <!-- Dropdown????-->
+                
+                <p>Do you have AP credits?</p>
+                <input type="radio" id="ap-yes" name="ap" value="yes">
+                <label for="ap-yes">Yes</label>
+                <input type="radio" id="ap-no" name="ap" value="no">
+                <label for="ap-no">No</label>
+                
+                <div class="mb-3 mt-3">
+                    <label for="ap-credits" class="form-label">If yes, please explain:</label>
+                    <input type="text" class="form-control" id="ap-credits" placeholder="Enter your credits" name="ap-credits">
+                </div> <!-- Only show if yes? -->
+
+                <div class="mb-3 mt-3">
+                    <label for="password" class="form-label">Password:</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" name="password" required>
+                </div> 
+                
+                <div class="mb-3 mt-3">
+                    <label for="password" class="form-label">Retype your Password:</label>
+                    <input type="password" class="form-control" id="confirm_password" placeholder="Confirm your password" name="password" required>
+                </div>
+
+                <button type="button" class="submit-btn" id="register">Submit</button>
+            </form>
+        </div>
+        <div class="row mb-4">
+            <p id="message"></p>
+        </div>
+    </main>
 
     <div id="footer"></div>
     
