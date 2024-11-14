@@ -9,6 +9,9 @@
         loadCoreProgress();
     }
     
+    /**
+     * Populates progress bar for core courses
+     */
     async function loadCoreProgress() {
         try {
             const response = await fetch(BASE_URL+"/progress");

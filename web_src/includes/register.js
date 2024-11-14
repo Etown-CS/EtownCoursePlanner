@@ -11,6 +11,11 @@
         id('register').addEventListener('click', register);
     }
 
+    /**
+     * Creates options for drop down menus using advisors API
+     * @param {string} id - element ID
+     * @param {string} fieldName - element name
+     */
     function populateDropdown(id, fieldName, base_url) {
         const url = base_url + "/advisors";
         fetch(url)
@@ -31,6 +36,9 @@
         .catch(error => console.error('Error fetching data:', error));
     }
 
+    /**
+     * Fetches register API and prepares student info for client-side
+     */
     function register() {
         const url = BASE_URL + "/register";
         let params = new FormData();
