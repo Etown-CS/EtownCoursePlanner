@@ -132,13 +132,14 @@ app.post('/register', async function (req, res) {
     try {
         const username = req.body.username;
         const email = req.body.email;
+        const major = req.body.major;
+        // const advisor = req.body.advisor;
         const password = req.body.password;
-        const v_password = req.body.confirm_password;
 
         // Username, email, and password are all required, so if any are missing, return error.
-        if (!username || !email || !password || !v_password) {
+        if (!username || !email || !password) {
             return res.status(400).json({
-                'message': "Missing required field."
+                message: "Missing required field."
             });
         }
 
@@ -148,7 +149,7 @@ app.post('/register', async function (req, res) {
         // Usernames must be unique, so if it already exists, return error.
         if (user) {
             return res.status(400).json({
-                'message': "Username already in use, try again."
+                message: "Username already in use, try again."
             });
         }
 
@@ -156,12 +157,12 @@ app.post('/register', async function (req, res) {
         const encrypted_pw = await bcrypt.hash(password, 10);
 
         // Create user in table and register them, using encrypted password.
-        const result = await createUser(username, email, encrypted_pw);
+        const result = await createUser(username, email, major, encrypted_pw);
 
         // Check to see all went as planned, res 200
         if (result) {
             return res.status(200).json({
-                'message': "Account created successfully."
+                message: "Account created successfully."
             });
         }
 
@@ -169,7 +170,7 @@ app.post('/register', async function (req, res) {
     } catch (error) {
         console.log(error);
         return res.status(500).json({
-            'message': "Error."
+            message: "Error."
         })
     };
 });
@@ -181,25 +182,25 @@ app.post('/login', async function (req, res) {
 
         if (!email || !password) {
             return res.status(400).json({
-                'message': "Missing required field."
+                message: "Missing required field."
             });
         }
 
         const user = await getUser(email);
         if (!user) {
             return res.status(400).json({
-                'message': "User not found. Try again."
+                message: "User not found. Try again."
             });
         }
 
         const result = await bcrypt.compare(password, user.password);
         if (result) {
             return res.status(200).json({
-                'message': "Login successful!"
+                message: "Login successful!"
             });
         } else {
             return res.status(400).json({
-                'message': "Password incorrect. Try again."
+                message: "Password incorrect. Try again."
             });
         }
     } catch (error) {
@@ -231,16 +232,18 @@ async function getUser(email) {
  * Any errors that occur should be caught in the function that calls this one.
  * @param {string} email - The email of the user to insert.
  * @param {string} username - The username of the user to insert.
+ * @param {string} major - The major of the user to insert.
+ * @param {string} advisor - The advisor of the user to insert.
  * @param {string} ecrypt_password - The encoded password of the user to insert.
  * @returns {object} - The user stored in the database.
  */
-async function createUser(username, email, encrypt_password) {
+async function createUser(username, email, major, encrypt_password) {
     const db = await getDBConnection();
 
-    const query = "INSERT INTO user (username, email, password) VALUES (?, ?, ?);";
-    const res = await db.run(query, [username, email, encrypt_password]);
+    const query = "INSERT INTO user (username, email, major, password) VALUES (?, ?, ?, ?);";
+    const res = await db.run(query, [username, email, major, encrypt_password]);
 
-    const user = await getUser(username);
+    const user = await getUser(email);
     await db.close();
 
     return user;
