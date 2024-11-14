@@ -10,6 +10,9 @@
         id('login').addEventListener('click', login);
     }
 
+    /**
+     * Fetch login API and prepares info for client-side
+     */
     function login () {
         const url = BASE_URL + "/login";
         let params = new FormData();
