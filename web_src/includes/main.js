@@ -2,7 +2,7 @@
     "use strict";
 
     window.addEventListener("load", init);
-
+    
     function init() {
         $('#navbar').load('includes/navbar.html', function() {
             // Now that the navbar is loaded, check for the current page and apply "active" class
@@ -22,4 +22,5 @@
             window.location.href = "create.html"; // Replace 'newPage.html' with your desired URL
         });
     }
+    
 })();

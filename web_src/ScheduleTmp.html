@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week-Based Event Calendar with Time Range</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/advancedFormat.min.js"></script>
+    <link href="stylesheets/schedule.css" rel="stylesheet">
+    <script>
+        dayjs.extend(dayjs_plugin_advancedFormat);
+
+        const events = {
+            'Sunday': [],
+            'Monday': [],
+            'Tuesday': [],
+            'Wednesday': [],
+            'Thursday': [],
+            'Friday': [],
+            'Saturday': []
+        };
+
+        function displayTimes(startTime, endTime) {
+    const timeColumn = document.getElementById('time-column');
+    timeColumn.innerHTML = ''; // Clear existing times
+
+    let currentTime = startTime;
+    while (currentTime.isBefore(endTime)) {
+        const hourSlot = document.createElement('div');
+        hourSlot.className = 'hour-slot';
+        hourSlot.innerText = currentTime.format('h A');
+        timeColumn.appendChild(hourSlot);
+        currentTime = currentTime.add(1, 'hour');
+    }
+}
+
+    function displayWeek(startTime, endTime) {
+        const now = dayjs();
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
+
+        daysOfWeek.forEach(day => {
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'day' + (day === now.format('dddd') ? ' today' : '');
+
+            const dayName = document.createElement('div');
+            dayName.className = 'day-name';
+            dayName.textContent = day;
+            dayDiv.appendChild(dayName);
+
+            calendar.appendChild(dayDiv);
+            displayEvents(day, dayDiv, startTime, endTime);
+        });
+    }
+
+        function displayEvents(day, dayDiv, defaultStartTime, defaultEndTime) {
+            const dayEvents = events[day];
+            dayEvents.forEach(event => {
+                const eventStart = dayjs().hour(event.startTime.split(":")[0]).minute(event.startTime.split(":")[1]);
+                const eventEnd = dayjs().hour(event.endTime.split(":")[0]).minute(event.endTime.split(":")[1]);
+
+                const totalHours = defaultEndTime.diff(defaultStartTime, 'hour');
+                const pixelsPerHour = 50; // Each hour is 50px
+
+                const topPosition = (eventStart.diff(defaultStartTime, 'minute') / 60) * pixelsPerHour;
+                const eventHeight = (eventEnd.diff(eventStart, 'minute') / 60) * pixelsPerHour;
+
+                const eventDiv = document.createElement('div');
+                eventDiv.className = 'event';
+                eventDiv.style.top = `${topPosition}px`;
+                eventDiv.style.height = `${eventHeight}px`;
+                eventDiv.textContent = `${event.startTime} - ${event.endTime}: ${event.title}`;
+
+                dayDiv.appendChild(eventDiv);
+            });
+        }
+        
+        function updateTimeRange() {
+            let minTime = dayjs().hour(8).minute(0);
+            let maxTime = dayjs().hour(18).minute(0);
+
+            Object.values(events).forEach(dayEvents => {
+                dayEvents.forEach(event => {
+                    // make a varaible that holds all extra hours outside of the standard time frame
+                    const eventStart = dayjs().hour(event.startTime.split(":")[0]).minute(event.startTime.split(":")[1]);
+                    const eventEnd = dayjs().hour(event.endTime.split(":")[0]).minute(event.endTime.split(":")[1]);
+                    if (eventStart.isBefore(minTime)) minTime = eventStart;
+                    if (eventEnd.isAfter(maxTime)) maxTime = eventEnd;
+                });
+            });
+
+            displayTimes(minTime, maxTime);
+            displayWeek(minTime, maxTime);
+        }
+
+        function addEvent() {
+            const titleInput = document.getElementById('event-title');
+            const startTimeInput = document.getElementById('event-start-time');
+            const endTimeInput = document.getElementById('event-end-time');
+            const dayInput = document.getElementById('event-day');
+
+            const title = titleInput.value;
+            const startTime = startTimeInput.value;
+            const endTime = endTimeInput.value;
+            const day = dayInput.value;
+
+            if (title && startTime && endTime && day) {
+                events[day].push({ title, startTime, endTime });
+
+                titleInput.value = '';
+                startTimeInput.value = '';
+                endTimeInput.value = '';
+                dayInput.value = '';
+
+                updateTimeRange();
+                //if the start or end time is out of the default time update the display events function and adjust the size of each hour to be smaller so it still takes up the same ammount of space
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayTimes();
+            displayWeek();
+        });
+    </script>
+</head>
+<body>
+    <h1>Week-Based Event Calendar with Time Range</h1>
+
+    <div class="event-form">
+        <h2>Add Event</h2>
+        <select id="event-day">
+            <option value="">Select Day</option>
+            <option value="Sunday">Sunday</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+        </select>
+        <input type="time" id="event-start-time" placeholder="Start Time">
+        <input type="time" id="event-end-time" placeholder="End Time">
+        <input type="text" id="event-title" placeholder="Event Title">
+        <button onclick="addEvent()">Add Event</button>
+    </div>
+
+    <div class="calendar-container">
+        <div id="time-column" class="time-column"></div>
+        <div id="calendar" class="calendar"></div>
+    </div>
+</body>
+</html>

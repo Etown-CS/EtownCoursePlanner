@@ -11,48 +11,102 @@
     <link href="https://fonts.googleapis.com/css2?family=Crete+Round&display=swap" rel="stylesheet">
     <link href="stylesheets/schedule.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Jquery -->
     <script src="https://releases.jquery.com/git/jquery-git.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/advancedFormat.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="includes/main.js"></script>
+    <script src="includes/create.js"></script>
 </head>
 
 <body>
     <header id="navbar"></header>
     <main>
-        <button type="button" class="btn btn-primary" id="save">Save</button>
-    <section id="schedule_Maker">
-        <section id="Course_grid">
-            <input type="text" placeholder="Untitled" id="titleText">
-            <img src="../../images/Schedule_placeholder.png" alt="Placeholder">
-            <div id="gen">
+        <button type="button" class="btn btn-primary" id="save">Save</button><br><br><br>
+        <div class="schedule-title-container">
+            <label for="schedule-title">Enter Schedule Title:</label>
+            <input type="text" id="schedule-title" name="schedule-title" placeholder="Enter your schedule title here" required>
+        </div>
+
+        <section id="schedule_Maker">
+            <div class="side-by-side-container"> <!-- Container for side-by-side form and calendar -->
+                <!-- Event Form -->
+                <div class="event-form">
+                    <h2>Manual Add</h2>
+                
+                    <label>Select Days:</label><br>
+                    <input type="checkbox" id="sunday" value="Sunday"> Sunday<br>
+                    <input type="checkbox" id="monday" value="Monday"> Monday<br>
+                    <input type="checkbox" id="tuesday" value="Tuesday"> Tuesday<br>
+                    <input type="checkbox" id="wednesday" value="Wednesday"> Wednesday<br>
+                    <input type="checkbox" id="thursday" value="Thursday"> Thursday<br>
+                    <input type="checkbox" id="friday" value="Friday"> Friday<br>
+                    <input type="checkbox" id="saturday" value="Saturday"> Saturday<br>
+                
+                    <br>
+                
+                    <label for="event-start-time">Start Time:</label>
+                    <input type="time" id="event-start-time" placeholder="Start Time">
+                    
+                    <label for="event-end-time">End Time:</label>
+                    <input type="time" id="event-end-time" placeholder="End Time">
+                    
+                    <label for="event-title">Event Title:</label>
+                    <input type="text" id="event-title" placeholder="Event Title">
+                    
+                    <button id="add">Add Event</button>
+                </div>
+
+                <!-- Calendar Container -->
+                <div class="calendar-container">
+                    <div id="header" class="header"></div>
+                    <div class="week-container">
+                        <div id="time-column" class="time-column"></div>
+                        <div id="calendar" class="calendar"></div>
+                    </div>
+                </div>
+            </div> 
+
+            <section id="filter_btns">
+                <button type="button" class="btn btn-primary sched_btn">Filters</button>
+                <button type="button" class="btn btn-primary sched_btn">Swap</button>
+                <!-- <button type="button" class="btn btn-primary sched_btn" id="manual_add">Manual add</button> -->
+                <button type="button" class="btn btn-primary sched_btn">Colors</button>
+                <button type="button" class="btn btn-primary sched_btn" id="msg_btn">Message Advisor</button>
+            </section>
+    
+        </section>
+
+        <div id="gen">
             <button type="button" class="btn btn-primary sched_btn" id="msg_btn">Generate</button>
-            </div>
-        </section>
-        <section id="filter_btns">
-            <button type="button" class="btn btn-primary sched_btn">Filters</button>
-            <button type="button" class="btn btn-primary sched_btn">Swap</button>
-            <button type="button" class="btn btn-primary sched_btn">Manual add</button>
-            <button type="button" class="btn btn-primary sched_btn">colors</button>
-            <button type="button" class="btn btn-primary sched_btn" id="msg_btn">Mesage Advisor</button>
-        </section>
-    </section>
+        </div>
+
+
     <section id="suggested">
         <div id="sug_head">
             <h1>Suggested classes</h1>
         </div>
         <div id="sug_classes">
-            <h5> Random class</h5>
-            <h5> Random class</h5>
-            <h5> Random class</h5>
+            <h5>Random class</h5>
+            <h5>Random class</h5>
+            <h5>Random class</h5>
         </div>
     </section>
     </main>
 
-    <div id="footer"></div>
-   
+    <footer>
+        <p>Powered by Etown CS 401/402</p>
+        <p>Connect with us: <br>
+            <a href="https://www.facebook.com/etowncollege/" class="fa fa-facebook" target="_blank" aria-label="Facebook"></a>
+            <a href="https://www.instagram.com/etowncollege/" class="fa fa-instagram" target="_blank" aria-label="Instagram"></a>
+            <a href="https://twitter.com/EtownCollege?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" class="fa fa-twitter" target="_blank" aria-label="Twitter"></a>
+            <a href="https://www.linkedin.com/school/elizabethtown-college/" class="fa fa-linkedin" target="_blank" aria-label="LinkedIn"></a>
+        </p>
+    </footer>
+
+    
 </body>
 </html>
