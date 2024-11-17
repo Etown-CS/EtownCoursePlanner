@@ -106,6 +106,7 @@ color: #C8C8C8;
   display: flex;
   flex-direction: column;
   align-items: left;
+  justify-content: center;
   }
   
   #Course_grid{
@@ -310,7 +311,7 @@ color: #C8C8C8;
   
   /* Etown Branding Color References */
   :root {
-      --primary-color: #004B98; /* Primary Etown Blue */
+      --primary-color: #004B98;
       --dark-blue: #0A2240;
       --light-blue: #3DB5E6;
       --red: #E1261C;
@@ -398,7 +399,24 @@ color: #C8C8C8;
       border-radius: 4px;
       font-size: 14px;
   }
-    
+  #message-container{
+    display: block;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+  }
+    .card-header{
+        background-color: var(--dark-blue) !important; /* Set your desired background color */
+        color: #ffffff;           /* Set your desired text color */
+    }
+    .btn-secondary{
+        background-color: var(--red) !important; /* Set your desired background color */
+        color: #ffffff;  
+        border: none !important;
+    }
+
   #add {
       background-color: var(--primary-color);
       color: var(--white);

@@ -14,6 +14,7 @@
 
         updateTimeRange();
         document.getElementById("add").addEventListener("click", addEvent);
+        document.getElementById("msg_btn").addEventListener("click", msgBox);
         document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // Add this event listener
 
         
@@ -189,6 +190,75 @@
         endTimeInput.value = '';
 
         updateTimeRange();
+    }
+
+    function msgBox() {
+            // Check if the card already exists
+        let existingCard = document.getElementById("message-container");
+        if (existingCard) {
+            existingCard.remove(); // Remove the old card to avoid duplicates
+        }
+
+        // Create the container for the card
+        const messageContainer = document.createElement("div");
+        messageContainer.id = "message-container";
+    
+        // Add Bootstrap container classes for styling
+        messageContainer.className = "container";
+
+        // Create the card
+        const card = document.createElement("div");
+        card.className = "card";
+
+        // Create the card header with a close (X) button
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header text-white d-flex justify-content-between align-items-center";
+        
+        // Header text
+        const headerText = document.createElement("span");
+        headerText.textContent = "Message";
+
+        // Close (X) button
+        const closeButton = document.createElement("button");
+        closeButton.className = "btn-close btn-close-white";
+        closeButton.setAttribute("aria-label", "Close");
+        closeButton.style.cursor = "pointer";
+        closeButton.addEventListener("click", () => {
+            messageContainer.remove(); // Remove the card on close
+        });
+
+        // Append text and close button to the header
+        cardHeader.appendChild(headerText);
+        cardHeader.appendChild(closeButton);
+
+        // Create the card body
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+
+        // Create the message text
+        const cardText = document.createElement("p");
+        cardText.className = "card-text";
+        cardText.textContent = "Soon you will be able to message your advisor here";
+
+        // Create the send button
+        const sendButton = document.createElement("button");
+        sendButton.className = "btn btn-secondary";
+        sendButton.textContent = "Send";
+        sendButton.style.marginTop = "10px";
+        sendButton.addEventListener("click", () => {
+            // Placeholder functionality for the "Send" button
+            alert("Send button clicked (no functionality yet).");
+        });
+
+        // Assemble the card
+        cardBody.appendChild(cardText);
+        cardBody.appendChild(sendButton);
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+        messageContainer.appendChild(card);
+
+        // Append the card to the body
+        document.body.appendChild(messageContainer);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
