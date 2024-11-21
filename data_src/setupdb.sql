@@ -97,7 +97,8 @@ INSERT INTO course (course_code, name, credits, department, core) VALUES
 ('CS363', 'Computer Security', 4, 'Computer Science', 'None'), -- 27
 ('CS364', 'Network Security', 4, 'Computer Science', 'None'), -- 28
 ('CS113', 'The Power and Beauty of Computing', 4, 'Computer Science', 'NPS'), -- 29
-('EN100', 'PLE First Year Writing', 4, 'Language', 'PLE'); -- 30
+('EN100', 'PLE First Year Writing', 4, 'Language', 'PLE'), -- 30
+('CS221', 'Data Structures', 4, 'Computer Science', 'None'); -- 31
 
 
 -- Insert data into prerequisite table

@@ -51,6 +51,25 @@ app.get('/courses-completed', async (req, res) => {
     }
 });
 
+app.get('/major', async (req, res) => {
+    //const userId = 1; // have to get user's major too
+    const courseIds= [1, 2, 3, 31, 23, 7, 8, 12, 24, 10, 13, 14, 15, 25, 26, 21, 22, 18, 17, 19]
+    try {
+        const db = await getDBConnection();
+        const query = `SELECT course_code, name, credits
+            FROM course
+            WHERE id IN (${courseIds.join(', ')})`;
+
+        const majorCourses = await db.all(query);
+        await db.close()
+        //console.log(majorCourses);
+        res.type('json').send(majorCourses);
+    } catch (error) {
+        console.error("Error fetching major courses data:", error);
+        res.status(500).send("Error on server. Please try again later.");
+    }
+});
+
 app.get('/advisors', async (req, res) => {
     try {
         const db = await getDBConnection();
@@ -66,7 +85,7 @@ app.get('/advisors', async (req, res) => {
     }
 });
 
-app.get('/progress', async (req, res) => {
+app.get('/core', async (req, res) => {
     const userId = 1; // Hard code user for now
     try {
         const db = await getDBConnection();
@@ -164,7 +183,6 @@ app.post('/register', async function (req, res) {
                 'message': "Account created successfully."
             });
         }
-
 
     } catch (error) {
         console.log(error);
