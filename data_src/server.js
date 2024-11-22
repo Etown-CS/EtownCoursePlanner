@@ -7,6 +7,9 @@ const sqlite3 = require('sqlite3');
 const sqlite = require('sqlite');
 const bcrypt = require('bcrypt'); // Password Hashing
 const bodyParser = require('body-parser'); // Parses form body
+const jwt = require('jsonwebtoken');
+const jwtSecret = "0f21f0a8883cdbfab0d88578e409b702a6461977c93a101ad81ba96b04281563";
+const cookieParser = require("cookie-parser");
 const dbPath = 'course_planner.db';
 const PORT = process.env.PORT || 8080;
 require('dotenv').config();
@@ -212,6 +215,18 @@ app.post('/login', async function (req, res) {
 
         const result = await bcrypt.compare(password, user.password);
         if (result) {
+            // Set the cookie using jwt
+            const maxAge = 7*24*60*60; // One week in seconds
+            const token = jwt.sign(
+                {"login": true, "email": email},
+                jwtSecret,
+                {expiresIn: maxAge}
+            );
+            res.cookie("jwt", token, {
+                httpOnly: true,
+                maxAge: maxAge * 1000, // 7 hours in miliseconds
+            });
+
             return res.status(200).json({
                 'message': "Login successful!"
             });
