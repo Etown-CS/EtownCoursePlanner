@@ -20,6 +20,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serves static files
 app.use(express.static('./../web_src'));
 
+//Validation
+const validation = require("./validation.js")
+
+
 
 // Get all courses
 app.get('/courses', async (req, res) => {
@@ -164,6 +168,33 @@ app.post('/register', async function (req, res) {
                 message: "Missing required field."
             });
         }
+
+        //username validation
+        const username_err = validation.check_username(username);
+        if (username_err != "") {
+            return res.status(400).json({
+                message: username_err
+            });
+        }
+
+
+        // email validation
+       const email_err = validation.check_email(email);
+       if (email_err != "") {
+           return res.status(400).json({
+               message: email_err
+           });
+       }
+
+
+       // password validation
+       const pwd_err = validation.check_password(password);
+       if (pwd_err != "") {
+           return res.status(400).json({
+               message: pwd_err
+           });
+       }
+
 
         // Checking if email is already in table
         const user = await getUser(email);
