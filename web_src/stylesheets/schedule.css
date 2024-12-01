@@ -456,6 +456,13 @@ main{
     transform: translate(-50%, -50%);
     z-index: 1050;
   }
+  #message-container2{
+    position: fixed; /* This ensures the element is fixed relative to the viewport */
+    top: 50%; /* Moves the element vertically to the center */
+    left: 50%; /* Moves the element horizontally to the center */
+    transform: translate(-50%, -50%); /* Offsets the element by half of its own width and height */
+    z-index: 1050; /* Keeps it on top of other elements */
+  }
     .card-header{
         background-color: var(--dark-blue) !important; /* Set your desired background color */
         color: #ffffff;           /* Set your desired text color */

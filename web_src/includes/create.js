@@ -13,10 +13,10 @@
         });
 
         updateTimeRange();
-        document.getElementById("add").addEventListener("click", addEvent);
+        // document.getElementById("add").addEventListener("click", addEvent);
         document.getElementById("msg_btn").addEventListener("click", msgBox);
-        document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // Add this event listener
-
+        document.getElementById("manual_add").addEventListener("click", addEvent2);
+        // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
         
     }
 
@@ -144,6 +144,7 @@
     }
 
     function addEvent() {
+        console.log("add it into addEvent function yay");
         const titleInput = document.getElementById('event-title');
         const startTimeInput = document.getElementById('event-start-time');
         const endTimeInput = document.getElementById('event-end-time');
@@ -261,6 +262,75 @@
         document.body.appendChild(messageContainer);
     }
 
+    function addEvent2() {
+        console.log("made it into event function 2");
+        let existingCard = document.getElementById("message-container2");
+        if (existingCard) {
+            existingCard.remove(); // Remove the old card to avoid duplicates
+        }
+    
+        // Create the container for the card
+        const messageContainer = document.createElement("div");
+        messageContainer.id = "message-container2";
+        messageContainer.className = "container";
+    
+        // Create the card
+        const card = document.createElement("div");
+        card.className = "card";
+    
+        // Create the card header
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header text-white d-flex justify-content-between align-items-center";
+        const headerText = document.createElement("span");
+        headerText.textContent = "Message";
+    
+        const closeButton = document.createElement("button");
+        closeButton.className = "btn-close btn-close-white";
+        closeButton.setAttribute("aria-label", "Close");
+        closeButton.style.cursor = "pointer";
+        closeButton.addEventListener("click", () => {
+            messageContainer.remove();
+        });
+    
+        cardHeader.appendChild(headerText);
+        cardHeader.appendChild(closeButton);
+    
+        // Create the card body
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+    
+        const eventFormHTML = `
+            <h2>Manual Add</h2>
+            <label>Select Days:</label><br>
+            <input type="checkbox" id="sunday" value="Sunday"> Sunday<br>
+            <input type="checkbox" id="monday" value="Monday"> Monday<br>
+            <input type="checkbox" id="tuesday" value="Tuesday"> Tuesday<br>
+            <input type="checkbox" id="wednesday" value="Wednesday"> Wednesday<br>
+            <input type="checkbox" id="thursday" value="Thursday"> Thursday<br>
+            <input type="checkbox" id="friday" value="Friday"> Friday<br>
+            <input type="checkbox" id="saturday" value="Saturday"> Saturday<br>
+            <br>
+            <label for="event-start-time">Start Time:</label>
+            <input type="time" id="event-start-time" placeholder="Start Time">
+            <label for="event-end-time">End Time:</label>
+            <input type="time" id="event-end-time" placeholder="End Time">
+            <label for="event-title">Event Title:</label>
+            <input type="text" id="event-title" placeholder="Event Title">
+            <button id="add">Add Event</button>
+        `;
+        cardBody.innerHTML = eventFormHTML;
+    
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+        messageContainer.appendChild(card);
+    
+        document.body.appendChild(messageContainer);
+        document.getElementById("add").addEventListener("click", () => {
+            addEvent();
+            messageContainer.remove(); // Remove the card on close
+        });
+    }
+    
     document.addEventListener('DOMContentLoaded', () => {
         displayTimes(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
         displayWeek(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
