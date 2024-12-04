@@ -38,6 +38,9 @@ app.get('/courses', async (req, res) => {
         const [courses] = await db.query(query); // Fetch all rows from courses table
 
         //await db.end();
+        if (courses.length === 0) {
+            return res.status(404).json({ message: "No courses found." });
+        }
         res.type('json').send(courses); // Send results as JSON
 
     } catch (error) {
@@ -56,7 +59,12 @@ app.get('/courses-completed', async (req, res) => {
         const [completedCourses] = await db.query(query, [userId]);
         //await db.end();
 
+        if (completedCourses.length === 0) {
+            return res.status(404).json({ message: "No completed courses found."});
+        }
+
         res.type('json').send(completedCourses);
+        //console.log(completedCourses);
     } catch (error) {
         console.error("Error fetching completed courses data:", error);
         res.status(500).send("Error on server. Please try again later.");
@@ -72,8 +80,12 @@ app.get('/major', async (req, res) => {
             FROM course
             WHERE id IN (${courseIds.join(', ')})`;
 
-        const majorCourses = await db.query(query);
+        const [majorCourses] = await db.query(query);
         
+        if (majorCourses.length === 0) {
+            return res.status(404).json({ message: "No major courses found."});
+        }
+
         //console.log(majorCourses);
         res.type('json').send(majorCourses);
     } catch (error) {
@@ -88,6 +100,9 @@ app.get('/advisors', async (req, res) => {
         const query = "SELECT DISTINCT name, id FROM advisor";
         const [advisors] = await db.query(query); // Fetch all rows from courses table
 
+        if (advisors.length === 0) {
+            return res.status(404).json({ message: "No advisors found."});
+        }
         //await db.end();
         res.type('json').send(advisors); // Send results as JSON
 
@@ -347,8 +362,9 @@ async function createUser(username, email, major, advisor, encrypt_password) {
 
 async function testDbConnection() {
     try {
-        const db = await getDbPool();  // Get the pool
-        const [results] = await db.query('SELECT 1');
+        const db = await getDbPool();  // Get the dpool
+        const [results] = await db.query('SELECT * FROM user;');
+        //console.log(results);
         console.log('Database connected successfully.');
     } catch (error) {
         console.error('Error connecting to the database:', error);
@@ -381,8 +397,8 @@ async function createDbPool() {
 }
 
 process.on('SIGINT', async () => {
-    if (pool) {
-        await pool.end();
+    if (dbPool) {
+        await dbPool.end();
         console.log('Pool is now closed');
     }
     process.exit();
