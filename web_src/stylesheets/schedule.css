@@ -449,12 +449,12 @@ main{
       font-size: 14px;
   }
   #message-container{
-    display: block;
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1050;
+    position: fixed; /* Keeps the element in the same position even when scrolling */
+    top: 30%; /* Vertically center */
+    left: 50%; /* Horizontally center */
+    transform: translate(-50%, -50%); /* Adjust the center point to be the middle of the element */
+    z-index: 1050; /* Ensures it appears above most other elements */
+    max-width: 90%; /* Ensures responsiveness */
   }
   #message-container2{
     position: fixed; /* This ensures the element is fixed relative to the viewport */
@@ -488,7 +488,14 @@ main{
 #add:hover {
       background-color: var(--dark-blue);
 }
-  
+
+#advisorMessage{
+  width: 100%; 
+  height: calc(1.2em * 10); /* Each row is about 1.2em tall, adjust multiplier for rows */
+  font-size: 16px; /* Adjust font size to control line height */
+  line-height: 1.2em;
+  resize: none;
+}
   
   /* Footer */
 footer {

@@ -2,6 +2,7 @@
     "use strict";
 
     window.addEventListener("load", init);
+    let eventNum =0;
 
     function init() {
         $('#navbar').load('includes/navbar.html', function() {
@@ -11,6 +12,9 @@
                 }
             });
         });
+        // require('dotenv').config();
+        // const apiKey = process.env.API_KEY;
+        // console.log(apiKey); // Use the key in your application
 
         updateTimeRange();
         // document.getElementById("add").addEventListener("click", addEvent);
@@ -29,7 +33,7 @@
         'Friday': [],
         'Saturday': []
     };
-
+   
     function displayTimes(startTime, endTime) {
         const timeColumn = document.getElementById('time-column');
         timeColumn.innerHTML = '';
@@ -83,47 +87,39 @@
         dayEvents.forEach((event, index) => {
             const eventStart = dayjs().hour(event.startTime.split(":")[0]).minute(event.startTime.split(":")[1]);
             const eventEnd = dayjs().hour(event.endTime.split(":")[0]).minute(event.endTime.split(":")[1]);
-
+    
             const totalHours = defaultEndTime.diff(defaultStartTime, 'hour');
             const pixelsPerHour = 50;
-
+    
             const topPosition = (eventStart.diff(defaultStartTime, 'minute') / 60) * pixelsPerHour;
             const eventHeight = (eventEnd.diff(eventStart, 'minute') / 60) * pixelsPerHour;
-
+    
             const eventDiv = document.createElement('div');
             eventDiv.className = 'event';
+            eventDiv.style.backgroundColor = event.color || '#defaultColor'; // Apply the color
             eventDiv.style.top = `${topPosition}px`;
             eventDiv.style.height = `${eventHeight}px`;
             eventDiv.textContent = `${event.startTime} - ${event.endTime}: ${event.title}`;
-
-            // Add a delete button to each event
             const deleteButton = document.createElement('button');
             deleteButton.textContent = "Delete";
             deleteButton.className = "delete-event";
             deleteButton.addEventListener('click', function () {
-                deleteEvent(day, index);
+                deleteEvent(event.eventNum);
             });
-
             eventDiv.appendChild(deleteButton);
             dayDiv.appendChild(eventDiv);
         });
     }
 
-    function deleteEvent(day, index) {
-        events[day].splice(index, 1); // Remove the event from the array
-        updateTimeRange(); // Refresh the display after deletion
-    }
-
-    function deleteSelectedEvents() {
-        const checkboxes = document.querySelectorAll('.event-checkbox:checked');
-        checkboxes.forEach(checkbox => {
-            const day = checkbox.dataset.day;
-            const eventIndex = checkbox.dataset.index;
-            events[day].splice(eventIndex, 1); // Remove the event
-        });
-
-        updateTimeRange(); // Refresh the display after deletion
-    }
+    function deleteEvent(eventN) {
+        let eventNumToRemove = eventN;
+        for (let day in events) {
+            // Remove the event from the current day's array if eventNum matches
+            events[day] = events[day].filter(event => event.eventNum !== eventNumToRemove);
+        }
+        console.log(events);
+        updateTimeRange();
+}
 
     function updateTimeRange() {
         let minTime = dayjs().hour(8).minute(0);
@@ -144,29 +140,29 @@
     }
 
     function addEvent() {
-        console.log("add it into addEvent function yay");
         const titleInput = document.getElementById('event-title');
         const startTimeInput = document.getElementById('event-start-time');
         const endTimeInput = document.getElementById('event-end-time');
-
+        const colorPicker = document.getElementById('favcolor');
+    
         const title = titleInput.value;
         const startTime = startTimeInput.value;
         const endTime = endTimeInput.value;
-
+        const selectedColor = colorPicker.value;
+    
         if (!title || !startTime || !endTime) {
             alert("Please fill in all fields.");
             return;
         }
-
+    
         const startTimeParsed = dayjs(startTime, 'HH:mm');
         const endTimeParsed = dayjs(endTime, 'HH:mm');
-
+    
         if (startTimeParsed.isAfter(endTimeParsed)) {
             alert("Start time cannot be after end time.");
             return;
         }
-
-        // Gather selected days
+    
         const selectedDays = [];
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         days.forEach(day => {
@@ -175,21 +171,21 @@
                 selectedDays.push(day);
             }
         });
-
+    
         if (selectedDays.length === 0) {
             alert("Please select at least one day.");
             return;
         }
-
-        // Add the event to each selected day
+        
         selectedDays.forEach(day => {
-            events[day].push({ title, startTime, endTime });
+            events[day].push({ title, startTime, endTime, color: selectedColor, eventNum});
         });
+        eventNum++;
 
         titleInput.value = '';
         startTimeInput.value = '';
         endTimeInput.value = '';
-
+    
         updateTimeRange();
     }
 
@@ -236,10 +232,10 @@
         const cardBody = document.createElement("div");
         cardBody.className = "card-body";
 
-        // Create the message text
-        const cardText = document.createElement("p");
+        const cardText = document.createElement("textarea");
         cardText.className = "card-text";
-        cardText.textContent = "Soon you will be able to message your advisor here";
+        cardText.id = "advisorMessage"
+        cardText.placeholder = "Type your message here";
 
         // Create the send button
         const sendButton = document.createElement("button");
@@ -316,10 +312,11 @@
             <input type="time" id="event-end-time" placeholder="End Time">
             <label for="event-title">Event Title:</label>
             <input type="text" id="event-title" placeholder="Event Title">
+            <label for="favcolor">Select your favorite color:</label>
+            <input type="color" id="favcolor" value="#ff0000">
             <button id="add">Add Event</button>
         `;
         cardBody.innerHTML = eventFormHTML;
-    
         card.appendChild(cardHeader);
         card.appendChild(cardBody);
         messageContainer.appendChild(card);
@@ -330,6 +327,7 @@
             messageContainer.remove(); // Remove the card on close
         });
     }
+        
     
     document.addEventListener('DOMContentLoaded', () => {
         displayTimes(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
