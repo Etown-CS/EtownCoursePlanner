@@ -3,31 +3,35 @@
 const express = require('express');
 const app = express();
 const multer = require('multer');
-const sqlite3 = require('sqlite3');
-const sqlite = require('sqlite');
+const mysql = require('mysql2/promise');
+// const sqlite3 = require('sqlite3');
+// const sqlite = require('sqlite');
 const bcrypt = require('bcrypt'); // Password Hashing
 const bodyParser = require('body-parser'); // Parses form body
-const dbPath = 'course_planner.db';
+// const dbPath = 'course_planner.db';
 const PORT = process.env.PORT || 8080;
 require('dotenv').config();
+const { Connector } = require('@google-cloud/cloud-sql-connector');
+const connector = new Connector();
+
 app.use(multer().none());
 
-const createUnixSocketPool = require('./connect-unix.js')
+// const createUnixSocketPool = require('./connect-unix.js')
 
 // Parse incoming url-encoded requests (default format)
 app.use(bodyParser.urlencoded({ extended: true }));
 // Serves static files
 app.use(express.static('./../web_src'));
-
+let dbPool;
 
 // Get all courses
 app.get('/courses', async (req, res) => {
     try {
-        const db = await createUnixSocketPool();
+        const db = await getDbPool();
         const query = "SELECT * FROM course"; 
-        const courses = await db.query(query); // Fetch all rows from courses table
+        const [courses] = await db.query(query); // Fetch all rows from courses table
 
-        await db.end();
+        //await db.end();
         res.type('json').send(courses); // Send results as JSON
 
     } catch (error) {
@@ -39,12 +43,12 @@ app.get('/courses', async (req, res) => {
 app.get('/courses-completed', async (req, res) => {
     const userId = 1; // Hard code user for now
     try {
-        const db = await createUnixSocketPool();
+        const db = await getDbPool();
         const query = `SELECT c.course_code, c.name, c.department, c.credits 
             FROM completed_course cc JOIN course c ON cc.course_id = c.id 
             WHERE cc.user_id = ?;`;
-        const completedCourses = await db.query(query, [userId]);
-        await db.end();
+        const [completedCourses] = await db.query(query, [userId]);
+        //await db.end();
 
         res.type('json').send(completedCourses);
     } catch (error) {
@@ -55,11 +59,11 @@ app.get('/courses-completed', async (req, res) => {
 
 app.get('/advisors', async (req, res) => {
     try {
-        const db = await createUnixSocketPool();
+        const db = await getDbPool();
         const query = "SELECT DISTINCT name, id FROM advisor";
-        const advisors = await db.query(query); // Fetch all rows from courses table
+        const [advisors] = await db.query(query); // Fetch all rows from courses table
 
-        await db.end();
+        //await db.end();
         res.type('json').send(advisors); // Send results as JSON
 
     } catch (error) {
@@ -71,13 +75,13 @@ app.get('/advisors', async (req, res) => {
 app.get('/progress', async (req, res) => {
     const userId = 1; // Hard code user for now
     try {
-        const db = await createUnixSocketPool();
+        const db = await getDbPool();
         const query = `SELECT c.course_code, c.name, c.credits, c.core 
         FROM completed_course cc 
         JOIN course c ON cc.course_id = c.id 
         WHERE cc.user_id = ?;`;
-        const completedCourses = await db.query(query, [userId]);
-        await db.end();
+        const [completedCourses] = await db.query(query, [userId]);
+        //await db.end();
 
         const coreRequirements = {
             "PLE" : 1,
@@ -188,13 +192,13 @@ app.post('/login', async function (req, res) {
         }
 
         const user = await getUser(email);
-        if (!user) {
+        if (!user || user.length === 0) {
             return res.status(400).json({
                 message: "User not found. Try again."
             });
         }
 
-        const result = await bcrypt.compare(password, user.password);
+        const result = await bcrypt.compare(password, user[0].password);
         if (result) {
             return res.status(200).json({
                 message: "Login successful!"
@@ -217,16 +221,29 @@ app.post('/login', async function (req, res) {
  * @param {string} email - The email of the user to find.
  * @returns {object} - The user stored in the database.
  */
+// async function getUser(email) {
+//     const db = await getDbPool();
+
+//     const query = "SELECT * FROM user WHERE email = ?";
+//     const [user] = await db.query(query, [email]);
+
+//     //await db.end();
+
+//     return user;
+// }
+
 async function getUser(email) {
-    const db = await createUnixSocketPool();
-
+    const db = await getDbPool();
     const query = "SELECT * FROM user WHERE email = ?";
-    const user = await db.query(query, [email]);
+    const [user] = await db.query(query, [email]);
 
-    await db.end();
+    if (user.length === 0) {
+        return null;
+    }
 
     return user;
 }
+
 
 /**
  * Create the new account by email and password
@@ -239,13 +256,13 @@ async function getUser(email) {
  * @returns {object} - The user stored in the database.
  */
 async function createUser(username, email, major, advisor, encrypt_password) {
-    const db = await createUnixSocketPool();
+    const db = await getDbPool();
 
     const query = "INSERT INTO user (username, email, major, advisor_id, password) VALUES (?, ?, ?, ?, ?);";
     const res = await db.query(query, [username, email, major, advisor, encrypt_password]);
     // console.log(res);
     const user = await getUser(email);
-    await db.end();
+    //await db.end();
 
     return user;
 }
@@ -264,6 +281,49 @@ async function createUser(username, email, major, advisor, encrypt_password) {
 //     return db;
 // }
 
+async function testDbConnection() {
+    try {
+        const db = await getDbPool();  // Get the pool
+        const [results] = await db.query('SELECT 1');
+        console.log('Database connected successfully.');
+    } catch (error) {
+        console.error('Error connecting to the database:', error);
+    }
+}
+
+
+// Easier to check
+async function getDbPool() {
+    if (!dbPool) {
+        dbPool = await createDbPool();
+    }
+    return dbPool;
+}
+
+async function createDbPool() {
+    const clientOpts = await connector.getOptions({
+        instanceConnectionName: process.env.INSTANCE_CONNECTION_NAME,
+        ipType: 'PUBLIC',
+    });
+
+    const pool = mysql.createPool({
+        ...clientOpts,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+    });
+
+    return pool;
+}
+
+process.on('SIGINT', async () => {
+    if (pool) {
+        await pool.end();
+        console.log('Pool is now closed');
+    }
+    process.exit();
+})
+
 // Basic Route
 // app.get('/', (req, res) => {
 //     res.send('Welcome to the Underground');
@@ -272,4 +332,5 @@ async function createUser(username, email, major, advisor, encrypt_password) {
 // Start the server
 app.listen(PORT, () => {
     console.log('Server running on http://localhost:' + PORT);
+    testDbConnection();
 });

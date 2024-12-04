@@ -7,7 +7,7 @@ env_variables:
   INSTANCE_UNIX_SOCKET: /cloudsql/etown-course-planner:us-east1:course-planner-db
   DB_USER: web-api
   DB_PASS: Oe,+SNbTmq0Gk;H(
-  DB_NAME: course-planner-db
+  DB_NAME: course_planner
 
 handlers:
   - url: /
