@@ -2,7 +2,7 @@
 (function () {
     "use strict";
 
-    const BASE_URL = "http://localhost:8080"; //"https://etown-course-planner.ue.r.appspot.com/courses"
+    const BASE_URL = "";//"http://localhost:8080"; //"https://etown-course-planner.ue.r.appspot.com/courses"
     window.addEventListener("load", init);
 
     function init() {
