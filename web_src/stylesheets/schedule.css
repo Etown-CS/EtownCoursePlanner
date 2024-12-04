@@ -19,11 +19,42 @@ color: #C8C8C8;
 } */
 
 /* Fonts */
+/* Etown Branding Color References */
+/* .primary-color {
+color: #004B98; /* Primary Etown Blue */
+/*  
+.secondary-dark-blue {
+color: #0A2240;
+}
+.secondary-light-blue {
+color: #3DB5E6;
+}
+.secondary-red {
+color: #E1261C;
+}
+.secondary-green {
+color: #61BF1A;
+}
+.secondary-light-gray {
+color: #C8C8C8;
+} */
+
+/* Fonts */
 .crete-round-regular {
   font-family: "Crete Round", serif;
   font-weight: 400;
   font-style: normal;
+  font-family: "Crete Round", serif;
+  font-weight: 400;
+  font-style: normal;
   }
+  
+  /* Navbar Styling */
+  .nav-color {
+  background-color: #0A2240;
+  }
+  
+  .nav-link, .navbar-brand {
   
   /* Navbar Styling */
   .nav-color {
@@ -36,7 +67,16 @@ color: #C8C8C8;
   
   .nav-link.active {
   background-color: #3DB5E6;
+  }
+  
+  .nav-link.active {
+  background-color: #3DB5E6;
   color: white;
+  border-radius: 5px;
+  }
+  
+  /* Create Button Section */
+  #Create_btn_section {
   border-radius: 5px;
   }
   
@@ -50,13 +90,23 @@ color: #C8C8C8;
   }
   
   #createNew {
+  justify-content: space-between;
+  }
+  
+  #createNew {
   background-color: red !important;
   border: none !important;
   }
   
   .dropdown-toggle, .btn-primary {
+  }
+  
+  .dropdown-toggle, .btn-primary {
   background-color: #3DB5E6 !important;
   border: none !important;
+  }
+  
+  .btn-primary:hover {
   }
   
   .btn-primary:hover {
@@ -183,40 +233,40 @@ color: #C8C8C8;
 }
 #schedule_Maker{
   display: flex;
-
-  align-items: center;
-  justify-content: center;
-}
-
-#Course_grid{
+  flex-direction: column;
+  align-items: left;
+  }
+  
+  #Course_grid{
   display: flex;;
   flex-direction: column;
   align-items: center;
-}
-
-#filter_btns{
-  padding: 3%;
-  display: flex;
-  flex-direction: column;
-}
-#gen{
-  margin: 3%;
-}
-#msg_btn{
+  width: 100%;
+  }
+  
+  #gen {
+      text-align: center; /* Center the button */
+      margin-top: 20px; /* Add space above the button */
+      margin-bottom: 20px;
+  }
+  
+  #msg_btn{
   background-color: red !important;
   border: none !important;
-}
-#sug_head{
+  }
+  
+  #sug_head{
   background-color: #3DB5E6;
   padding-left: 3%;
   padding-top: 1%;
   padding-bottom: 1%;
-}
-#sug_classes{
+  }
+  
+  #sug_classes{
   margin: 3%;
-
-}
-#save{
+  }
+  
+  #save{
   margin-bottom:3%;
   float: right;
   background-color: red !important;

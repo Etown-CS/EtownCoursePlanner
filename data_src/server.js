@@ -8,6 +8,9 @@ const mysql = require('mysql2/promise');
 // const sqlite = require('sqlite');
 const bcrypt = require('bcrypt'); // Password Hashing
 const bodyParser = require('body-parser'); // Parses form body
+const jwt = require('jsonwebtoken');
+const jwtSecret = "0f21f0a8883cdbfab0d88578e409b702a6461977c93a101ad81ba96b04281563";
+const cookieParser = require("cookie-parser");
 // const dbPath = 'course_planner.db';
 const PORT = process.env.PORT || 8080;
 require('dotenv').config();
@@ -22,6 +25,9 @@ app.use(multer().none());
 app.use(bodyParser.urlencoded({ extended: true }));
 // Serves static files
 app.use(express.static('./../web_src'));
+//Validation
+const validation = require("./validation.js")
+
 let dbPool;
 
 // Get all courses
@@ -57,6 +63,25 @@ app.get('/courses-completed', async (req, res) => {
     }
 });
 
+app.get('/major', async (req, res) => {
+    //const userId = 1; // have to get user's major too
+    const courseIds= [1, 2, 3, 31, 23, 7, 8, 12, 24, 10, 13, 14, 15, 25, 26, 21, 22, 18, 17, 19]
+    try {
+        const db = await getDbPool();
+        const query = `SELECT course_code, name, credits
+            FROM course
+            WHERE id IN (${courseIds.join(', ')})`;
+
+        const majorCourses = await db.query(query);
+        
+        //console.log(majorCourses);
+        res.type('json').send(majorCourses);
+    } catch (error) {
+        console.error("Error fetching major courses data:", error);
+        res.status(500).send("Error on server. Please try again later.");
+    }
+});
+
 app.get('/advisors', async (req, res) => {
     try {
         const db = await getDbPool();
@@ -72,7 +97,7 @@ app.get('/advisors', async (req, res) => {
     }
 });
 
-app.get('/progress', async (req, res) => {
+app.get('/core', async (req, res) => {
     const userId = 1; // Hard code user for now
     try {
         const db = await getDbPool();
@@ -149,6 +174,33 @@ app.post('/register', async function (req, res) {
             });
         }
 
+        //username validation
+        const username_err = validation.check_username(username);
+        if (username_err != "") {
+            return res.status(400).json({
+                message: username_err
+            });
+        }
+
+
+        // email validation
+       const email_err = validation.check_email(email);
+       if (email_err != "") {
+           return res.status(400).json({
+               message: email_err
+           });
+       }
+
+
+       // password validation
+       const pwd_err = validation.check_password(password);
+       if (pwd_err != "") {
+           return res.status(400).json({
+               message: pwd_err
+           });
+       }
+
+
         // Checking if email is already in table
         const user = await getUser(email);
 
@@ -200,6 +252,18 @@ app.post('/login', async function (req, res) {
 
         const result = await bcrypt.compare(password, user[0].password);
         if (result) {
+            // Set the cookie using jwt
+            const maxAge = 7*24*60*60; // One week in seconds
+            const token = jwt.sign(
+                {"login": true, "email": email},
+                jwtSecret,
+                {expiresIn: maxAge}
+            );
+            res.cookie("jwt", token, {
+                httpOnly: true,
+                maxAge: maxAge * 1000, // 7 hours in miliseconds
+            });
+
             return res.status(200).json({
                 message: "Login successful!"
             });
