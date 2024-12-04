@@ -7,6 +7,10 @@
 
         if (email) {
             id('email').textContent = email;
+            id("body").classList.remove("hidden");
+        } else {
+            alert("Not currently logged in, try again.");
+            location.assign("login.html");
         }
 
     }
