@@ -24,9 +24,9 @@ app.use(multer().none());
 // Parse incoming url-encoded requests (default format)
 app.use(bodyParser.urlencoded({ extended: true }));
 // Serves static files
-app.use(express.static('./../web_src'));
+app.use(express.static("web_src"));
 //Validation
-const validation = require("./validation.js")
+const validation = require("./data_src/validation.js")
 
 let dbPool;
 

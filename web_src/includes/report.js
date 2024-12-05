@@ -2,7 +2,7 @@
 (function () {
     "use strict";
 
-    const BASE_URL = "";//"http://localhost:8080"; //"https://etown-course-planner.ue.r.appspot.com/courses"
+    //const BASE_URL = "https://etown-course-planner.ue.r.appspot.com";//"http://localhost:8080"; //"https://etown-course-planner.ue.r.appspot.com/courses"
     window.addEventListener("load", init);
 
     function init() {
@@ -16,7 +16,7 @@
      */
     async function loadCoreProgress() {
         try {
-            const response = await fetch(BASE_URL+"/core");
+            const response = await fetch("/core");
             const data = await response.json();
             const percentage = data.progressPercentage;
             const bar = document.getElementById("core-progress-bar");
@@ -36,7 +36,7 @@
      */
     function populateCompletedTable() {
         // Populate the table with course data
-        const url = BASE_URL + "/courses-completed";
+        const url = "/courses-completed";
         fetch(url)
         .then(res => {
             if(!res.ok) throw new Error('Response not ok');
@@ -73,11 +73,11 @@
     function populateMajorTable() {
         // PROMISE ALL 
         Promise.all([
-            fetch(BASE_URL+"/courses-completed").then(res => {
+            fetch("/courses-completed").then(res => {
                 if(!res.ok) throw new Error('Response not ok');
                 return res.json();
             }),
-            fetch(BASE_URL+"/major").then(res => {
+            fetch("/major").then(res => {
                 if(!res.ok) throw new Error('Response not ok');
                 return res.json();
             })

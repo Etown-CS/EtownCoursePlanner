@@ -2,12 +2,12 @@
 (function () {
     "use strict";
 
-    const BASE_URL = ""; "http://localhost:8080";
+    //const BASE_URL = "https://etown-course-planner.ue.r.appspot.com"; //"http://localhost:8080";
 
     window.addEventListener("load", init);
 
     function init() {
-        populateDropdown('advisor', 'name', BASE_URL);
+        populateDropdown('advisor', 'name');
         id('register').addEventListener('click', register);
     }
 
@@ -16,8 +16,8 @@
      * @param {string} id - element ID
      * @param {string} fieldName - element name
      */
-    function populateDropdown(id, fieldName, base_url) {
-        const url = base_url + "/advisors";
+    function populateDropdown(id, fieldName) {
+        const url = "/advisors";
         fetch(url)
         .then(res => {
             if(!res.ok) throw new Error('Response not ok');
@@ -40,7 +40,7 @@
      * Fetches register API and prepares student info for client-side
      */
     function register() {
-        const url = BASE_URL + "/register";
+        const url = "/register";
         let params = new FormData();
         params.append("username", id("name").value);
         params.append("email", id("email").value);

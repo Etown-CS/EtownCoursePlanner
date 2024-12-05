@@ -129,7 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-data_src/package-lock.json
 
 # Ignore secret JSON file
 data_src/etown-course-planner-e4ce0b1247e6.json

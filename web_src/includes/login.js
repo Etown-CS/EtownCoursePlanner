@@ -2,7 +2,7 @@
 (function () {
     "use strict";
 
-    const BASE_URL = "";//"http://localhost:8080";
+    //const BASE_URL = "https://etown-course-planner.ue.r.appspot.com";//"http://localhost:8080";
 
     window.addEventListener("load", init);
 
@@ -14,7 +14,7 @@
      * Fetch login API and prepares info for client-side
      */
     function login () {
-        const url = BASE_URL + "/login";
+        const url = "/login";
         let params = new FormData();
         let email = id('email').value;
 
