@@ -61,3 +61,7 @@ footer {
   border: solid 2px black;
   padding: 10px;
 }
+
+.hidden {
+  display: none !important;
+}

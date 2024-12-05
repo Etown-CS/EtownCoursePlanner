@@ -501,4 +501,8 @@ color: #C8C8C8;
         text-align: center;
         color: white;
   }
-    
+  
+  .hidden {
+    display: none !important;
+  }
+  

@@ -7,8 +7,11 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
+          <li class="nav-item" id="home">
             <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item hidden" id="li-home">
+            <a class="nav-link" href="loggedin.html">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="schedule.html">Schedule</a>
@@ -17,10 +20,24 @@
             <a class="nav-link" href="report.html">Report</a>
           </li>
 
-          <li class="nav-item">
+          <li class="nav-item" id="pfp">
             <a class="nav-link" href="login.html"> 
               <img src="../../images/profile.png" alt="Profile" style="height:30px;">
             </a>
+          </li>
+
+          <li class="nav-item hidden" id="li-pfp">
+            <div class="dropdown">
+              <a class="nav-link dropdown-toggle" role="button"data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="../../images/profile.png" alt="Profile" style="height:30px;">
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Account</a></li>
+                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><hr class="dropdown-divider"></hr></li>
+                <li><a class="dropdown-item" href="#">Log Out</a></li>
+              </ul>
+            </div>
           </li>
         </ul>
       </div>
