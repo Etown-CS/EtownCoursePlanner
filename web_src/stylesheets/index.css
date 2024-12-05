@@ -22,9 +22,6 @@ HEX #C8C8C8 (Light Gray)
   text-align: center;
 }
 
-.hidden {
-  display: none;
-}
 
 #basic-instructions, #about-project {
   background-color: #3DB5E6;
@@ -155,3 +152,7 @@ blockquote {
   text-decoration: underline;
 }
 
+
+.hidden {
+  display: none !important;
+}

@@ -424,3 +424,7 @@ color: #C8C8C8;
       color: white;
   }
   
+  .hidden {
+    display: none !important;
+  }
+  
