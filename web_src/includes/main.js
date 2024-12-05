@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    window.addEventListener("load", init);
+    window.addEventListener("DOMContentLoaded", init);
     
     function init() {
         const email = window.sessionStorage.getItem('email');
@@ -26,6 +26,11 @@
                 document.getElementById("home").classList.remove("hidden");
                 document.getElementById("li-home").classList.add("hidden");
             }
+
+            document.getElementById("logout-btn").addEventListener("click", function() {
+                window.sessionStorage.clear();
+                location.assign('../index.html');
+            });
         });
 
         
