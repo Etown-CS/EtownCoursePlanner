@@ -89,7 +89,7 @@
             const eventEnd = dayjs().hour(event.endTime.split(":")[0]).minute(event.endTime.split(":")[1]);
     
             const totalHours = defaultEndTime.diff(defaultStartTime, 'hour');
-            const pixelsPerHour = 50;
+            const pixelsPerHour = 60;
     
             const topPosition = (eventStart.diff(defaultStartTime, 'minute') / 60) * pixelsPerHour;
             const eventHeight = (eventEnd.diff(eventStart, 'minute') / 60) * pixelsPerHour;
@@ -99,10 +99,27 @@
             eventDiv.style.backgroundColor = event.color || '#defaultColor'; // Apply the color
             eventDiv.style.top = `${topPosition}px`;
             eventDiv.style.height = `${eventHeight}px`;
-            eventDiv.textContent = `${event.startTime} - ${event.endTime}: ${event.title}`;
+         // Add time range
+    const timeRange = document.createElement('div');
+    timeRange.textContent = `${event.startTime} - ${event.endTime}`;
+    eventDiv.appendChild(timeRange);
+
+    // Add event title on a new line
+    const title = document.createElement('div');
+    title.textContent = event.title;
+    eventDiv.appendChild(title);
             const deleteButton = document.createElement('button');
             deleteButton.textContent = "Delete";
-            deleteButton.className = "delete-event";
+            deleteButton.innerHTML = "&times;"; // HTML entity for '×'
+            deleteButton.className = "delete-event"; 
+            deleteButton.style.position = "absolute";
+            deleteButton.style.top = "1px";
+            deleteButton.style.right = "1px";
+            deleteButton.style.background = "transparent";
+            deleteButton.style.border = "none";
+            deleteButton.style.color = "white"; // Optional: Choose a color for the 'X'
+            deleteButton.style.cursor = "pointer";
+            deleteButton.style.fontSize = "16px";
             deleteButton.addEventListener('click', function () {
                 deleteEvent(event.eventNum);
             });
@@ -312,7 +329,7 @@
             <input type="time" id="event-end-time" placeholder="End Time">
             <label for="event-title">Event Title:</label>
             <input type="text" id="event-title" placeholder="Event Title">
-            <label for="favcolor">Select your favorite color:</label>
+            <label for="favcolor">Select a color:</label>
             <input type="color" id="favcolor" value="#ff0000">
             <button id="add">Add Event</button>
         `;

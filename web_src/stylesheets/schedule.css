@@ -217,12 +217,6 @@ color: #C8C8C8;
   margin: 3%;
 
 }
-#save{
-  margin-bottom:3%;
-  float: right;
-  background-color: red !important;
-  border: none !important;
-}
 
 main{
   margin: 3%;
@@ -308,7 +302,7 @@ main{
   
   /* Hourly Slot for Time Labels */
   .hour-slot {
-      height: 50px; /* Height of each hourly slot */
+      height: 60px; /* Height of each hourly slot */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -466,6 +460,9 @@ main{
     .card-header{
         background-color: var(--dark-blue) !important; /* Set your desired background color */
         color: #ffffff;           /* Set your desired text color */
+    }
+    #favcolor{
+      margin-bottom: 15px;
     }
     .btn-secondary{
         background-color: var(--red) !important; /* Set your desired background color */
