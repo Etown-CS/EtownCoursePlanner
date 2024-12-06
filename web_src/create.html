@@ -25,7 +25,7 @@
 <body>
     <header id="navbar"></header>
     <main>
-        <button type="button" class="btn btn-primary" id="save">Save</button><br><br><br>
+        <button type="button" class="btn btn-primary" id="save">Save</button><br><br>
         <div class="schedule-title-container">
             <label for="schedule-title">Enter Schedule Title:</label>
             <input type="text" id="schedule-title" name="schedule-title" placeholder="Enter your schedule title here" required>
@@ -33,32 +33,6 @@
 
         <section id="schedule_Maker">
             <div class="side-by-side-container"> <!-- Container for side-by-side form and calendar -->
-                <!-- Event Form -->
-                <div class="event-form">
-                    <h2>Manual Add</h2>
-                
-                    <label>Select Days:</label><br>
-                    <input type="checkbox" id="sunday" value="Sunday"> Sunday<br>
-                    <input type="checkbox" id="monday" value="Monday"> Monday<br>
-                    <input type="checkbox" id="tuesday" value="Tuesday"> Tuesday<br>
-                    <input type="checkbox" id="wednesday" value="Wednesday"> Wednesday<br>
-                    <input type="checkbox" id="thursday" value="Thursday"> Thursday<br>
-                    <input type="checkbox" id="friday" value="Friday"> Friday<br>
-                    <input type="checkbox" id="saturday" value="Saturday"> Saturday<br>
-                
-                    <br>
-                
-                    <label for="event-start-time">Start Time:</label>
-                    <input type="time" id="event-start-time" placeholder="Start Time">
-                    
-                    <label for="event-end-time">End Time:</label>
-                    <input type="time" id="event-end-time" placeholder="End Time">
-                    
-                    <label for="event-title">Event Title:</label>
-                    <input type="text" id="event-title" placeholder="Event Title">
-                    
-                    <button id="add">Add Event</button>
-                </div>
 
                 <!-- Calendar Container -->
                 <div class="calendar-container">
@@ -73,8 +47,7 @@
             <section id="filter_btns">
                 <button type="button" class="btn btn-primary sched_btn">Filters</button>
                 <button type="button" class="btn btn-primary sched_btn">Swap</button>
-                <!-- <button type="button" class="btn btn-primary sched_btn" id="manual_add">Manual add</button> -->
-                <button type="button" class="btn btn-primary sched_btn">Colors</button>
+                <button type="button" class="btn btn-primary sched_btn" id="manual_add">Manual add</button>
                 <button type="button" class="btn btn-primary sched_btn" id="msg_btn">Message Advisor</button>
             </section>
     
