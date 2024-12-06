@@ -10,8 +10,6 @@
   "author": "Isabel Mattivi",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.5"
     "@google-cloud/cloud-sql-connector": "^1.4.0",
     "@google-cloud/secret-manager": "^5.6.0",
     "bcrypt": "^5.1.1",
