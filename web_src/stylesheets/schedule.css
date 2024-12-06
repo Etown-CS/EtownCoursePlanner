@@ -506,3 +506,7 @@ color: #C8C8C8;
     display: none !important;
   }
   
+  .hidden {
+    display: none !important;
+  }
+  
