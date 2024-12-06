@@ -2,7 +2,7 @@
 (function () {
     "use strict";
 
-    const BASE_URL = "http://localhost:8080";
+    //const BASE_URL = "https://etown-course-planner.ue.r.appspot.com";//"http://localhost:8080";
 
     window.addEventListener("load", init);
 
@@ -14,10 +14,11 @@
      * Fetch login API and prepares info for client-side
      */
     function login () {
-        const url = BASE_URL + "/login";
+        const url = "/login";
         let params = new FormData();
+        let email = id('email').value;
 
-        params.append("email", id("email").value);
+        params.append("email", email);
         params.append("password", id("pwd").value);
 
         const options = {method: "POST", body: params};
@@ -25,7 +26,16 @@
         fetch(url, options)
         .then(checkStatus)
         .then((data) => {
-            id('message').textContent = data['message'];
+            if (data.message == "Login successful!") {
+                // Save user email
+                window.sessionStorage.setItem('email', email);
+                console.log(email);
+
+                // Redirect user to the logged in homepage
+                location.assign('../loggedin.html');
+            } else {
+                id('message').textContent = data['message'];
+            }
         });
     }
 })();

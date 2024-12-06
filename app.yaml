@@ -1,7 +1,12 @@
-runtime: nodejs20
-
+runtime: nodejs18
 service: default
 env: standard
+
+env_variables:
+  INSTANCE_CONNECTION_NAME: etown-course-planner:us-east1:course-planner-db
+  DB_USER: web-api
+  DB_PASS: Oe,+SNbTmq0Gk;H(
+  DB_NAME: course_planner
 
 handlers:
   - url: /
