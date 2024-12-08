@@ -50,6 +50,26 @@ handlers:
   - url: /includes/main.js
     static_files: web_src/includes/main.js
     upload: web_src/includes/main.js
+
+  - url: /includes/create.js
+    static_files: web_src/includes/create.js
+    upload: web_src/includes/create.js
+  
+  - url: /includes/login.js
+    static_files: web_src/includes/login.js
+    upload: web_src/includes/login.js
+
+  - url: /includes/register.js
+    static_files: web_src/includes/register.js
+    upload: web_src/includes/register.js
+
+  - url: /includes/report.js
+    static_files: web_src/includes/report.js
+    upload: web_src/includes/report.js
+  
+  - url: /includes/user.js
+    static_files: web_src/includes/user.js
+    upload: web_src/includes/user.js
   
   # Page links
   - url: /report.html
@@ -71,3 +91,7 @@ handlers:
   - url: /create.html
     static_files: web_src/create.html
     upload: web_src/create.html
+  
+  - url: /loggedin.html
+    static_files: web_src/loggedin.html
+    upload: web_src/loggedin.html

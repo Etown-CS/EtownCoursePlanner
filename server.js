@@ -366,7 +366,7 @@ async function createUser(username, email, major, advisor, encrypt_password) {
 async function testDbConnection() {
     try {
         const db = await getDbPool();  // Get the dpool
-        const [results] = await db.query('SELECT * FROM user;');
+        //const [results] = await db.query('SELECT * FROM user;');
         //console.log(results);
         console.log('Database connected successfully.');
     } catch (error) {
