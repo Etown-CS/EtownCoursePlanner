@@ -23,7 +23,7 @@ Version: 5.7.9 <br>
 <br> 
 
 
-## Setup
+# Setup
 
 <!---
 Here you list all the one-time things the developer needs to do after cloning
@@ -37,7 +37,7 @@ database for running your webapp locally. -->
 Now that everything's running and in its proper place, you can open the website locally. Enter the URL below into your browser, and the index page should load. <br>
 http://localhost/etowncourseplanner/web_src/
 
-# Deployment
+## Deployment
 
 To officially deploy the page, you must have access to the Google Cloud Platform. We'll assume that's taken care of for these instructions.<br>
 Open up a terminal in VSC, then run the following command: <br>
@@ -45,8 +45,34 @@ gcloud app deploy <br>
 Once you run this, a prompt will appear asking for a Y or a N. Type Y and hit enter, then wait for the command to finish.<br><br>
 Once this is completed, you can use the following command to open the deployed website in your browser: <br>
 gcloud app browse <br>
-To offically launch LiveServer to recieve live updates on your webpages, locate the "Go Live" button on the bottom right hand corner 
+To offically launch LiveServer to receive live updates on your webpages, locate the "Go Live" button on the bottom right hand corner 
 of your VSCode window. This will open an external window with the website. 
+
+# APIs
+
+<b>`Register API`</b>
+-  GET Request
+-  Endpoint URL: /register
+-  Expected Parameters: username, email, major, advisor, password
+-  Response & Error Handling Examples:
+   - message: "Account created successfully." - Status 200 JSON Response
+   - message: "Missing required field." - Status 400 JSON Response
+   - message: "Invalid Username! Username include first and last name, and start with uppercase." - Status 400 JSON Response
+   - message: "Invalid etown.edu email: ${email}" - Status 400 JSON Response
+   - message: "Invalid password! Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character." - Status 400 Error Response
+   - message: "Email already in use, try again." - Status 400 JSON Response
+   - message: "Error." - Status 500 JSON Response
+
+<b>`Login API`</b>
+-  POST Request
+-  Endpoint URL: /login
+-  Expected Parameters: email, password
+-  Response & Error Handling Examples:
+   - message: "Login successful!" - Status 200 JSON Response
+   - message: "Missing required field." - Status 400 JSON Response
+   - message: "User not found. Try again." - Status 400 JSON Response
+   - message: "Password incorrect. Try again." - Status 400 JSON Response
+   - message: "Error." - Status 500 JSON Response
 
 # Coding Style Guides
 HTML/CSS Style Guide - https://google.github.io/styleguide/htmlcssguide.html <br>
