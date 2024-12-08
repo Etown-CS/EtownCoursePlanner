@@ -37,6 +37,9 @@ database for running your webapp locally. -->
 Now that everything's running and in its proper place, you can open the website locally. Enter the URL below into your browser, and the index page should load. <br>
 http://localhost/etowncourseplanner/web_src/
 
+## Database (Cloud SQL)
+Using your appropriate google account, navigate to the SQL tab in the GCP Console. Create an instance using MySQL and choose the appropriate settings and pricing options for your database. Once created, you can open the cloud shell, connect to your database, and run the commands in data_src/db.sql or connect to the database via MySQL Workbench using your database name, password, and its public IP address and run the script there. If you choose to use MySQL Workbench, be sure to allow your own IP address in Connections->Networking under Authorized Networks in GCP. When testing or deploying, be sure to keep the database running and enable the Cloud SQL API.
+
 ## Deployment
 
 To officially deploy the page, you must have access to the Google Cloud Platform. We'll assume that's taken care of for these instructions.<br>
@@ -73,6 +76,40 @@ of your VSCode window. This will open an external window with the website.
    - message: "User not found. Try again." - Status 400 JSON Response
    - message: "Password incorrect. Try again." - Status 400 JSON Response
    - message: "Error." - Status 500 JSON Response
+
+<b>`Core API`</b>
+- GET Request
+- Endpoint URL: /core
+- Response & Parameter Handling Examples:
+   - message: "Error on the server. Please try again later." - Status 500 JSON Response
+
+<b>`Advisors API`</b>
+- GET Request
+- Endpoint URL: /advisors
+- Response & Parameter Handling Examples:
+   - message: "No advisors found." - Status 404 JSON Response
+   - message: "Error on the server. Please try again later." - Status 500 JSON Response
+ 
+<b>`Major API`</b>
+- GET Request
+- Endpoint URL: /major
+- Response & Parameter Handling Examples:
+   - message: "No major courses found." - Status 404 JSON Response
+   - message: "Error on the server. Please try again later." - Status 500 JSON Response
+
+<b>`Completed Courses API`</b>
+- GET Request
+- Endpoint URL: /courses-completed
+- Response & Parameter Handling Examples:
+   - message: "No completed courses found." - Status 404 JSON Response
+   - message: "Error on the server. Please try again later." - Status 500 JSON Response
+
+<b>`Courses API`</b>
+- GET Request
+- Endpoint URL: /courses
+- Response & Parameter Handling Examples:
+   - message: "No courses found." - Status 404 JSON Response
+   - message: "Error on the server. Please try again later." - Status 500 JSON Response
 
 # Coding Style Guides
 HTML/CSS Style Guide - https://google.github.io/styleguide/htmlcssguide.html <br>
