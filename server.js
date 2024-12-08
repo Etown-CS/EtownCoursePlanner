@@ -219,10 +219,10 @@ app.post('/register', async function (req, res) {
         // Checking if email is already in table
         const user = await getUser(email);
 
-        // Usernames must be unique, so if it already exists, return error.
+        // Emails must be unique, so if it already exists, return error.
         if (user) {
             return res.status(400).json({
-                message: "Username already in use, try again."
+                message: "Email already in use, try again."
             });
         }
 
@@ -243,8 +243,8 @@ app.post('/register', async function (req, res) {
         console.log(error);
         return res.status(500).json({
             message: "Error."
-        })
-    };
+        });
+    }
 });
 
 app.post('/login', async function (req, res) {
@@ -289,6 +289,9 @@ app.post('/login', async function (req, res) {
         }
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message: "Error."
+        });
     }
 });
 
