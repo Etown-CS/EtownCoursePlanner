@@ -17,9 +17,9 @@ To install the latest version of Node, run nvm install [version_number].<br>
 Node.js version 18 is the recommended version for most of the users.<br>
 To use a specific version of Node, run: nvm use version-number.
 
--   [LiveServer](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) <br>
-Description: Launch a development local Server with live reload feature for static & dynamic pages <br>
-Version: 5.7.9 <br>
+-   [Nodemon] <br>
+Description: <br> nodemon is a tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected. Nodemon does not require any additional changes to your code or method of development. nodemon is a replacement wrapper for node. <br> 
+<br> To load the server instance use the commands 'npm install' and 'npx nodemon server.js'. The terminal will produce a port that can be copied and pasted into the search engine of your choice. You will then be able to view our website with ease. <br>
 <br> 
 
 
