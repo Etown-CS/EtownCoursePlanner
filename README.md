@@ -54,7 +54,7 @@ of your VSCode window. This will open an external window with the website.
 # APIs
 
 <b>`Register API`</b>
--  GET Request
+-  POST Request
 -  Endpoint URL: /register
 -  Expected Parameters: username, email, major, advisor, password
 -  Response & Error Handling Examples:
