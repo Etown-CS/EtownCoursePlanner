@@ -12,9 +12,7 @@
                 }
             });
         });
-        // require('dotenv').config();
-        // const apiKey = process.env.API_KEY;
-        // console.log(apiKey); // Use the key in your application
+    
 
         updateTimeRange();
         // document.getElementById("add").addEventListener("click", addEvent);
@@ -257,12 +255,10 @@
         // Create the send button
         const sendButton = document.createElement("button");
         sendButton.className = "btn btn-secondary";
+        sendButton.id = "sendBtn"
         sendButton.textContent = "Send";
         sendButton.style.marginTop = "10px";
-        sendButton.addEventListener("click", () => {
-            // Placeholder functionality for the "Send" button
-            alert("Send button clicked (no functionality yet).");
-        });
+        sendButton.addEventListener("click", sendEmail);
 
         // Assemble the card
         cardBody.appendChild(cardText);
@@ -350,4 +346,60 @@
         displayTimes(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
         displayWeek(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
     });
+
+    async function fetchApiKey() {
+        try {
+          const response = await fetch('/api/get-key');
+          if (!response.ok) {
+            throw new Error('Failed to fetch API key');
+          }
+          const data = await response.json();
+          return data.apiKey;
+        } catch (error) {
+          console.error('Error fetching API key:', error);
+        }
+      }
+      
+      async function sendEmail() {
+        console.log("button clicked");
+      
+        // Fetch the API key
+        const API_KEY = await fetchApiKey();
+        if (!API_KEY) {
+          console.error("API key is not available");
+          return;
+        }
+      
+        const url = "https://api.brevo.com/v3/smtp/email";
+        // Email data
+        const emailData = {
+          sender: { name: "Your Name", email: "mgracepatton87@gmail.com" },
+          to: [{ email: "melissa_patton@outlook.com", name: "Recipient Name" }],
+          subject: "Hello from Brevo API",
+          htmlContent: "<html><body><h1>This is a test email</h1><p>Sent via Brevo API!</p></body></html>"
+        };
+      
+        // Send email using fetch
+        console.log(API_KEY);
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "accept": "application/json",
+            "api-key": API_KEY,
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(emailData)
+        })
+        .then(response => response.json())  // Parse response as JSON to check the result
+        .then(data => {
+          if (data && data.messageId) {
+            console.log("Email sent successfully! Message ID: ", data.messageId);
+          } else {
+            console.error("Failed to send email: ", data);
+          }
+        })
+        .catch(error => {
+          console.error("Error sending email:", error);
+        });
+      }
 })();

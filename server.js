@@ -1,7 +1,8 @@
 "use strict";
-
+require('dotenv').config();
 const express = require('express');
 const app = express();
+// const axios = require('axios');
 const multer = require('multer');
 const mysql = require('mysql2/promise');
 // const sqlite3 = require('sqlite3');
@@ -417,3 +418,14 @@ app.listen(PORT, () => {
     console.log('Server running on http://localhost:' + PORT);
     testDbConnection();
 });
+
+//yipieee go me
+app.use(express.json());
+
+app.get('/api/get-key', (req, res) => {
+    // Replace with authentication if needed
+    const apiKey = process.env.API_KEY;
+    res.json({ apiKey });
+  });
+  
+  app.listen(3000, () => console.log('Server running on port 3000'));
