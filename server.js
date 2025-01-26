@@ -279,7 +279,12 @@ app.post('/login', async function (req, res) {
                 maxAge: maxAge * 1000, // 7 hours in miliseconds
             });
 
+            
+
             return res.status(200).json({
+                username: user[0].username,
+                major: user[0].major,
+                advisor: user[0].advisor,
                 message: "Login successful!"
             });
         } else {
