@@ -1,82 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Etown Course Planner</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Etown Course Planner</title>
 
-    <!-- Etown Font look-alike -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crete+Round&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="stylesheets/settings.css" rel="stylesheet">
+        <!-- Etown Font look-alike -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Crete+Round&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="stylesheets/settings.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
 
-    <!-- Jquery -->
-    <script src="https://releases.jquery.com/git/jquery-git.min.js"></script>
+        <!-- Jquery -->
+        <script src="https://releases.jquery.com/git/jquery-git.min.js"></script>
 
-    <script src="includes/main.js"></script>
-</head>
-<body>
-    <header id="navbar"></header>
+        <script src="includes/main.js"></script>
+        <script src="includes/user.js"></script>
+    </head>
+    <body>
+        <header id="navbar"></header>
 
-    <main class="hidden" id="body">
-        <h1 class="crete-round-regular">Settings</h1>
+        <main class="hidden" id="body">
+            <h1 class="crete-round-regular">Settings</h1>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+            <div class="form-container">
+                <form class="settings-form" id="major-change"> <!-- class="was-validated" -->
+
+                    <div class="mb-3 mt-3">
+                        <label for="major" class="form-label">Choose Major:</label>
+                        <select class="form-control" id="major" name="major">
+                            <option value="Computer Science">Computer Science</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="submit-btn" id="major-btn">Add Major</button>
+                </form>
+            </div>
+
+            <div class="form-container">
+                <form class="settings-form" id="minor-change">
+                    <div class="mb-3 mt-3">
+                        <label for="minor" class="form-label">Enter Minor:</label>
+                        <input type="text" class="form-control" id="minor" placeholder="Enter minor" name="minor">
+                    </div>
+
+                    <button type="button" class="submit-btn" id="minor-btn">Add Minor</button>
+                </form>
+            </div>
+
+            <div class="form-container">
+                <form class="settings-form" id="advisor-change">
+                    <div class="mb-3 mt-3">
+                        <label for="advisor" class="form-label">Add Advisor:</label>
+                        <select class="form-control" id="advisor" name="advisor"></select>
+                    </div> <!--Dropdown , populate from database -->
+
+                    <button type="button" class="submit-btn" id="advisor-btn">Add Advisor</button>
+                </form>
+            </div>
+
+            <div class="form-container">
+                <a href="course.html"><button type="button" class="submit-btn" id="course-btn">Add Course</button></a>
+            </div>
+        </main>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-        <div class="form-container">
-            <form class="settings-form" id="major-change"> <!-- class="was-validated" -->
 
-                <div class="mb-3 mt-3">
-                    <label for="major" class="form-label">Choose Major:</label>
-                    <select class="form-control" id="major" name="major">
-                        <option value="Computer Science">Computer Science</option>
-                    </select>
-                </div>
-
-                <button type="button" class="submit-btn" id="major-btn">Add Major</button>
-            </form>
-        </div>
-
-        <div class="form-container">
-            <form class="settings-form" id="minor-change">
-                <div class="mb-3 mt-3">
-                    <label for="minor" class="form-label">Enter Minor:</label>
-                    <input type="text" class="form-control" id="minor" placeholder="Enter minor" name="minor">
-                </div>
-
-                <button type="button" class="submit-btn" id="minor-btn">Add Minor</button>
-            </form>
-        </div>
-
-        <div class="form-container">
-            <form class="settings-form" id="advisor-change">
-                <div class="mb-3 mt-3">
-                    <label for="advisor" class="form-label">Add Advisor:</label>
-                    <select class="form-control" id="advisor" name="advisor"></select>
-                </div> <!--Dropdown , populate from database -->
-
-                <button type="button" class="submit-btn" id="advisor-btn">Add Advisor</button>
-            </form>
-        </div>
-
-        <div class="form-container">
-            <form class="settings-form" id="class-add">
-                <div class="mb-3 mt-3">
-                    <label for="ap-credits" class="form-label">Enter Course Name:</label>
-                    <input type="text" class="form-control" id="ap-credits" placeholder="Enter your credits" name="ap-credits">
-                </div> <!-- Only show if yes? -->
-
-                <button type="button" class="submit-btn" id="course-btn">Add Course</button>
-            </form>
-        </div>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-    <div id="footer"></div>
-    
-</body>
+        <div id="footer"></div>
+        
+    </body>
 
 </html>

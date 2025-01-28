@@ -34,6 +34,7 @@
                 window.sessionStorage.setItem('name', data.username);
                 window.sessionStorage.setItem('major', data.major);
                 window.sessionStorage.setItem('advisor', data.advisor);
+                window.sessionStorage.setItem('id', data.id);
 
                 // Redirect user to the logged in homepage
                 location.assign('../loggedin.html');

@@ -285,6 +285,7 @@ app.post('/login', async function (req, res) {
                 username: user[0].username,
                 major: user[0].major,
                 advisor: user[0].advisor,
+                id: user[0].id,
                 message: "Login successful!"
             });
         } else {
