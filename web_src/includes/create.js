@@ -359,9 +359,37 @@
           console.error('Error fetching API key:', error);
         }
       }
+
+      async function getAdvisorsEmails() {
+        
+        try {
+            const adviso = window.sessionStorage.getItem('advisor');
+            console.log(adviso);
+            const response = await fetch('/advisors/emails'); // Send GET request
+            if (!response.ok) throw new Error("Failed to fetch advisors.");
+    
+            const advisors = await response.json();
+            console.log(advisors); // Logs an array of advisors with names, IDs, and emails
+    
+            // Example: Find an advisor's email by ID
+            const advisorName = adviso; // Change to the desired advisor name
+            const advisor = advisors.find(a => a.name === advisorName);
+            
+            if (advisor) {
+                console.log(`Advisor Email: ${advisor.email}`);
+            } else {
+                console.log("Advisor not found.");
+            }
+            
+        } catch (error) {
+            console.error("Error fetching advisors:", error);
+        }
+    }
       
       async function sendEmail() {
-        console.log("button clicked");
+        const name = window.sessionStorage.getItem('name');
+        console.log(name);
+        const message = document.getElementById("advisorMessage").value;
       
         // Fetch the API key
         const API_KEY = await fetchApiKey();
@@ -369,14 +397,16 @@
           console.error("API key is not available");
           return;
         }
+
+        getAdvisorsEmails()
       
         const url = "https://api.brevo.com/v3/smtp/email";
         // Email data
         const emailData = {
-          sender: { name: "Your Name", email: "mgracepatton87@gmail.com" },
-          to: [{ email: "melissa_patton@outlook.com", name: "Recipient Name" }],
-          subject: "Hello from Brevo API",
-          htmlContent: "<html><body><h1>This is a test email</h1><p>Sent via Brevo API!</p></body></html>"
+          sender: { name: name, email: "EtownCoursePlanner@gmail.com" },
+          to: [{ email: "melissa_patton@outlook.com", name: advisor }],
+          subject: "Advising Message",
+          htmlContent: message
         };
       
         // Send email using fetch

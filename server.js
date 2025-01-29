@@ -113,6 +113,24 @@ app.get('/advisors', async (req, res) => {
     }
 });
 
+app.get('/advisors/emails', async (req, res) => {
+    try {
+        const db = await getDbPool();
+        const query = "SELECT DISTINCT name, id, email FROM advisor";
+        const [advisors] = await db.query(query); // Fetch all rows from advisor table
+
+        if (advisors.length === 0) {
+            return res.status(404).json({ message: "No advisors found." });
+        }
+        
+        res.type('json').send(advisors); // Send results as JSON
+
+    } catch (error) {
+        console.error("Error retrieving advisors:", error);
+        res.status(500).send('Error on the server. Please try again later.');
+    }
+});
+
 app.get('/core', async (req, res) => {
     const userId = 1; // Hard code user for now
     try {
