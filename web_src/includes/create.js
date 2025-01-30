@@ -363,8 +363,9 @@
       async function getAdvisorsEmails() {
         
         try {
-            const adviso = window.sessionStorage.getItem('advisor');
-            console.log(adviso);
+            const advisor_id = window.sessionStorage.getItem('advisor');
+            console.log(advisor_id);
+
             const response = await fetch('/advisors/emails'); // Send GET request
             if (!response.ok) throw new Error("Failed to fetch advisors.");
     
@@ -372,10 +373,11 @@
             console.log(advisors); // Logs an array of advisors with names, IDs, and emails
     
             // Example: Find an advisor's email by ID
-            const advisorName = adviso; // Change to the desired advisor name
-            const advisor = advisors.find(a => a.name === advisorName);
+             // Change to the desired advisor name
+             const advisor = advisors.find(a => a.id === Number(advisor_id));
             
             if (advisor) {
+                console.log('id:',advisor.id)
                 console.log(`Advisor Email: ${advisor.email}`);
             } else {
                 console.log("Advisor not found.");
@@ -387,8 +389,6 @@
     }
       
       async function sendEmail() {
-        const name = window.sessionStorage.getItem('name');
-        console.log(name);
         const message = document.getElementById("advisorMessage").value;
       
         // Fetch the API key
