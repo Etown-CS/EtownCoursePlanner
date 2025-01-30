@@ -284,7 +284,7 @@ app.post('/login', async function (req, res) {
             return res.status(200).json({
                 username: user[0].username,
                 major: user[0].major,
-                advisor: user[0].advisor,
+                advisor: user[0].advisor_id,
                 id: user[0].id,
                 message: "Login successful!"
             });
