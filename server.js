@@ -301,7 +301,58 @@ app.post('/login', async function (req, res) {
     }
 });
 
+app.patch('/add-minor', async function (req, res) {
+    try {
+        const email = req.body.email;
+        const minor = req.body.minor;
+        const min_advisor = req.body.min_advisor_id;
+
+        if (!minor || !min_advisor) {
+            return res.status(400).json({
+                message: "Missing required field."
+            });
+        }
+
+        const result = await addMinor(email, minor, min_advisor);
+        if (result) {
+            return res.status(200).json({
+                message: "Minor added successfully!"
+            });
+        } else {
+            return res.status(400).json({
+                message: "Error"
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Error."
+        });
+    }
+});
+
 // Functions for registration and login purposes.
+
+/**
+ * Updating the user's minor and minor advisor.
+ * Any errors that occur should be caught in the function that calls this one.
+ * @param {string} email - The email of the user.
+ * @param {string} minor - The minor of the user to insert.
+ * @param {string} advisor - The minor advisor of the user to insert.
+ * @returns {object} - The user stored in the database.
+ */
+async function addMinor(email, minor, advisor) {
+    const db = await getDbPool();
+
+    const query = "UPDATE user SET minor=?, min_advisor_id=? WHERE email=?";
+    const res = await db.query(query, [minor, advisor, email]);
+    // console.log(res);
+    const user = await getUser(email);
+    //await db.end();
+
+    return user;
+}
 
 /**
  * Find the User by email

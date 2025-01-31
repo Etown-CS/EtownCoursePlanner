@@ -18,7 +18,9 @@
         <script src="https://releases.jquery.com/git/jquery-git.min.js"></script>
 
         <script src="includes/main.js"></script>
+        <script src="includes/register.js"></script>
         <script src="includes/user.js"></script>
+        <script src="includes/settings.js"></script>
     </head>
     <body>
         <header id="navbar"></header>
@@ -47,23 +49,21 @@
                         <input type="text" class="form-control" id="minor" placeholder="Enter minor" name="minor">
                     </div>
 
-                    <button type="button" class="submit-btn" id="minor-btn">Add Minor</button>
-                </form>
-            </div>
-
-            <div class="form-container">
-                <form class="settings-form" id="advisor-change">
                     <div class="mb-3 mt-3">
                         <label for="advisor" class="form-label">Add Advisor:</label>
                         <select class="form-control" id="advisor" name="advisor"></select>
                     </div> <!--Dropdown , populate from database -->
 
-                    <button type="button" class="submit-btn" id="advisor-btn">Add Advisor</button>
+                    <button type="button" class="submit-btn" id="minor-btn">Add Minor</button>
                 </form>
             </div>
 
             <div class="form-container">
                 <a href="course.html"><button type="button" class="submit-btn" id="course-btn">Add Course</button></a>
+            </div>
+
+            <div class="row mb-4">
+                <p id="message"></p>
             </div>
         </main>
 
