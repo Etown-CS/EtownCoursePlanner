@@ -28,6 +28,7 @@ app.use(express.static("web_src"));
 //Validation
 const validation = require("./data_src/validation.js")
 
+app.use(express.json()); // app.use(bodyParser.json());
 let dbPool;
 
 // Get all courses
@@ -112,7 +113,7 @@ app.get('/advisors', async (req, res) => {
     }
 });
 
-app.get('/core', async (req, res) => {
+app.get('/core', async (req, res) => { // Switch POST?
     const userId = 1; // Hard code user for now
     try {
         const db = await getDbPool();
@@ -171,6 +172,60 @@ app.get('/core', async (req, res) => {
     } catch (error) {
         console.error("Error fetching progress data:", error);
         res.status(500).send("Error on server. Please try again later.");
+    }
+});
+
+app.post('/save-schedule', async (req, res) => {
+    try {
+        const {user_id, scheduleName, events} = req.body;
+        if (!user_id || !scheduleName || !events || Object.keys(events).length === 0) {
+            return res.status(400).json({error: "Missing required data."});
+        }
+
+        const db = await getDbPool();
+
+        // Insert schedule into schedule table
+        const insertSchedule = "INSERT INTO schedule (user_id, name) VALUES (?, ?)";
+        const [scheduleResult] = await db.query(insertSchedule, [user_id, scheduleName]);
+
+        // Get inserted schedule id
+        const schedule_id = scheduleResult.insertId;
+
+        // Insert events into schedule_course table
+        const insertEvents = "INSERT INTO schedule_course (schedule_id, custom_name, custom_start, custom_end, color, days) VALUES ?";
+        const eventMap = new Map(); // Store events grouped by details
+
+        // Iterate over days and group events
+        Object.keys(events).forEach(day => {
+            events[day].forEach(event => {
+                const key = `${event.title}-${event.startTime}-${event.endTime}-${event.color}`;
+                if (!eventMap.has(key)) {
+                    eventMap.set(key, {...event, days: [day]});
+                } else {
+                    eventMap.get(key).days.push(day);
+                }
+            });
+        });
+
+        // Prepare event values
+        const eventValues = [...eventMap.values()].map(event => [
+            schedule_id,
+            event.title,
+            event.startTime,
+            event.endTime,
+            event.color,
+            event.days.join(",") // Convert days to comma-separated string
+        ]);
+
+        if (eventValues.length > 0) {
+            await db.query(insertEvents, [eventValues]); // Insert grouped events
+            console.log("Inserted events:", eventValues);
+        }
+
+        res.status(200).json({message: "Schedule saved successfully.", schedule_id});
+    } catch (error) {
+        console.error("Error saving schedule:", error);
+        res.status(500).json({error: "Server error."});
     }
 });
 

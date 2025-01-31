@@ -21,10 +21,11 @@
         document.getElementById("msg_btn").addEventListener("click", msgBox);
         document.getElementById("manual_add").addEventListener("click", addEvent2);
         // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
+        document.getElementById("save").addEventListener("click", saveSchedule);
         
     }
 
-    const events = {
+    const events = { // Events holds all the classes saved for each day. All days (including events in once dict)
         'Sunday': [],
         'Monday': [],
         'Tuesday': [],
@@ -204,6 +205,37 @@
         endTimeInput.value = '';
     
         updateTimeRange();
+    }
+
+    async function saveSchedule() {
+        const scheduleName = document.getElementById("schedule-title").value;
+        //const user_id = 1; // Replace with actual logged-in user ID
+        const user_id = window.sessionStorage.getItem('id');
+
+        if (!user_id) {
+            alert("Error: No user logged in.");
+            return;
+        }
+
+        if (!scheduleName) {
+            alert("Please enter a schedule name.");
+            return;
+        }
+    
+        const response = await fetch('/save-schedule', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({user_id, scheduleName, events})
+        });
+    
+        const result = await response.json();
+        //console.log(result.status);
+        console.log(result)
+        if (response.ok) { // Checks if successful
+            alert(result.message);
+        } else {
+            alert(result.error || "Error saving schedule. :(");
+        }
     }
 
     function msgBox() {
