@@ -209,7 +209,6 @@
 
     async function saveSchedule() {
         const scheduleName = document.getElementById("schedule-title").value;
-        //const user_id = 1; // Replace with actual logged-in user ID
         const user_id = window.sessionStorage.getItem('id');
 
         if (!user_id) {
