@@ -145,46 +145,54 @@
         dayEvents.forEach((event, index) => {
             const eventStart = dayjs().hour(event.startTime.split(":")[0]).minute(event.startTime.split(":")[1]);
             const eventEnd = dayjs().hour(event.endTime.split(":")[0]).minute(event.endTime.split(":")[1]);
-    
-            const totalHours = defaultEndTime.diff(defaultStartTime, 'hour');
+        
             const pixelsPerHour = 60;
-    
             const topPosition = (eventStart.diff(defaultStartTime, 'minute') / 60) * pixelsPerHour;
             const eventHeight = (eventEnd.diff(eventStart, 'minute') / 60) * pixelsPerHour;
-    
+        
             const eventDiv = document.createElement('div');
             eventDiv.className = 'event';
-            eventDiv.style.backgroundColor = event.color || '#defaultColor'; // Apply the color
+            eventDiv.style.backgroundColor = event.color || '#cccccc'; // fallback color if needed
             eventDiv.style.top = `${topPosition}px`;
             eventDiv.style.height = `${eventHeight}px`;
-         // Add time range
-    const timeRange = document.createElement('div');
-    timeRange.textContent = `${event.startTime} - ${event.endTime}`;
-    eventDiv.appendChild(timeRange);
+        
+            // Add time range and title
+            const timeRange = document.createElement('div');
+            timeRange.textContent = `${event.startTime} - ${event.endTime}`;
+            eventDiv.appendChild(timeRange);
+        
+            const title = document.createElement('div');
+            title.textContent = event.title;
+            eventDiv.appendChild(title);
+        
+            // // Create the delete button
+            // const deleteButton = document.createElement('button');
+            // deleteButton.textContent = "×"; // or "Delete"
+            // deleteButton.className = "delete-event"; 
+            // deleteButton.style.position = "absolute";
+            // deleteButton.style.top = "1px";
+            // deleteButton.style.right = "1px";
+            // deleteButton.style.cursor = "pointer";
+            // deleteButton.addEventListener('click', function () {
+            //     deleteEvent(event.eventNum);
+            // });
+            // eventDiv.appendChild(deleteButton);
+        
 
-    // Add event title on a new line
-    const title = document.createElement('div');
-    title.textContent = event.title;
-    eventDiv.appendChild(title);
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = "Delete";
-            deleteButton.innerHTML = "&times;"; // HTML entity for '×'
-            deleteButton.className = "delete-event"; 
-            deleteButton.style.position = "absolute";
-            deleteButton.style.top = "1px";
-            deleteButton.style.right = "1px";
-            deleteButton.style.background = "transparent";
-            deleteButton.style.border = "none";
-            deleteButton.style.color = "white"; // Optional: Choose a color for the 'X'
-            deleteButton.style.cursor = "pointer";
-            deleteButton.style.fontSize = "16px";
-            deleteButton.addEventListener('click', function () {
-                deleteEvent(event.eventNum);
+            // Create and append the edit button
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.classList.add('edit-event');
+            editButton.addEventListener('click', function() {
+            editEvent(event.eventNum);
             });
-            eventDiv.appendChild(deleteButton);
+            eventDiv.appendChild(editButton);
+
+            // Append the event to the day column
             dayDiv.appendChild(eventDiv);
         });
     }
+    
 
     function deleteEvent(eventN) {
         let eventNumToRemove = eventN;
@@ -194,7 +202,150 @@
         }
         console.log(events);
         updateTimeRange();
-}
+    }
+
+    function editEvent(eventNum) {
+        // Find the event details and the days on which it exists.
+        let eventDetails = null;
+        let daysForEvent = [];
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        for (let day of daysOfWeek) {
+            events[day].forEach(ev => {
+                if (ev.eventNum === eventNum) {
+                    eventDetails = ev; // assume each occurrence has the same details
+                    if (!daysForEvent.includes(day)) {
+                        daysForEvent.push(day);
+                    }
+                }
+            });
+        }
+        if (!eventDetails) return; // No event found
+        
+        // Remove any existing manual add/edit form
+        let existingCard = document.getElementById("message-container2");
+        if (existingCard) {
+            existingCard.remove();
+        }
+        
+        // Create the container for the edit form (similar to addEvent2)
+        const messageContainer = document.createElement("div");
+        messageContainer.id = "message-container2";
+        messageContainer.className = "container";
+        
+        const card = document.createElement("div");
+        card.className = "card";
+        
+        // Card Header with Close Button
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header text-white d-flex justify-content-between align-items-center";
+        const headerText = document.createElement("span");
+        headerText.textContent = "Edit Event";
+        
+        const closeButton = document.createElement("button");
+        closeButton.className = "btn-close btn-close-white";
+        closeButton.setAttribute("aria-label", "Close");
+        closeButton.style.cursor = "pointer";
+        closeButton.addEventListener("click", () => {
+            messageContainer.remove();
+        });
+        
+        cardHeader.appendChild(headerText);
+        cardHeader.appendChild(closeButton);
+        
+        // Card Body with the pre-populated form
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+        
+        // Build the HTML for the form; checkboxes will be checked if the event exists on that day.
+        let formHTML = `
+            <h2>Edit Event</h2>
+            <label>Select Days:</label><br>
+            <input type="checkbox" id="sunday" value="Sunday" ${daysForEvent.includes("Sunday") ? "checked" : ""}> Sunday<br>
+            <input type="checkbox" id="monday" value="Monday" ${daysForEvent.includes("Monday") ? "checked" : ""}> Monday<br>
+            <input type="checkbox" id="tuesday" value="Tuesday" ${daysForEvent.includes("Tuesday") ? "checked" : ""}> Tuesday<br>
+            <input type="checkbox" id="wednesday" value="Wednesday" ${daysForEvent.includes("Wednesday") ? "checked" : ""}> Wednesday<br>
+            <input type="checkbox" id="thursday" value="Thursday" ${daysForEvent.includes("Thursday") ? "checked" : ""}> Thursday<br>
+            <input type="checkbox" id="friday" value="Friday" ${daysForEvent.includes("Friday") ? "checked" : ""}> Friday<br>
+            <input type="checkbox" id="saturday" value="Saturday" ${daysForEvent.includes("Saturday") ? "checked" : ""}> Saturday<br>
+            <br>
+            <label for="event-start-time">Start Time:</label>
+            <input type="time" id="event-start-time" placeholder="Start Time" value="${eventDetails.startTime}">
+            <label for="event-end-time">End Time:</label>
+            <input type="time" id="event-end-time" placeholder="End Time" value="${eventDetails.endTime}">
+            <label for="event-title">Event Title:</label>
+            <input type="text" id="event-title" placeholder="Event Title" value="${eventDetails.title}">
+            <label for="favcolor">Select a color:</label>
+            <input type="color" id="favcolor" value="${eventDetails.color}">
+            <button id="saveEdit">Save Changes</button>
+        `;
+        cardBody.innerHTML = formHTML;
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+        messageContainer.appendChild(card);
+        document.body.appendChild(messageContainer);
+        
+        // Add an event listener for saving the changes.
+        document.getElementById("saveEdit").addEventListener("click", function(){
+            updateEditedEvent(eventNum);
+            messageContainer.remove(); // Remove the edit form after saving.
+        });
+    }
+
+    function updateEditedEvent(eventNum) {
+        const title = document.getElementById('event-title').value;
+        const startTime = document.getElementById('event-start-time').value;
+        const endTime = document.getElementById('event-end-time').value;
+        const selectedColor = document.getElementById('favcolor').value;
+        
+        if (!title || !startTime || !endTime) {
+            alert("Please fill in all fields.");
+            return;
+        }
+        
+        const startTimeParsed = dayjs(startTime, 'HH:mm');
+        const endTimeParsed = dayjs(endTime, 'HH:mm');
+        
+        if (startTimeParsed.isAfter(endTimeParsed)) {
+            alert("Start time cannot be after end time.");
+            return;
+        }
+        
+        // Determine which days are selected.
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        let selectedDays = [];
+        days.forEach(day => {
+             const checkbox = document.getElementById(day.toLowerCase());
+             if (checkbox && checkbox.checked) {
+                 selectedDays.push(day);
+             }
+        });
+        
+        if (selectedDays.length === 0) {
+             alert("Please select at least one day.");
+             return;
+        }
+        
+        // Update the events object: For each day, remove any event with eventNum.
+        // Then, if the day is selected, add the updated event.
+        days.forEach(day => {
+             // Remove events with the eventNum
+             events[day] = events[day].filter(ev => ev.eventNum !== eventNum);
+             // If this day is checked, add the updated event.
+             if (selectedDays.includes(day)) {
+                  events[day].push({ 
+                      title: title, 
+                      startTime: startTime, 
+                      endTime: endTime, 
+                      color: selectedColor, 
+                      eventNum: eventNum 
+                  });
+             }
+        });
+        
+        updateTimeRange(); // Refresh the calendar view.
+    }
+    
+    
 
     function updateTimeRange() {
         let minTime = dayjs().hour(8).minute(0);

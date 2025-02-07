@@ -483,7 +483,31 @@ color: #C8C8C8;
         cursor: pointer;
         transition: background-color 0.3s ease;
   }
-      
+
+  #saveEdit {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-event {
+  position: absolute;
+  bottom: 1px;               /* Positioned at the bottom of the container */
+  cursor: pointer;
+  background-color: rgb(115, 199, 115);   /* Green background */
+  color: black;              /* Black text */
+  padding: 3px 9px;
+  font-size: 10px;
+  border-radius: 5px;
+}
+     
+
   #add:hover {
         background-color: var(--dark-blue);
   }
