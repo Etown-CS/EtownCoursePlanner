@@ -6,10 +6,29 @@
         if (id("on_campus") != null) {
             id("on_campus").addEventListener("click", classType);
             id("transfer").addEventListener("click", classType);
+            id("course-btn").addEventListener("click", addCourse)
         }
         if (id("minor-btn") != null) {
             id("minor-btn").addEventListener("click", addMinor);
         }
+    }
+
+    function addCourse() {
+        const url = "/add-oc-course";
+        let params = new FormData();
+        let course_code = id("course_code").value;
+        let semester = id("semester").value;
+
+        params.append("email", window.sessionStorage.getItem("email"));
+        params.append("course_code", course_code);
+        params.append("semester", semester);
+
+        const options = {method: "POST", body: params};
+        fetch(url, options)
+        .then(checkStatus)
+        .then((data) => {
+            id('message').textContent = data['message'];
+        })
     }
 
     function addMinor() {

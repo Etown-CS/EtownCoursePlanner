@@ -42,6 +42,9 @@
                     <label for="course_code" class="form-label">Enter Course Code</label><br>
                     <input type="text" class="form-control" id="course_code" name="course_code" placeholder="eg CS121"><br>
 
+                    <label for="semester" class="form-label">Enter Semester Taken</label><br>
+                    <input type="text" class="form-control" id="semester" name="semester" placeholder="eg FA2023"><br>
+
                     <button type="button" class="submit-btn" id="course-btn">Add Course</button>
                 </form>
             </div>
@@ -78,8 +81,12 @@
                     </select>
 
                     <br>
-                    <button type="button" class="submit-btn" id="course-btn">Add Course</button>
+                    <button type="button" class="submit-btn" id="transfer-course-btn">Add Course</button>
                 </form>
+            </div>
+
+            <div class="row mb-4">
+                <p id="message"></p>
             </div>
         </main>
 
