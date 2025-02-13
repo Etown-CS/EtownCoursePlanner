@@ -11,13 +11,14 @@ const bodyParser = require('body-parser'); // Parses form body
 const jwt = require('jsonwebtoken');
 const jwtSecret = "0f21f0a8883cdbfab0d88578e409b702a6461977c93a101ad81ba96b04281563";
 const cookieParser = require("cookie-parser");
-// const dbPath = 'course_planner.db';
+
 const PORT = process.env.PORT || 8080;
 require('dotenv').config();
 const { Connector } = require('@google-cloud/cloud-sql-connector');
 const connector = new Connector();
 
 app.use(multer().none());
+app.use(cookieParser());
 
 // const createUnixSocketPool = require('./connect-unix.js')
 
@@ -28,6 +29,7 @@ app.use(express.static("web_src"));
 //Validation
 const validation = require("./data_src/validation.js")
 
+app.use(express.json()); // app.use(bodyParser.json());
 let dbPool;
 
 // Get all courses
@@ -112,7 +114,7 @@ app.get('/advisors', async (req, res) => {
     }
 });
 
-app.get('/core', async (req, res) => {
+app.get('/core', async (req, res) => { // Switch POST?
     const userId = 1; // Hard code user for now
     try {
         const db = await getDbPool();
@@ -171,6 +173,170 @@ app.get('/core', async (req, res) => {
     } catch (error) {
         console.error("Error fetching progress data:", error);
         res.status(500).send("Error on server. Please try again later.");
+    }
+});
+
+app.get('/schedule-view', async (req, res) => {
+    try {
+        // Extract token from cookie?
+        const token = req.cookies.jwt;
+        if (!token) {
+            return res.status(400).json({message: "User not logged in."});
+        }
+
+        // Verify token
+        const decoded = jwt.verify(token, jwtSecret);
+        if (!decoded || !decoded.email) {
+            return res.status(400).json({message: "Invalid token."});
+        }
+        
+        const db = await getDbPool();
+
+        // Retrieve user ID from email
+        const user = await getUser(decoded.email);
+        const user_id = user[0].id;
+        if (!user_id) {
+            return res.status(400).json({ message: "User not found." });
+        }
+        // const user_id = req.body.user_id;
+        console.log("User's ID is", user_id);
+
+        // Query out a students saved schedules
+        const query = "SELECT id, name FROM schedule WHERE user_id = ?"; 
+        const [schedules] = await db.query(query, [user_id]);
+
+        res.type('json').send(schedules);
+    } catch (error) {
+        console.error("Error fetching schedules:", error);
+        res.status(500).send("Error on the server. Please try again later.");
+    }
+});
+
+app.get('/load-schedule', async (req, res) => { // Changes based on schedule_id
+    try {
+        // Extract token from cookie?
+        const token = req.cookies.jwt;
+        if (!token) {
+            return res.status(400).json({message: "User not logged in."});
+        }
+
+        // Verify token
+        const decoded = jwt.verify(token, jwtSecret);
+        if (!decoded || !decoded.email) {
+            return res.status(400).json({message: "Invalid token."});
+        }
+
+        const db = await getDbPool();
+        const user = await getUser(decoded.email);
+        const user_id = user[0].id;
+        if (!user_id) {
+            return res.status(400).json({ message: "User not found." });
+        }
+
+        const schedule_id = req.query.schedule_id; // req.query.schedule_id
+        console.log("Recieved Schedule ID:", schedule_id);
+
+        if (!schedule_id) {
+            return res.status(400).json({message: "No Schedule ID."});
+        }
+
+        // TODO: Check if the schedule exists and belongs to the logged in user
+
+        const query =  `SELECT s.name AS schedule_name, sc.*
+                        FROM schedule s
+                        LEFT JOIN schedule_course sc ON s.id = sc.schedule_id
+                        WHERE s.id = ?`;
+        const [results] = await db.query(query, [schedule_id]);
+
+        if (results.length == 0) {
+            return res.status(400).json({message: "No schedule found."});
+        }
+
+        const schedule_name = results[0].schedule_name;
+        const courses = results.map(({schedule_name, ...course}) => course);
+        res.type('json').send({schedule_name, courses});
+
+        // const schedule_id = parseInt(req.params.id); // Requires testing? -- Make sure it is int
+        // console.log("Hellow");
+        // console.log("Schedule ID:", schedule_id);
+
+        // // Check if schedule exists
+        // const query = "SELECT * FROM schedule WHERE id = ? AND user_id = ?";
+        // const [schedule] = await db.query(query, [schedule_id, user_id]);
+
+        // if (schedule.length === 0) {
+        //     return res.status(400).json({message: "Schedule not found."});
+        // }
+
+        // // Retrieve associated courses
+        // // TODO: Check if it there is a course_id
+        // const query2 = `SELECT sc.id, sc.custom_name, sc.custom_start, sc.custom_end, sc.color, c.code, 
+        // c.name, c.credits, c.days, c.time
+        // FROM schedule_course sc
+        // LEFT JOIN course c ON sc.course_id = c.id
+        // WHERE sc.schedule_id = ?`;
+        // const [courses] = await db.query(query2, [schedule_id]);
+
+        // res.type('json').send({schedule: schedule[0], courses});
+
+    } catch (error) {
+        console.error("Error retrieving schedule details:", error);
+        res.status(500).send("Error on the server. Please try again later.");
+    }
+});
+
+app.post('/save-schedule', async (req, res) => {
+    try {
+        const {user_id, scheduleName, events} = req.body;
+        if (!user_id || !scheduleName || !events || Object.keys(events).length === 0) {
+            return res.status(400).json({message: "Missing required data."});
+        }
+
+        const db = await getDbPool();
+
+        // Insert schedule into schedule table
+        const insertSchedule = "INSERT INTO schedule (user_id, name) VALUES (?, ?)";
+        const [scheduleResult] = await db.query(insertSchedule, [user_id, scheduleName]);
+
+        // Get inserted schedule id
+        const schedule_id = scheduleResult.insertId;
+
+        // Insert events into schedule_course table
+        const insertEvents = "INSERT INTO schedule_course (schedule_id, custom_name, custom_start, custom_end, color, days) VALUES ?";
+        const eventMap = new Map(); // Store events grouped by details
+
+        // Iterate over days and group events
+        // TODO: Ensure times are in military time
+        Object.keys(events).forEach(day => {
+            events[day].forEach(event => {
+                const key = `${event.title}-${event.startTime}-${event.endTime}-${event.color}`;
+                if (!eventMap.has(key)) {
+                    eventMap.set(key, {...event, days: [day]});
+                } else {
+                    eventMap.get(key).days.push(day);
+                }
+            });
+        });
+
+        // Prepare event values
+        const eventValues = [...eventMap.values()].map(event => [
+            schedule_id,
+            event.title,
+            convertToMilitaryTime(event.startTime),
+            convertToMilitaryTime(event.endTime),
+            event.color,
+            event.days.join(",") // Convert days to comma-separated string
+        ]);
+
+        if (eventValues.length > 0) {
+            await db.query(insertEvents, [eventValues]); // Insert grouped events
+            console.log("Inserted events:", eventValues);
+        }
+
+        res.status(200).json({message: "Schedule saved successfully.", schedule_id});
+    } catch (error) {
+        console.error("Error saving schedule:", error);
+        res.status(500).send("Error on the server. Please try again later.");
     }
 });
 
@@ -372,6 +538,25 @@ app.post('/add-oc-course', async function (req, res) {
         });
     }
 });
+
+// Add description here - surely theres already a function for this???
+function convertToMilitaryTime(time) {
+    if (!time) return null;
+    
+    const match = time.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
+    if (!match) return time; // If already in military time, return as is
+
+    let [_, hours, minutes, period] = match;
+    hours = parseInt(hours, 10);
+
+    if (period.toUpperCase() === "PM" && hours !== 12) {
+        hours += 12;
+    } else if (period.toUpperCase() === "AM" && hours === 12) {
+        hours = 0;
+    }
+
+    return `${hours.toString().padStart(2, "0")}:${minutes}`; // hewo?
+}
 
 // Functions for registration and login purposes.
 

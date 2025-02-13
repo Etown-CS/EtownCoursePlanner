@@ -17,14 +17,23 @@
         // console.log(apiKey); // Use the key in your application
 
         updateTimeRange();
+
+        const schedule_id = JSON.parse(sessionStorage.getItem("selectedSchedule"));
+        if (schedule_id) {
+            //console.log("Loaded schedule:", schedule);
+            fetchSavedSchedule(schedule_id)
+            sessionStorage.removeItem("selectedSchedule"); // go away
+        }
+
         // document.getElementById("add").addEventListener("click", addEvent);
         document.getElementById("msg_btn").addEventListener("click", msgBox);
         document.getElementById("manual_add").addEventListener("click", addEvent2);
         // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
+        document.getElementById("save").addEventListener("click", saveSchedule);
         
     }
 
-    const events = {
+    const events = { // Events holds all the classes saved for each day. All days (including events in once dict)
         'Sunday': [],
         'Monday': [],
         'Tuesday': [],
@@ -194,7 +203,7 @@
             return;
         }
         
-        selectedDays.forEach(day => {
+        selectedDays.forEach(day => { // FORMATTING IS HERE - LOOK HERE!!!!!!!!!!!!!!!!
             events[day].push({ title, startTime, endTime, color: selectedColor, eventNum});
         });
         eventNum++;
@@ -204,6 +213,68 @@
         endTimeInput.value = '';
     
         updateTimeRange();
+    }
+
+    async function saveSchedule() {
+        const scheduleName = document.getElementById("schedule-title").value;
+        const user_id = window.sessionStorage.getItem('id');
+
+        if (!user_id) {
+            alert("Error: No user logged in.");
+            return;
+        }
+
+        if (!scheduleName) {
+            alert("Please enter a schedule name.");
+            return;
+        }
+    
+        const response = await fetch('/save-schedule', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({user_id, scheduleName, events})
+        });
+    
+        const result = await response.json();
+        //console.log(result.status);
+        console.log(result)
+        if (response.ok) { // Checks if successful
+            alert(result.message);
+        } else {
+            alert(result.error || "Error saving schedule. :(");
+        }
+    }
+
+    async function fetchSavedSchedule(schedule_id) {
+        try {
+            const response = await fetch(`/load-schedule?schedule_id=${schedule_id}`);
+            if (!response.ok) {
+                console.error("Failed response for loading schedule.");
+            }
+            const {schedule_name, courses} = await response.json();
+            console.log("Fetched schedule:", schedule_name, courses);
+            // Remake schedule format
+            document.getElementById("schedule-title").textContent = schedule_name; // Displays name hopefully
+
+            // Remake courses - whyyyyyy
+            courses.forEach(row => {
+                const days = row.days.split(","); // Convert to array
+                days.forEach(day => {
+                    if (events[day]) {
+                        events[day].push({
+                            title: row.custom_name, // Course id - row.course_id
+                            startTime: row.custom_start,
+                            endTime: row.custom_end,
+                            color: row.color,
+                            eventNum: eventNum++
+                        });
+                    }
+                });
+            });
+            updateTimeRange(); // Refresh UI?
+        } catch (error) {
+            console.error("Error fetching saved schedule:", error);
+        }
     }
 
     function msgBox() {
