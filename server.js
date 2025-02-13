@@ -1,5 +1,5 @@
 "use strict";
-
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const multer = require('multer');
@@ -11,11 +11,21 @@ const bodyParser = require('body-parser'); // Parses form body
 const jwt = require('jsonwebtoken');
 const jwtSecret = "0f21f0a8883cdbfab0d88578e409b702a6461977c93a101ad81ba96b04281563";
 const cookieParser = require("cookie-parser");
+const readline = require("readline");
+const OpenAI = require("openai");
+const openai = new OpenAI({
+    apiKey: process.env.API_KEY2,
+});
+
+module.exports = openai;
+
+const { generateMeta } = require('./openaiController')
 // const dbPath = 'course_planner.db';
 const PORT = process.env.PORT || 8080;
-require('dotenv').config();
+
 const { Connector } = require('@google-cloud/cloud-sql-connector');
 const connector = new Connector();
+
 
 app.use(multer().none());
 
@@ -417,3 +427,11 @@ app.listen(PORT, () => {
     console.log('Server running on http://localhost:' + PORT);
     testDbConnection();
 });
+
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+})
+
+rl.question('Youtube video title: \n', generateMeta)
