@@ -75,15 +75,11 @@
                 });
             }, 500); // Wait 500ms for the browser to render
         });
-    }
-    
-    document.addEventListener("DOMContentLoaded", init);
-    
-    
-    
-    
-    
 
+    
+    document.addEventListener("DOMContentLoaded", init);  //Content loading, take note of this one. If there are issues it may be this (whoops)
+
+    
     const events = { // Events holds all the classes saved for each day. All days (including events in once dict)
         'Sunday': [],
         'Monday': [],
