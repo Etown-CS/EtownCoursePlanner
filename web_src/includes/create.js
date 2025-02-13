@@ -23,63 +23,14 @@
             sessionStorage.removeItem("selectedSchedule"); // go away
         }
 
+        // document.getElementById("add").addEventListener("click", addEvent);
         document.getElementById("msg_btn").addEventListener("click", msgBox);
         document.getElementById("manual_add").addEventListener("click", addEvent2);
         // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
         document.getElementById("save").addEventListener("click", saveSchedule);
         
     }
-    
-        let isGenerating = false; // Prevent multiple clicks
-    
-        document.getElementById("generate_screenshot").addEventListener("click", function() {
-            if (isGenerating) return; // Prevent further clicks while generating the screenshot
-            isGenerating = true; // Set to true to prevent further clicks
-    
-            const scheduleContainer = document.getElementById("schedule-container");
-            const titleText = document.getElementById("schedule-title").value || "My Schedule";
-    
-            // Check if the title element already exists and remove it if it does
-            const existingTitle = scheduleContainer.querySelector(".schedule-title");
-            if (existingTitle) {
-                existingTitle.remove();
-            }
-    
-            // Create a stylized title element
-            let titleElement = document.createElement("div");
-            titleElement.innerText = titleText;
-            titleElement.classList.add("schedule-title"); 
 
-            // Insert title at the top of the schedule
-            scheduleContainer.prepend(titleElement);
-    
-            // Wait for the title to be rendered before capturing the screenshot
-            setTimeout(() => {
-                html2canvas(scheduleContainer, {
-                    backgroundColor: null // Keeps transparency
-                }).then(canvas => {
-                    // Use the title text for the filename, replacing spaces with no spaces
-                    let sanitizedTitle = titleText.replace(/\s+/g, '');
-                    let fileName = sanitizedTitle + '.png'; // File name based on title
-    
-                    let link = document.createElement('a');
-                    link.href = canvas.toDataURL("image/png");
-                    link.download = fileName; // Set the custom file name
-                    link.click();
-    
-                    // Remove the title after capturing the screenshot
-                    titleElement.remove();
-    
-                    // Re-enable button and allow further clicks
-                    isGenerating = false;
-                });
-            }, 500); // Wait 500ms for the browser to render
-        });
-
-    
-    document.addEventListener("DOMContentLoaded", init);  //Content loading, take note of this one. If there are issues it may be this (whoops)
-
-    
     const events = { // Events holds all the classes saved for each day. All days (including events in once dict)
         'Sunday': [],
         'Monday': [],
