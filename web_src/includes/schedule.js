@@ -60,9 +60,10 @@
         }
 
         try {
-            const response = await fetch(`/load-schedule?schedule_id=${schedule_id}`);
-            const schedule = await response.json();
-            console.log("Schedule to be loaded:", schedule);
+            // const response = await fetch(`/load-schedule?schedule_id=${schedule_id}`);
+            // const schedule = await response.json();
+            // console.log("Schedule to be loaded:", schedule);
+            sessionStorage.setItem("selectedSchedule", JSON.stringify(schedule_id));
 
             // Redirect user to create.html - Sent with given schedule ID
             // window.location.href = "createSchedule.html"
@@ -80,6 +81,7 @@
             // sessionStorage.removeItem("loadedSchedule");
             // updateTimeRange(); 
             // }*/
+            window.location.href = "create.html"; // May have to change for GCP
         } catch (error) {
             console.error("Error");
         }

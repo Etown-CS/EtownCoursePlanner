@@ -233,18 +233,28 @@ app.get('/load-schedule', async (req, res) => { // Changes based on schedule_id
             return res.status(400).json({ message: "User not found." });
         }
 
-        const schedule_id = req.query.schedule_id;
+        const schedule_id = req.query.schedule_id; // req.query.schedule_id
         console.log("Recieved Schedule ID:", schedule_id);
 
         if (!schedule_id) {
-            return res.status(400).json({message: "No Schedule ID"});
+            return res.status(400).json({message: "No Schedule ID."});
         }
 
         // TODO: Check if the schedule exists and belongs to the logged in user
 
-        const query = "SELECT * FROM schedule_course WHERE schedule_id = ?";
-        const [courses] = await db.query(query, [schedule_id]);
-        res.type('json').send(courses);
+        const query =  `SELECT s.name AS schedule_name, sc.*
+                        FROM schedule s
+                        LEFT JOIN schedule_course sc ON s.id = sc.schedule_id
+                        WHERE s.id = ?`;
+        const [results] = await db.query(query, [schedule_id]);
+
+        if (results.length == 0) {
+            return res.status(400).json({message: "No schedule found."});
+        }
+
+        const schedule_name = results[0].schedule_name;
+        const courses = results.map(({schedule_name, ...course}) => course);
+        res.type('json').send({schedule_name, courses});
 
         // const schedule_id = parseInt(req.params.id); // Requires testing? -- Make sure it is int
         // console.log("Hellow");
@@ -296,6 +306,7 @@ app.post('/save-schedule', async (req, res) => {
         const eventMap = new Map(); // Store events grouped by details
 
         // Iterate over days and group events
+        // TODO: Ensure times are in military time
         Object.keys(events).forEach(day => {
             events[day].forEach(event => {
                 const key = `${event.title}-${event.startTime}-${event.endTime}-${event.color}`;
@@ -311,8 +322,8 @@ app.post('/save-schedule', async (req, res) => {
         const eventValues = [...eventMap.values()].map(event => [
             schedule_id,
             event.title,
-            event.startTime,
-            event.endTime,
+            convertToMilitaryTime(event.startTime),
+            convertToMilitaryTime(event.endTime),
             event.color,
             event.days.join(",") // Convert days to comma-separated string
         ]);
@@ -455,6 +466,25 @@ app.post('/login', async function (req, res) {
         });
     }
 });
+
+// Add description here - surely theres already a function for this???
+function convertToMilitaryTime(time) {
+    if (!time) return null;
+    
+    const match = time.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
+    if (!match) return time; // If already in military time, return as is
+
+    let [_, hours, minutes, period] = match;
+    hours = parseInt(hours, 10);
+
+    if (period.toUpperCase() === "PM" && hours !== 12) {
+        hours += 12;
+    } else if (period.toUpperCase() === "AM" && hours === 12) {
+        hours = 0;
+    }
+
+    return `${hours.toString().padStart(2, "0")}:${minutes}`; // hewo?
+}
 
 // Functions for registration and login purposes.
 
