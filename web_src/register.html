@@ -46,13 +46,24 @@
                 </div>
 
                 <div class="mb-3 mt-3">
+                    <label for="advisor" class="form-label">Advisor:</label>
+                    <select class="form-control" id="advisor" name="advisor"></select>
+                </div> <!--Dropdown , populate from database -->
+
+                <p>Do you have a minor?</p>
+                <input type="radio" id="min-yes" name="min" value="yes">
+                <label for="min-yes">Yes</label>
+                <input type="radio" id="min-no" name="min" value="no">
+                <label for="min-no">No</label>
+
+                <div class="mb-3 mt-3 hidden" id="minor">
                     <label for="minor" class="form-label">Minor:</label>
                     <input type="text" class="form-control" id="minor" placeholder="Enter minor" name="minor">
                 </div>
 
-                <div class="mb-3 mt-3">
-                    <label for="advisor" class="form-label">Advisor:</label>
-                    <select class="form-control" id="advisor" name="advisor"></select>
+                <div class="mb-3 mt-3 hidden" id="minor-advisor">
+                    <label for="min-advisor" class="form-label">Minor Advisor:</label>
+                    <select class="form-control" id="min-advisor" name="min-advisor"></select>
                 </div> <!--Dropdown , populate from database -->
 
                 <div class="mb-3 mt-3">
