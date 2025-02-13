@@ -1,7 +1,8 @@
 "use strict";
-
+require('dotenv').config();
 const express = require('express');
 const app = express();
+// const axios = require('axios');
 const multer = require('multer');
 const mysql = require('mysql2/promise');
 // const sqlite3 = require('sqlite3');
@@ -106,6 +107,42 @@ app.get('/advisors', async (req, res) => {
             return res.status(404).json({ message: "No advisors found."});
         }
         //await db.end();
+        res.type('json').send(advisors); // Send results as JSON
+
+    } catch (error) {
+        console.error("Error retrieving advisors:", error);
+        res.status(500).send('Error on the server. Please try again later.');
+    }
+});
+
+app.get('/advisors/emails', async (req, res) => {
+    try {
+        const db = await getDbPool();
+        const query = "SELECT DISTINCT name, id, email FROM advisor";
+        const [advisors] = await db.query(query); // Fetch all rows from advisor table
+
+        if (advisors.length === 0) {
+            return res.status(404).json({ message: "No advisors found." });
+        }
+        
+        res.type('json').send(advisors); // Send results as JSON
+
+    } catch (error) {
+        console.error("Error retrieving advisors:", error);
+        res.status(500).send('Error on the server. Please try again later.');
+    }
+});
+
+app.get('/advisors/emails', async (req, res) => {
+    try {
+        const db = await getDbPool();
+        const query = "SELECT DISTINCT name, id, email FROM advisor";
+        const [advisors] = await db.query(query); // Fetch all rows from advisor table
+
+        if (advisors.length === 0) {
+            return res.status(404).json({ message: "No advisors found." });
+        }
+        
         res.type('json').send(advisors); // Send results as JSON
 
     } catch (error) {
@@ -447,6 +484,8 @@ app.post('/login', async function (req, res) {
 
             
 
+            
+
             return res.status(200).json({
                 username: user[0].username,
                 major: user[0].major,
@@ -718,3 +757,14 @@ app.listen(PORT, () => {
     console.log('Server running on http://localhost:' + PORT);
     testDbConnection();
 });
+
+//yipieee go me
+app.use(express.json());
+
+app.get('/api/get-key', (req, res) => {
+    // Replace with authentication if needed
+    const apiKey = process.env.API_KEY;
+    res.json({ apiKey });
+  });
+  
+  app.listen(3000, () => console.log('Server running on port 3000'));
