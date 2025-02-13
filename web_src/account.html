@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Account</title>
+    
+        <!-- Etown Font look-alike -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Crete+Round&display=swap" rel="stylesheet">
+        <link href="stylesheets/account.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    
+        <!-- Jquery -->
+        <script src="https://releases.jquery.com/git/jquery-git.min.js"></script>
+    
+        <script src="includes/main.js"></script>
+        <script src="includes/user.js"></script>
+    </head>
+    <body>
+        <header id="navbar"></header>
+
+        <main class="hidden" id="body">
+            <section id="welcome-msg">
+                <h1 class="crete-round-regular">Welcome back, <span id="email"></span>!</h1> <!--Contribution-->
+                <h2 class="crete-round-regular">Need help with your courses? Of course!</h2>
+            </section>
+
+            <section id="account">
+                <p>Name: <span id="name"></span></p>
+                <p>Email: <span id="user_email"></span></p>
+                <p>Major: <span id="major"></span></p>
+                <p>Advisor: <span id="advisor"></span></p>
+                <section id="account-minor" class="hidden">
+                    <p>Minor: <span id="minor"></span></p>
+                    <p>Minor Advisor: <span id="min-id"></span></p>
+                </section>
+            </section>
+
+            <div id="footer"></div>
+        </main>
+
+
+</body>
+
+</html>

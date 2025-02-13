@@ -1,0 +1,69 @@
+/* Etown Branding Color References
+
+Primary Color (Etown Blue): 
+HEX #004B98
+
+Secondary Colors: 
+HEX #0A2240 (Dark Blue), 
+HEX #3DB5E6 (Light Blue),
+HEX #E1261C (Red), 
+HEX #61BF1A (Green),
+HEX #C8C8C8 (Light Gray)
+
+*/
+
+.crete-round-regular {
+    font-family: "Crete Round", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+.nav-color{
+  background-color: #0A2240
+}
+
+.nav-link, .navbar-brand{
+  color: white !important;
+}
+
+.nav-link.active {
+  background-color: #3DB5E6; /* Light Blue */
+  color: white;
+  border-radius: 5px; /* Optional: Rounded corners */
+}
+
+h1 {
+  text-align: center;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+}
+
+.form-control {
+  width: 450px;
+}
+
+main {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+footer {
+  padding: 10px;
+  background-color: #0A2240;
+  text-align: center;
+  color: white;
+}
+
+.settings-form {
+  border: solid 2px black;
+  padding: 10px;
+  margin: 10px;
+  width: 500px;
+}
+
+.hidden {
+  display: none !important;
+}

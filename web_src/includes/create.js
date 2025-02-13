@@ -13,9 +13,22 @@
             });
         });
     
+
         updateTimeRange();
+
+        const schedule_id = JSON.parse(sessionStorage.getItem("selectedSchedule"));
+        if (schedule_id) {
+            //console.log("Loaded schedule:", schedule);
+            fetchSavedSchedule(schedule_id)
+            sessionStorage.removeItem("selectedSchedule"); // go away
+        }
+
         document.getElementById("msg_btn").addEventListener("click", msgBox);
         document.getElementById("manual_add").addEventListener("click", addEvent2);
+        // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
+        document.getElementById("save").addEventListener("click", saveSchedule);
+        
+    }
     
         let isGenerating = false; // Prevent multiple clicks
     
@@ -71,7 +84,7 @@
     
     
 
-    const events = {
+    const events = { // Events holds all the classes saved for each day. All days (including events in once dict)
         'Sunday': [],
         'Monday': [],
         'Tuesday': [],
@@ -241,7 +254,7 @@
             return;
         }
         
-        selectedDays.forEach(day => {
+        selectedDays.forEach(day => { // FORMATTING IS HERE - LOOK HERE!!!!!!!!!!!!!!!!
             events[day].push({ title, startTime, endTime, color: selectedColor, eventNum});
         });
         eventNum++;
@@ -251,6 +264,68 @@
         endTimeInput.value = '';
     
         updateTimeRange();
+    }
+
+    async function saveSchedule() {
+        const scheduleName = document.getElementById("schedule-title").value;
+        const user_id = window.sessionStorage.getItem('id');
+
+        if (!user_id) {
+            alert("Error: No user logged in.");
+            return;
+        }
+
+        if (!scheduleName) {
+            alert("Please enter a schedule name.");
+            return;
+        }
+    
+        const response = await fetch('/save-schedule', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({user_id, scheduleName, events})
+        });
+    
+        const result = await response.json();
+        //console.log(result.status);
+        console.log(result)
+        if (response.ok) { // Checks if successful
+            alert(result.message);
+        } else {
+            alert(result.error || "Error saving schedule. :(");
+        }
+    }
+
+    async function fetchSavedSchedule(schedule_id) {
+        try {
+            const response = await fetch(`/load-schedule?schedule_id=${schedule_id}`);
+            if (!response.ok) {
+                console.error("Failed response for loading schedule.");
+            }
+            const {schedule_name, courses} = await response.json();
+            console.log("Fetched schedule:", schedule_name, courses);
+            // Remake schedule format
+            document.getElementById("schedule-title").textContent = schedule_name; // Displays name hopefully
+
+            // Remake courses - whyyyyyy
+            courses.forEach(row => {
+                const days = row.days.split(","); // Convert to array
+                days.forEach(day => {
+                    if (events[day]) {
+                        events[day].push({
+                            title: row.custom_name, // Course id - row.course_id
+                            startTime: row.custom_start,
+                            endTime: row.custom_end,
+                            color: row.color,
+                            eventNum: eventNum++
+                        });
+                    }
+                });
+            });
+            updateTimeRange(); // Refresh UI?
+        } catch (error) {
+            console.error("Error fetching saved schedule:", error);
+        }
     }
 
     function msgBox() {
@@ -304,12 +379,10 @@
         // Create the send button
         const sendButton = document.createElement("button");
         sendButton.className = "btn btn-secondary";
+        sendButton.id = "sendBtn"
         sendButton.textContent = "Send";
         sendButton.style.marginTop = "10px";
-        sendButton.addEventListener("click", () => {
-            // Placeholder functionality for the "Send" button
-            alert("Send button clicked (no functionality yet).");
-        });
+        sendButton.addEventListener("click", sendEmail);
 
         // Assemble the card
         cardBody.appendChild(cardText);
@@ -397,4 +470,90 @@
         displayTimes(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
         displayWeek(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
     });
+
+    async function fetchApiKey() {
+        try {
+          const response = await fetch('/api/get-key');
+          if (!response.ok) {
+            throw new Error('Failed to fetch API key');
+          }
+          const data = await response.json();
+          return data.apiKey;
+        } catch (error) {
+          console.error('Error fetching API key:', error);
+        }
+      }
+
+      async function getAdvisorsEmails() {
+        
+        try {
+            const advisor_id = window.sessionStorage.getItem('advisor');
+            console.log(advisor_id);
+
+            const response = await fetch('/advisors/emails'); // Send GET request
+            if (!response.ok) throw new Error("Failed to fetch advisors.");
+    
+            const advisors = await response.json();
+            console.log(advisors); // Logs an array of advisors with names, IDs, and emails
+    
+            // Example: Find an advisor's email by ID
+             // Change to the desired advisor name
+             const advisor = advisors.find(a => a.id === Number(advisor_id));
+            
+            if (advisor) {
+                console.log('id:',advisor.id)
+                console.log(`Advisor Email: ${advisor.email}`);
+            } else {
+                console.log("Advisor not found.");
+            }
+            
+        } catch (error) {
+            console.error("Error fetching advisors:", error);
+        }
+    }
+      
+      async function sendEmail() {
+        const message = document.getElementById("advisorMessage").value;
+      
+        // Fetch the API key
+        const API_KEY = await fetchApiKey();
+        if (!API_KEY) {
+          console.error("API key is not available");
+          return;
+        }
+
+        getAdvisorsEmails()
+      
+        const url = "https://api.brevo.com/v3/smtp/email";
+        // Email data
+        const emailData = {
+          sender: { name: name, email: "EtownCoursePlanner@gmail.com" },
+          to: [{ email: "melissa_patton@outlook.com", name: advisor }],
+          subject: "Advising Message",
+          htmlContent: message
+        };
+      
+        // Send email using fetch
+        console.log(API_KEY);
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "accept": "application/json",
+            "api-key": API_KEY,
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(emailData)
+        })
+        .then(response => response.json())  // Parse response as JSON to check the result
+        .then(data => {
+          if (data && data.messageId) {
+            console.log("Email sent successfully! Message ID: ", data.messageId);
+          } else {
+            console.error("Failed to send email: ", data);
+          }
+        })
+        .catch(error => {
+          console.error("Error sending email:", error);
+        });
+      }
 })();

@@ -51,6 +51,27 @@ CREATE TABLE IF NOT EXISTS completed_course (
     constraint PK_completed_course PRIMARY KEY (user_id, course_id) -- Composite
 );
 
+CREATE TABLE IF NOT EXISTS schedule ( -- Saved schedules
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL, 
+    name VARCHAR(255) NOT NULL,
+    img VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS schedule_course (  -- Array of courses for each schedule
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    schedule_id INT NOT NULL,
+    course_id INT NULL,
+    days VARCHAR(255) NOT NULL,
+    custom_name VARCHAR(255) NULL,
+    custom_start TIME, # Store start time
+    custom_end TIME, # Store end time
+    color VARCHAR(50) NOT NULL, # Store rgb?
+    FOREIGN KEY (schedule_id) REFERENCES schedule(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE
+);
+
 
 -- Insert data into advisor table
 INSERT INTO advisor (name, email, office, department) VALUES
