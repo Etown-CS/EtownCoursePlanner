@@ -27,9 +27,11 @@ CREATE TABLE IF NOT EXISTS user (
     username VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL,
     major VARCHAR(255) DEFAULT ("Undecided"), -- img
-    minor VARCHAR(255), # Multiple minors?
+    minor VARCHAR(255), -- Multiple minors?
     advisor_id INT,
-    FOREIGN KEY (advisor_id) REFERENCES advisor(id) ON DELETE SET NULL
+    min_advisor_id INT NULL,
+    FOREIGN KEY (advisor_id) REFERENCES advisor(id) ON DELETE SET NULL,
+    FOREIGN KEY (min_advisor_id) REFERENCES advisor(id) ON DELETE SET NULL
 );
 
 ALTER TABLE user ADD COLUMN password VARCHAR(255) NOT NULL; -- Hashed pwd field
@@ -65,9 +67,9 @@ CREATE TABLE IF NOT EXISTS schedule_course (  -- Array of courses for each sched
     course_id INT NULL,
     days VARCHAR(255) NOT NULL,
     custom_name VARCHAR(255) NULL,
-    custom_start TIME, # Store start time
-    custom_end TIME, # Store end time
-    color VARCHAR(50) NOT NULL, # Store rgb?
+    custom_start VARCHAR(255), -- Store start time | Change to VARCHAR
+    custom_end VARCHAR(255), -- Store end time
+    color VARCHAR(50) NOT NULL, -- Store rgb?
     FOREIGN KEY (schedule_id) REFERENCES schedule(id) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE
 );
