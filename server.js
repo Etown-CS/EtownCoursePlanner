@@ -429,9 +429,8 @@ app.listen(PORT, () => {
 });
 
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
+const { summarizePDF } = require("./openaiController.js");
 
-rl.question('Youtube video title: \n', generateMeta)
+summarizePDF().then(summary => {
+    console.log("PDF Summary:", summary);
+});
