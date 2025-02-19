@@ -35,7 +35,8 @@
                 window.sessionStorage.setItem('major', data.major);
                 window.sessionStorage.setItem('advisor', data.advisor);
                 window.sessionStorage.setItem('id', data.id);
-
+                window.sessionStorage.setItem('minor', data.minor);
+                window.sessionStorage.setItem('min_advisor_id',data.min_advisor_id);
                 // Redirect user to the logged in homepage
                 location.assign('../loggedin.html');
             } else {
