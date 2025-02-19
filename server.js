@@ -383,6 +383,8 @@ app.post('/register', async function (req, res) {
         const email = req.body.email;
         const major = req.body.major;
         const advisor = req.body.advisor;
+        const minor = req.body.minor;
+        const min_advisor = req.body.min_advisor;
         const password = req.body.password;
 
         // Username, email, and password are all required, so if any are missing, return error.
@@ -434,6 +436,13 @@ app.post('/register', async function (req, res) {
 
         // Create user in table and register them, using encrypted password.
         const result = await createUser(username, email, major, advisor, encrypted_pw);
+
+        if (minor != null) {
+            const db = await getDbPool();
+            const query = "SELECT id FROM advisor WHERE name = ?;";
+            const [min_advisor_id] = await db.query(query, [min_advisor]); 
+            const res = await addMinor(email, minor, min_advisor_id[0].id);
+        }
 
         // Check to see all went as planned, res 200
         if (result) {
@@ -490,6 +499,8 @@ app.post('/login', async function (req, res) {
                 username: user[0].username,
                 major: user[0].major,
                 advisor: user[0].advisor_id,
+                minor: user[0].minor,
+                min_advisor_id: user[0].min_advisor_id,
                 id: user[0].id,
                 message: "Login successful!"
             });
