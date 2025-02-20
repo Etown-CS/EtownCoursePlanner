@@ -256,29 +256,6 @@ app.get('/load-schedule', async (req, res) => { // Changes based on schedule_id
         const courses = results.map(({schedule_name, ...course}) => course);
         res.type('json').send({schedule_name, courses});
 
-        // const schedule_id = parseInt(req.params.id); // Requires testing? -- Make sure it is int
-        // console.log("Hellow");
-        // console.log("Schedule ID:", schedule_id);
-
-        // // Check if schedule exists
-        // const query = "SELECT * FROM schedule WHERE id = ? AND user_id = ?";
-        // const [schedule] = await db.query(query, [schedule_id, user_id]);
-
-        // if (schedule.length === 0) {
-        //     return res.status(400).json({message: "Schedule not found."});
-        // }
-
-        // // Retrieve associated courses
-        // // TODO: Check if it there is a course_id
-        // const query2 = `SELECT sc.id, sc.custom_name, sc.custom_start, sc.custom_end, sc.color, c.code, 
-        // c.name, c.credits, c.days, c.time
-        // FROM schedule_course sc
-        // LEFT JOIN course c ON sc.course_id = c.id
-        // WHERE sc.schedule_id = ?`;
-        // const [courses] = await db.query(query2, [schedule_id]);
-
-        // res.type('json').send({schedule: schedule[0], courses});
-
     } catch (error) {
         console.error("Error retrieving schedule details:", error);
         res.status(500).send("Error on the server. Please try again later.");
@@ -287,40 +264,50 @@ app.get('/load-schedule', async (req, res) => { // Changes based on schedule_id
 
 app.post('/save-schedule', async (req, res) => {
     try {
-        const {user_id, scheduleName, events} = req.body;
+        const {user_id, schedule_id, scheduleName, events} = req.body;
         if (!user_id || !scheduleName || !events || Object.keys(events).length === 0) {
             return res.status(400).json({message: "Missing required data."});
         }
 
         const db = await getDbPool();
-
-        // Insert schedule into schedule table
-        const insertSchedule = "INSERT INTO schedule (user_id, name) VALUES (?, ?)";
-        const [scheduleResult] = await db.query(insertSchedule, [user_id, scheduleName]);
-
-        // Get inserted schedule id
-        const schedule_id = scheduleResult.insertId;
+        let sched_id = schedule_id; // Variable for seeing if the schedule_id is null or not
+        
+        if (schedule_id) { // IF THE SCHEDULE ID IS EXISTING and NOT new
+            // Update schedule name
+            const nameQuery = "UPDATE schedule SET name = ? WHERE id = ? AND user_id = ?";
+            const [name] = await db.query(nameQuery, [scheduleName, schedule_id, user_id]);
+            console.log(name);
+            // Delete old associated events
+            const delQuery = "DELETE FROM schedule_course WHERE schedule_id = ?";
+            const [del] = await db.query(delQuery, [schedule_id]);
+        } else { // If there is no schedule id because the schedule is NEW
+            // Insert schedule into schedule table
+            const insertSchedule = "INSERT INTO schedule (user_id, name) VALUES (?, ?)";
+            const [scheduleResult] = await db.query(insertSchedule, [user_id, scheduleName]);
+            // Get inserted schedule id
+            sched_id = scheduleResult.insertId;
+        }
 
         // Insert events into schedule_course table
         const insertEvents = "INSERT INTO schedule_course (schedule_id, custom_name, custom_start, custom_end, color, days) VALUES ?";
         const eventMap = new Map(); // Store events grouped by details
 
         // Iterate over days and group events
-        // TODO: Ensure times are in military time
-        Object.keys(events).forEach(day => {
-            events[day].forEach(event => {
-                const key = `${event.title}-${event.startTime}-${event.endTime}-${event.color}`;
-                if (!eventMap.has(key)) {
+        Object.keys(events).forEach(day => { // Days of week
+            events[day].forEach(event => { // Array of events of a day, loops
+                const key = `${event.title}-${event.startTime}-${event.endTime}-${event.color}`; // Create unique key 
+                // If event has the same key, it's considered the same event across multiple days (maybe)
+                if (!eventMap.has(key)) { // If event is not in map, add it
                     eventMap.set(key, {...event, days: [day]});
-                } else {
+                } else { // Else update existing event/day/idk
                     eventMap.get(key).days.push(day);
                 }
             });
         });
 
         // Prepare event values
-        const eventValues = [...eventMap.values()].map(event => [
-            schedule_id,
+        const eventValues = [...eventMap.values()].map(event => [ // Converts values into array ([...]) 
+            sched_id, // The new/old schedule id
             event.title,
             convertToMilitaryTime(event.startTime),
             convertToMilitaryTime(event.endTime),
@@ -333,7 +320,7 @@ app.post('/save-schedule', async (req, res) => {
             console.log("Inserted events:", eventValues);
         }
 
-        res.status(200).json({message: "Schedule saved successfully.", schedule_id});
+        res.status(200).json({message: "Schedule saved successfully.", sched_id});
     } catch (error) {
         console.error("Error saving schedule:", error);
         res.status(500).send("Error on the server. Please try again later.");
@@ -494,17 +481,6 @@ function convertToMilitaryTime(time) {
  * @param {string} email - The email of the user to find.
  * @returns {object} - The user stored in the database.
  */
-// async function getUser(email) {
-//     const db = await getDbPool();
-
-//     const query = "SELECT * FROM user WHERE email = ?";
-//     const [user] = await db.query(query, [email]);
-
-//     //await db.end();
-
-//     return user;
-// }
-
 async function getUser(email) {
     const db = await getDbPool();
     const query = "SELECT * FROM user WHERE email = ?";

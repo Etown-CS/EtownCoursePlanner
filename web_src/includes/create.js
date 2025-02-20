@@ -12,9 +12,7 @@
                 }
             });
         });
-        // require('dotenv').config();
-        // const apiKey = process.env.API_KEY;
-        // console.log(apiKey); // Use the key in your application
+    
 
         updateTimeRange();
 
@@ -22,7 +20,7 @@
         if (schedule_id) {
             //console.log("Loaded schedule:", schedule);
             fetchSavedSchedule(schedule_id)
-            sessionStorage.removeItem("selectedSchedule"); // go away
+            //sessionStorage.removeItem("selectedSchedule"); // go away BUT NOT YET
         }
 
         // document.getElementById("add").addEventListener("click", addEvent);
@@ -31,6 +29,37 @@
         // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
         document.getElementById("save").addEventListener("click", saveSchedule);
         
+    }
+
+    let hasUnsavedChanges = false;
+    // Track changes when user modifies schedule
+    function markUnsavedChanges() {
+        hasUnsavedChanges = true;
+    }
+    // Listen for input or change events to track modifications (Reacher)
+    document.addEventListener("input", markUnsavedChanges);
+    document.addEventListener("change", markUnsavedChanges);
+
+    window.addEventListener("beforeunload", (event) => {
+        if (hasUnsavedChanges) {
+            event.preventDefault();
+            event.returnValue = ""; // Required for some browsers? says internet
+        }
+    });
+    // Custom confirmation when user clicks a link or tries to navigate
+    window.addEventListener("click", (event) => {
+        if (hasUnsavedChanges && event.target.tagName === "A") { // Checks for changes and if anchor tag was activated
+            event.preventDefault(); // Stop in the name of the law
+            showLeavePopup(event.target.href);
+        }
+    });
+    function showLeavePopup(redirectUrl) { // Hold on, wait a minute - Willow
+        const leavePage = confirm("You may have unsaved changes. Are you sure you want to leave?"); // Be polite
+        if (leavePage) {
+            hasUnsavedChanges = false; // Reset changes to avoid looper
+            sessionStorage.removeItem("selectedSchedule"); // Be gone satan
+            window.location.href = redirectUrl; // Navigate to new page
+        }
     }
 
     const events = { // Events holds all the classes saved for each day. All days (including events in once dict)
@@ -215,10 +244,11 @@
         updateTimeRange();
     }
 
-    async function saveSchedule() {
+    // TODO: Make a new API or edit current API to <edited> schedule
+    async function saveSchedule() { // TODO: Make a new API or edit current API to <edited> schedule
         const scheduleName = document.getElementById("schedule-title").value;
         const user_id = window.sessionStorage.getItem('id');
-
+        const schedule_id = JSON.parse(sessionStorage.getItem("selectedSchedule")); // get data from session storage -- but then when to destroy? idk 
         if (!user_id) {
             alert("Error: No user logged in.");
             return;
@@ -228,11 +258,19 @@
             alert("Please enter a schedule name.");
             return;
         }
-    
+
+        const data = {
+            user_id,
+            schedule_id: schedule_id ?? null, // If schedule_id is null or undefined, send null
+            scheduleName,
+            events
+        };
+
+        // If selectedSchedule (sessionStorage) exists call other API || add id (empty or not) to body
         const response = await fetch('/save-schedule', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({user_id, scheduleName, events})
+            body: JSON.stringify(data)
         });
     
         const result = await response.json();
@@ -253,8 +291,10 @@
             }
             const {schedule_name, courses} = await response.json();
             console.log("Fetched schedule:", schedule_name, courses);
-            // Remake schedule format
-            document.getElementById("schedule-title").textContent = schedule_name; // Displays name hopefully
+            // Put up the schedule title again
+            //console.log(document.getElementById("schedule-title"));
+            document.getElementById("schedule-title").value = schedule_name; // Displays name with VALUE
+            // What's the point of inner whatever?
 
             // Remake courses - whyyyyyy
             courses.forEach(row => {
@@ -267,7 +307,7 @@
                             endTime: row.custom_end,
                             color: row.color,
                             eventNum: eventNum++
-                        });
+                        }); // Twas actually much easier than inserting
                     }
                 });
             });
@@ -328,12 +368,10 @@
         // Create the send button
         const sendButton = document.createElement("button");
         sendButton.className = "btn btn-secondary";
+        sendButton.id = "sendBtn"
         sendButton.textContent = "Send";
         sendButton.style.marginTop = "10px";
-        sendButton.addEventListener("click", () => {
-            // Placeholder functionality for the "Send" button
-            alert("Send button clicked (no functionality yet).");
-        });
+        sendButton.addEventListener("click", sendEmail);
 
         // Assemble the card
         cardBody.appendChild(cardText);
@@ -421,4 +459,90 @@
         displayTimes(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
         displayWeek(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
     });
+
+    async function fetchApiKey() {
+        try {
+          const response = await fetch('/api/get-key');
+          if (!response.ok) {
+            throw new Error('Failed to fetch API key');
+          }
+          const data = await response.json();
+          return data.apiKey;
+        } catch (error) {
+          console.error('Error fetching API key:', error);
+        }
+      }
+
+      async function getAdvisorsEmails() {
+        
+        try {
+            const advisor_id = window.sessionStorage.getItem('advisor');
+            console.log(advisor_id);
+
+            const response = await fetch('/advisors/emails'); // Send GET request
+            if (!response.ok) throw new Error("Failed to fetch advisors.");
+    
+            const advisors = await response.json();
+            console.log(advisors); // Logs an array of advisors with names, IDs, and emails
+    
+            // Example: Find an advisor's email by ID
+             // Change to the desired advisor name
+             const advisor = advisors.find(a => a.id === Number(advisor_id));
+            
+            if (advisor) {
+                console.log('id:',advisor.id)
+                console.log(`Advisor Email: ${advisor.email}`);
+            } else {
+                console.log("Advisor not found.");
+            }
+            
+        } catch (error) {
+            console.error("Error fetching advisors:", error);
+        }
+    }
+      
+      async function sendEmail() {
+        const message = document.getElementById("advisorMessage").value;
+      
+        // Fetch the API key
+        const API_KEY = await fetchApiKey();
+        if (!API_KEY) {
+          console.error("API key is not available");
+          return;
+        }
+
+        getAdvisorsEmails()
+      
+        const url = "https://api.brevo.com/v3/smtp/email";
+        // Email data
+        const emailData = {
+          sender: { name: name, email: "EtownCoursePlanner@gmail.com" },
+          to: [{ email: "melissa_patton@outlook.com", name: advisor }],
+          subject: "Advising Message",
+          htmlContent: message
+        };
+      
+        // Send email using fetch
+        console.log(API_KEY);
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "accept": "application/json",
+            "api-key": API_KEY,
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(emailData)
+        })
+        .then(response => response.json())  // Parse response as JSON to check the result
+        .then(data => {
+          if (data && data.messageId) {
+            console.log("Email sent successfully! Message ID: ", data.messageId);
+          } else {
+            console.error("Failed to send email: ", data);
+          }
+        })
+        .catch(error => {
+          console.error("Error sending email:", error);
+        });
+      }
 })();

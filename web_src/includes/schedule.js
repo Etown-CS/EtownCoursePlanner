@@ -4,7 +4,10 @@
     window.addEventListener("load", init);
     
     function init() {
-        displaySchedules();
+        const user_id = window.sessionStorage.getItem('id');
+        if (user_id){ // If the user is logged in, otherwise show default square things - use for report page
+            displaySchedules();
+        }
     }
 
     // Description here
