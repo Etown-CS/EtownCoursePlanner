@@ -1,7 +1,8 @@
 "use strict";
-
+require('dotenv').config();
 const express = require('express');
 const app = express();
+// const axios = require('axios');
 const multer = require('multer');
 const mysql = require('mysql2/promise');
 // const sqlite3 = require('sqlite3');
@@ -106,6 +107,42 @@ app.get('/advisors', async (req, res) => {
             return res.status(404).json({ message: "No advisors found."});
         }
         //await db.end();
+        res.type('json').send(advisors); // Send results as JSON
+
+    } catch (error) {
+        console.error("Error retrieving advisors:", error);
+        res.status(500).send('Error on the server. Please try again later.');
+    }
+});
+
+app.get('/advisors/emails', async (req, res) => {
+    try {
+        const db = await getDbPool();
+        const query = "SELECT DISTINCT name, id, email FROM advisor";
+        const [advisors] = await db.query(query); // Fetch all rows from advisor table
+
+        if (advisors.length === 0) {
+            return res.status(404).json({ message: "No advisors found." });
+        }
+        
+        res.type('json').send(advisors); // Send results as JSON
+
+    } catch (error) {
+        console.error("Error retrieving advisors:", error);
+        res.status(500).send('Error on the server. Please try again later.');
+    }
+});
+
+app.get('/advisors/emails', async (req, res) => {
+    try {
+        const db = await getDbPool();
+        const query = "SELECT DISTINCT name, id, email FROM advisor";
+        const [advisors] = await db.query(query); // Fetch all rows from advisor table
+
+        if (advisors.length === 0) {
+            return res.status(404).json({ message: "No advisors found." });
+        }
+        
         res.type('json').send(advisors); // Send results as JSON
 
     } catch (error) {
@@ -434,6 +471,8 @@ app.post('/login', async function (req, res) {
 
             
 
+            
+
             return res.status(200).json({
                 username: user[0].username,
                 major: user[0].major,
@@ -450,6 +489,78 @@ app.post('/login', async function (req, res) {
         console.log(error);
         return res.status(500).json({
             message: "Error."
+        });
+    }
+});
+
+app.patch('/add-minor', async function (req, res) {
+    try {
+        const email = req.body.email;
+        const minor = req.body.minor;
+        const min_advisor = req.body.min_advisor_id;
+
+        if (!minor || !min_advisor) {
+            return res.status(400).json({
+                message: "Missing required field."
+            });
+        }
+
+        const result = await addMinor(email, minor, min_advisor);
+        if (result) {
+            return res.status(200).json({
+                message: "Minor added successfully!"
+            });
+        } else {
+            return res.status(400).json({
+                message: "Error"
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Error."
+        });
+    }
+});
+
+app.post('/add-oc-course', async function (req, res) {
+    try {
+        const email = req.body.email;
+        const course_code = req.body.course_code;
+        const semester = req.body.semester;
+
+        const db = await getDbPool();
+
+        const query1 = `SELECT * FROM user WHERE email = ?;`;
+        const [user] = await db.query(query1, [email]);
+
+        const query = `SELECT *
+            FROM course WHERE course_code = ?;`;
+        const [course] = await db.query(query, [course_code]);
+        
+        if (course.length === 0) {
+            return res.status(404).json({
+                message: "Course not found."
+            });
+        } 
+
+        const result = await addCourse(user[0].id, course[0].id, semester);
+        if (result) {
+            return res.status(200).json({
+                message: "Course added successfully!"
+            });
+        } else {
+            return res.status(400).json({
+                message: "Course could not be added."
+            });
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Error"
         });
     }
 });
@@ -474,6 +585,44 @@ function convertToMilitaryTime(time) {
 }
 
 // Functions for registration and login purposes.
+
+/**
+ * Updating the user's minor and minor advisor.
+ * Any errors that occur should be caught in the function that calls this one.
+ * @param {int} id - The id of the user.
+ * @param {int} course_id - The id of the course to insert.
+ * @param {string} semester - The semester the course was taken to insert.
+ * @returns {object} - The course record stored in the database.
+ */
+async function addCourse(id, course_id, semester) {
+    const db = await getDbPool();
+
+    const query = "INSERT INTO completed_course VALUES (?, ?, ?);";
+    const res = await db.query(query, [id, course_id, semester]);
+    //await db.end();
+
+    return res;
+}
+
+/**
+ * Updating the user's minor and minor advisor.
+ * Any errors that occur should be caught in the function that calls this one.
+ * @param {string} email - The email of the user.
+ * @param {string} minor - The minor of the user to insert.
+ * @param {string} advisor - The minor advisor of the user to insert.
+ * @returns {object} - The user stored in the database.
+ */
+async function addMinor(email, minor, advisor) {
+    const db = await getDbPool();
+
+    const query = "UPDATE user SET minor=?, min_advisor_id=? WHERE email=?";
+    const res = await db.query(query, [minor, advisor, email]);
+    // console.log(res);
+    const user = await getUser(email);
+    //await db.end();
+
+    return user;
+}
 
 /**
  * Find the User by email
@@ -584,3 +733,14 @@ app.listen(PORT, () => {
     console.log('Server running on http://localhost:' + PORT);
     testDbConnection();
 });
+
+//yipieee go me
+app.use(express.json());
+
+app.get('/api/get-key', (req, res) => {
+    // Replace with authentication if needed
+    const apiKey = process.env.API_KEY;
+    res.json({ apiKey });
+  });
+  
+  app.listen(3000, () => console.log('Server running on port 3000'));

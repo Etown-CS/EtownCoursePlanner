@@ -9,6 +9,7 @@
     function init() {
         populateDropdown('advisor', 'name');
         id('register').addEventListener('click', register);
+        id("min-yes").addEventListener("click", addMinor);
     }
 
     /**
@@ -36,6 +37,16 @@
         .catch(error => console.error('Error fetching data:', error));
     }
 
+    function addMinor() {
+        if (id("min-yes").checked) {
+            id('minor').classList.remove("hidden");
+            id('minor-advisor').classList.remove("hidden");
+        } else {
+            id('minor').classList.add("hidden");
+            id('minor-advisor').classList.add("hidden");
+        }
+    }
+
     /**
      * Fetches register API and prepares student info for client-side
      */
@@ -47,6 +58,10 @@
         params.append("major", id("major").value);
         params.append("advisor", id("advisor").value);
         params.append("password", id("password").value);
+        if (id("minor") != null) {
+            params.append("minor", id("minor").value);
+            params.append("min_advisor_id", id("advisor").value);
+        }
 
         let pwd = id('password').value;
         let vpwd = id('confirm_password').value;
