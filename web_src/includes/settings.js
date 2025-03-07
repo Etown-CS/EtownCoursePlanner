@@ -29,6 +29,8 @@
         .then((data) => {
             id('message').textContent = data['message'];
         })
+        alert("Click ok to add another course.");
+        window.location.href = "../course.html";
     }
 
     function addMinor() {

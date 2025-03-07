@@ -79,6 +79,8 @@
         .then((data) => {
             id('message').textContent = data['message'];
         });
+        alert("Click ok to login, then go to settings to add your course history.");
+        window.location.href = ("../login.html");
     }
 })();
 
