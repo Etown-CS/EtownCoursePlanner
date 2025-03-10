@@ -4,6 +4,8 @@
     window.addEventListener("load", init);
     let eventNum =0;
 
+    
+
     function init() {
         $('#navbar').load('includes/navbar.html', function() {
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -16,9 +18,11 @@
         // const apiKey = process.env.API_KEY;
         // console.log(apiKey); // Use the key in your application
 
+
         updateTimeRange();
         // document.getElementById("add").addEventListener("click", addEvent);
         document.getElementById("msg_btn").addEventListener("click", msgBox);
+        document.getElementById("generate").addEventListener("click", generateMsg);
         document.getElementById("manual_add").addEventListener("click", addEvent2);
         // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
         
@@ -216,8 +220,6 @@
         // Create the container for the card
         const messageContainer = document.createElement("div");
         messageContainer.id = "message-container";
-    
-        // Add Bootstrap container classes for styling
         messageContainer.className = "container";
 
         // Create the card
@@ -350,4 +352,67 @@
         displayTimes(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
         displayWeek(dayjs().hour(8).minute(0), dayjs().hour(18).minute(0));
     });
+
+
+    function generateMsg(){
+        // const { summarizePDF } = require("./openaiController.js");
+        // summarizePDF()
+        // Check if the card already exists
+    let existingCard = document.getElementById("output-card");
+    if (existingCard) {
+        existingCard.remove(); // Remove the old card to avoid duplicates
+    }
+
+     // Create the container for the card
+     const messageContainer = document.createElement("div");
+     messageContainer.id = "output-card";
+     messageContainer.className = "container";
+
+     // Create the card
+     const card = document.createElement("div");
+     card.className = "card";
+
+     // Create the card header with a close (X) button
+     const cardHeader = document.createElement("div");
+     cardHeader.className = "card-header text-white d-flex justify-content-between align-items-center";
+     
+     // Header text
+     const headerText = document.createElement("span");
+     headerText.textContent = "Generated Message";
+
+     // Close (X) button
+     const closeButton = document.createElement("button");
+     closeButton.className = "btn-close btn-close-white";
+     closeButton.setAttribute("aria-label", "Close");
+     closeButton.style.cursor = "pointer";
+     closeButton.addEventListener("click", () => {
+         messageContainer.remove(); // Remove the card on close
+     });
+
+     // Append text and close button to the header
+     cardHeader.appendChild(headerText);
+     cardHeader.appendChild(closeButton);
+
+     // Create the card body
+     const cardBody = document.createElement("div");
+     cardBody.className = "card-body";
+
+     const cardText = document.createElement("textarea");
+     cardText.className = "card-text";
+     cardText.id = "advisorMessage"
+     cardText.placeholder = "Type your message here";
+
+    
+
+     // Assemble the card
+     cardBody.appendChild(cardText);
+     card.appendChild(cardHeader);
+     card.appendChild(cardBody);
+     messageContainer.appendChild(card);
+
+     // Append the card to the body
+     document.body.appendChild(messageContainer);
+    }
+
+
 })();

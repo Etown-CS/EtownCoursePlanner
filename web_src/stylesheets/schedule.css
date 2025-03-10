@@ -442,7 +442,7 @@ color: #C8C8C8;
         border-radius: 4px;
         font-size: 14px;
     }
-    #message-container{
+    .container{
       position: fixed; /* Keeps the element in the same position even when scrolling */
       top: 30%; /* Vertically center */
       left: 50%; /* Horizontally center */
@@ -456,6 +456,14 @@ color: #C8C8C8;
       left: 50%; /* Moves the element horizontally to the center */
       transform: translate(-50%, -50%); /* Offsets the element by half of its own width and height */
       z-index: 1050; /* Keeps it on top of other elements */
+    }
+    #output-card{
+      position: fixed; /* Keeps the element in the same position even when scrolling */
+      top: 30%; /* Vertically center */
+      left: 50%; /* Horizontally center */
+      transform: translate(-50%, -50%); /* Adjust the center point to be the middle of the element */
+      z-index: 1050; /* Ensures it appears above most other elements */
+      max-width: 90%; /* Ensures responsiveness */
     }
       .card-header{
           background-color: var(--dark-blue) !important; /* Set your desired background color */
@@ -486,7 +494,7 @@ color: #C8C8C8;
         background-color: var(--dark-blue);
   }
   
-  #advisorMessage{
+  .card-text{
     width: 100%; 
     height: calc(1.2em * 10); /* Each row is about 1.2em tall, adjust multiplier for rows */
     font-size: 16px; /* Adjust font size to control line height */
