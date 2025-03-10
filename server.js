@@ -428,9 +428,15 @@ app.listen(PORT, () => {
     testDbConnection();
 });
 
+//get the AI response
+const { summarizePDF } = require('./openaiController.js');
+app.use(express.json());
 
-const { summarizePDF } = require("./openaiController.js");
-
-summarizePDF().then(summary => {
-    console.log("PDF Summary:", summary);
+app.get('/summarize-pdf', async (req, res) => {
+    try {
+        const summary = await summarizePDF();
+        res.json({ summary });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to summarize PDF" });
+    }
 });

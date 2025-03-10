@@ -79,7 +79,7 @@ const summarizePDF = async () => {
             ],
             max_tokens: 400
         });
-        console.log(response.choices[0].message.content)
+        console.log()
         return response.choices[0].message.content;
 
     } catch (error) {

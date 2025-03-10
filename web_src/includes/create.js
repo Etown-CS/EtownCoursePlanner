@@ -354,64 +354,92 @@
     });
 
 
-    function generateMsg(){
-        // const { summarizePDF } = require("./openaiController.js");
-        // summarizePDF()
+    async function generateMsg(){
+        console.log("Generate button clicked");
+
         // Check if the card already exists
-    let existingCard = document.getElementById("output-card");
-    if (existingCard) {
-        existingCard.remove(); // Remove the old card to avoid duplicates
-    }
-
-     // Create the container for the card
-     const messageContainer = document.createElement("div");
-     messageContainer.id = "output-card";
-     messageContainer.className = "container";
-
-     // Create the card
-     const card = document.createElement("div");
-     card.className = "card";
-
-     // Create the card header with a close (X) button
-     const cardHeader = document.createElement("div");
-     cardHeader.className = "card-header text-white d-flex justify-content-between align-items-center";
-     
-     // Header text
-     const headerText = document.createElement("span");
-     headerText.textContent = "Generated Message";
-
-     // Close (X) button
-     const closeButton = document.createElement("button");
-     closeButton.className = "btn-close btn-close-white";
-     closeButton.setAttribute("aria-label", "Close");
-     closeButton.style.cursor = "pointer";
-     closeButton.addEventListener("click", () => {
-         messageContainer.remove(); // Remove the card on close
-     });
-
-     // Append text and close button to the header
-     cardHeader.appendChild(headerText);
-     cardHeader.appendChild(closeButton);
-
-     // Create the card body
-     const cardBody = document.createElement("div");
-     cardBody.className = "card-body";
-
-     const cardText = document.createElement("textarea");
-     cardText.className = "card-text";
-     cardText.id = "advisorMessage"
-     cardText.placeholder = "Type your message here";
-
+        let existingCard = document.getElementById("output-card");
+        if (existingCard) {
+            existingCard.remove(); // Remove the old card to avoid duplicates
+        }
     
-
-     // Assemble the card
-     cardBody.appendChild(cardText);
-     card.appendChild(cardHeader);
-     card.appendChild(cardBody);
-     messageContainer.appendChild(card);
-
-     // Append the card to the body
-     document.body.appendChild(messageContainer);
+        // Create the container for the card
+        const messageContainer = document.createElement("div");
+        messageContainer.id = "output-card";
+        messageContainer.className = "container";
+    
+        // Create the card
+        const card = document.createElement("div");
+        card.className = "card";
+    
+        // Create the card header with a close (X) button
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header text-white d-flex justify-content-between align-items-center";
+    
+        // Header text
+        const headerText = document.createElement("span");
+        headerText.textContent = "Generated Message";
+    
+        // Close (X) button
+        const closeButton = document.createElement("button");
+        closeButton.className = "btn-close btn-close-white";
+        closeButton.setAttribute("aria-label", "Close");
+        closeButton.style.cursor = "pointer";
+        closeButton.addEventListener("click", () => {
+            messageContainer.remove(); // Remove the card on close
+        });
+    
+        // Append text and close button to the header
+        cardHeader.appendChild(headerText);
+        cardHeader.appendChild(closeButton);
+    
+        // Create the card body
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body";
+    
+        // Create the textarea
+        const cardText = document.createElement("textarea");
+        cardText.className = "card-text";
+        cardText.id = "advisorMessage";
+        cardText.placeholder = "Loading summary..."; // Default loading message
+        cardText.disabled = true; // Disable input while loading
+    
+        // Create a loading spinner
+        const loadingSpinner = document.createElement("div");
+        loadingSpinner.className = "spinner-border text-primary";
+        loadingSpinner.role = "status";
+        const spinnerText = document.createElement("span");
+        spinnerText.className = "visually-hidden";
+        spinnerText.textContent = "Loading...";
+        loadingSpinner.appendChild(spinnerText);
+    
+        // Append spinner to card body initially
+        cardBody.appendChild(loadingSpinner);
+        card.appendChild(cardHeader);
+        card.appendChild(cardBody);
+        messageContainer.appendChild(card);
+    
+        // Append the card to the body
+        document.body.appendChild(messageContainer);
+    
+        try {
+            console.log("Fetching summary...");
+            const response = await fetch("/summarize-pdf");
+            const data = await response.json();
+            console.log("PDF Summary:", data.summary);
+    
+            // Remove the spinner and enable the textarea
+            cardBody.removeChild(loadingSpinner);
+            cardText.value = data.summary;
+            cardText.disabled = false; // Enable input after loading
+        } catch (error) {
+            console.error("Error fetching summary:", error);
+            cardText.value = "Error fetching summary.";
+            cardText.disabled = false; // Enable input in case of error
+        }
+    
+        // Add the textarea after loading completes
+        cardBody.appendChild(cardText);
     }
 
 
