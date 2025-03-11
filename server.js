@@ -5,8 +5,6 @@ const app = express();
 // const axios = require('axios');
 const multer = require('multer');
 const mysql = require('mysql2/promise');
-// const sqlite3 = require('sqlite3');
-// const sqlite = require('sqlite');
 const bcrypt = require('bcrypt'); // Password Hashing
 const bodyParser = require('body-parser'); // Parses form body
 const jwt = require('jsonwebtoken');
@@ -21,7 +19,8 @@ const connector = new Connector();
 app.use(multer().none());
 app.use(cookieParser());
 
-// const createUnixSocketPool = require('./connect-unix.js')
+// const storage = multer.memoryStorage();
+// const upload = multer({storage: storage});
 
 // Parse incoming url-encoded requests (default format)
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -107,24 +106,6 @@ app.get('/advisors', async (req, res) => {
             return res.status(404).json({ message: "No advisors found."});
         }
         //await db.end();
-        res.type('json').send(advisors); // Send results as JSON
-
-    } catch (error) {
-        console.error("Error retrieving advisors:", error);
-        res.status(500).send('Error on the server. Please try again later.');
-    }
-});
-
-app.get('/advisors/emails', async (req, res) => {
-    try {
-        const db = await getDbPool();
-        const query = "SELECT DISTINCT name, id, email FROM advisor";
-        const [advisors] = await db.query(query); // Fetch all rows from advisor table
-
-        if (advisors.length === 0) {
-            return res.status(404).json({ message: "No advisors found." });
-        }
-        
         res.type('json').send(advisors); // Send results as JSON
 
     } catch (error) {
@@ -239,8 +220,15 @@ app.get('/schedule-view', async (req, res) => {
         console.log("User's ID is", user_id);
 
         // Query out a students saved schedules
-        const query = "SELECT id, name FROM schedule WHERE user_id = ?"; 
+        const query = "SELECT id, name FROM schedule WHERE user_id = ?"; // add img
         const [schedules] = await db.query(query, [user_id]);
+
+        // Convert img to buffers
+        // schedules.forEach(schedule => {
+        //     if (schedule.img) {
+        //         schedule.img = Buffer.from(schedule.img).toString('base64');
+        //     }
+        // });
 
         res.type('json').send(schedules);
     } catch (error) {
@@ -293,71 +281,71 @@ app.get('/load-schedule', async (req, res) => { // Changes based on schedule_id
         const courses = results.map(({schedule_name, ...course}) => course);
         res.type('json').send({schedule_name, courses});
 
-        // const schedule_id = parseInt(req.params.id); // Requires testing? -- Make sure it is int
-        // console.log("Hellow");
-        // console.log("Schedule ID:", schedule_id);
-
-        // // Check if schedule exists
-        // const query = "SELECT * FROM schedule WHERE id = ? AND user_id = ?";
-        // const [schedule] = await db.query(query, [schedule_id, user_id]);
-
-        // if (schedule.length === 0) {
-        //     return res.status(400).json({message: "Schedule not found."});
-        // }
-
-        // // Retrieve associated courses
-        // // TODO: Check if it there is a course_id
-        // const query2 = `SELECT sc.id, sc.custom_name, sc.custom_start, sc.custom_end, sc.color, c.code, 
-        // c.name, c.credits, c.days, c.time
-        // FROM schedule_course sc
-        // LEFT JOIN course c ON sc.course_id = c.id
-        // WHERE sc.schedule_id = ?`;
-        // const [courses] = await db.query(query2, [schedule_id]);
-
-        // res.type('json').send({schedule: schedule[0], courses});
-
     } catch (error) {
         console.error("Error retrieving schedule details:", error);
         res.status(500).send("Error on the server. Please try again later.");
     }
 });
 
-app.post('/save-schedule', async (req, res) => {
+app.post('/save-schedule', async (req, res) => { // upload.single('image')
     try {
-        const {user_id, scheduleName, events} = req.body;
+        const {user_id, schedule_id, scheduleName, events} = req.body;
         if (!user_id || !scheduleName || !events || Object.keys(events).length === 0) {
             return res.status(400).json({message: "Missing required data."});
         }
+        // const blob = req.file ? req.file.buffer : null; // Extract image blob
+        // console.log("Recieved file:", req.file);
+        // console.log("Received events:", events);
+        // console.log("Type of events:", typeof events);
+        // let events = req.body.events;
+
+        // if (typeof events === "string") {
+        //     try {
+        //         events = JSON.parse(events);
+        //     } catch (error) {
+        //         return res.status(400).json({ message: "Invalid events format." });
+        //     }
+        // }
 
         const db = await getDbPool();
-
-        // Insert schedule into schedule table
-        const insertSchedule = "INSERT INTO schedule (user_id, name) VALUES (?, ?)";
-        const [scheduleResult] = await db.query(insertSchedule, [user_id, scheduleName]);
-
-        // Get inserted schedule id
-        const schedule_id = scheduleResult.insertId;
+        let sched_id = schedule_id; // Variable for seeing if the schedule_id is null or not
+        // TODO: Check if schedule_id is empty instead of null
+        if (schedule_id) { // IF THE SCHEDULE ID IS EXISTING and NOT new
+            // Update schedule name
+            const nameQuery = "UPDATE schedule SET name = ? WHERE id = ? AND user_id = ?"; // add img
+            const [name] = await db.query(nameQuery, [scheduleName, schedule_id, user_id]);
+            console.log(name);
+            // Delete old associated events
+            const delQuery = "DELETE FROM schedule_course WHERE schedule_id = ?";
+            await db.query(delQuery, [schedule_id]);
+        } else { // If there is no schedule id because the schedule is NEW
+            // Insert schedule into schedule table
+            const insertSchedule = "INSERT INTO schedule (user_id, name) VALUES (?, ?)"; // add img
+            const [scheduleResult] = await db.query(insertSchedule, [user_id, scheduleName]);
+            // Get inserted schedule id
+            sched_id = scheduleResult.insertId;
+        }
 
         // Insert events into schedule_course table
         const insertEvents = "INSERT INTO schedule_course (schedule_id, custom_name, custom_start, custom_end, color, days) VALUES ?";
         const eventMap = new Map(); // Store events grouped by details
 
         // Iterate over days and group events
-        // TODO: Ensure times are in military time
-        Object.keys(events).forEach(day => {
-            events[day].forEach(event => {
-                const key = `${event.title}-${event.startTime}-${event.endTime}-${event.color}`;
-                if (!eventMap.has(key)) {
+        Object.keys(events).forEach(day => { // Days of week
+            events[day].forEach(event => { // Array of events of a day, loops
+                const key = `${event.title}-${event.startTime}-${event.endTime}-${event.color}`; // Create unique key 
+                // If event has the same key, it's considered the same event across multiple days (maybe)
+                if (!eventMap.has(key)) { // If event is not in map, add it
                     eventMap.set(key, {...event, days: [day]});
-                } else {
+                } else { // Else update existing event/day/idk
                     eventMap.get(key).days.push(day);
                 }
             });
         });
 
         // Prepare event values
-        const eventValues = [...eventMap.values()].map(event => [
-            schedule_id,
+        const eventValues = [...eventMap.values()].map(event => [ // Converts values into array ([...]) 
+            sched_id, // The new/old schedule id
             event.title,
             convertToMilitaryTime(event.startTime),
             convertToMilitaryTime(event.endTime),
@@ -370,9 +358,37 @@ app.post('/save-schedule', async (req, res) => {
             console.log("Inserted events:", eventValues);
         }
 
-        res.status(200).json({message: "Schedule saved successfully.", schedule_id});
+        res.status(200).json({message: "Schedule saved successfully.", sched_id});
     } catch (error) {
         console.error("Error saving schedule:", error);
+        res.status(500).send("Error on the server. Please try again later.");
+    }
+});
+
+app.post('/delete-schedule', async (req, res) => {
+    try {
+        const {user_id, schedule_id} = req.body;
+        if (!user_id || !schedule_id) {
+            return res.status(400).json({message: "Missing required data."});
+        }
+        const db = await getDbPool();
+        await db.query("START TRANSACTION");
+        // Delete courses
+        const delCourses = "DELETE FROM schedule_course WHERE schedule_id = ?";
+        await db.query(delCourses, [schedule_id]);
+        // Delete schedule
+        const delSchedule = "DELETE FROM schedule WHERE id = ? and user_id = ?";
+        const [result] = await db.query(delSchedule, [schedule_id, user_id]);
+        if (result.affectedRows === 0) {
+            await db.query("ROLLBACK");
+            return res.status(400).json({message: "Schedule not found or unauthorized."});
+        }
+        // Commit transaction
+        await db.query("COMMIT");
+        res.status(200).send({message: "Schedule deleted successfully."});
+    } catch (error) {
+        console.error("Error deleting schedule:", error);
+        if (db) await db.query("ROLLBACK"); // Only rollback if DB connection exists
         res.status(500).send("Error on the server. Please try again later.");
     }
 });
@@ -709,17 +725,6 @@ async function addMinor(email, minor, advisor) {
  * @param {string} email - The email of the user to find.
  * @returns {object} - The user stored in the database.
  */
-// async function getUser(email) {
-//     const db = await getDbPool();
-
-//     const query = "SELECT * FROM user WHERE email = ?";
-//     const [user] = await db.query(query, [email]);
-
-//     //await db.end();
-
-//     return user;
-// }
-
 async function getUser(email) {
     const db = await getDbPool();
     const query = "SELECT * FROM user WHERE email = ?";

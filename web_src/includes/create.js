@@ -20,7 +20,7 @@
         if (schedule_id) {
             //console.log("Loaded schedule:", schedule);
             fetchSavedSchedule(schedule_id)
-            sessionStorage.removeItem("selectedSchedule"); // go away
+            //sessionStorage.removeItem("selectedSchedule"); // go away BUT NOT YET
         }
 
         // document.getElementById("add").addEventListener("click", addEvent);
@@ -28,7 +28,83 @@
         document.getElementById("manual_add").addEventListener("click", addEvent2);
         // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
         document.getElementById("save").addEventListener("click", saveSchedule);
-        
+
+        let isGenerating = false; // Prevent multiple clicks
+    
+        document.getElementById("generate_screenshot").addEventListener("click", function() {
+            if (isGenerating) return; // Prevent further clicks while generating the screenshot
+            isGenerating = true; // Set to true to prevent further clicks
+    
+            const scheduleContainer = document.getElementById("schedule-container");
+            const titleText = document.getElementById("schedule-title").value || "My Schedule";
+    
+            // Check if the title element already exists and remove it if it does
+            const existingTitle = scheduleContainer.querySelector(".schedule-title");
+            if (existingTitle) {
+                existingTitle.remove();
+            }
+
+            //Title for screenshot
+            let titleElement = document.createElement("div");
+            titleElement.innerText = titleText;
+            titleElement.classList.add("schedule-title"); 
+
+            // Insert title at the top of the screenshot
+            scheduleContainer.prepend(titleElement);
+
+            // Wait for the title to be rendered before capturing the screenshot
+            setTimeout(() => {
+                html2canvas(scheduleContainer, {
+                    backgroundColor: null // stays transparent
+                }).then(canvas => {
+                    // Use the title text for the filename, replacing spaces with no spaces
+                    let sanitizedTitle = titleText.replace(/\s+/g, '');
+                    let fileName = sanitizedTitle + '.png'; // File name based on title
+
+                    let link = document.createElement('a');
+                    link.href = canvas.toDataURL("image/png");
+                    link.download = fileName; // Sets filename
+                    link.click();
+
+                    // Remove the title after capturing the screenshot
+                    titleElement.remove();
+
+                    // Re-enable button and allow further clicks
+                    isGenerating = false;
+                });
+            }, 500); // Wait 500ms for the browser to render
+        });
+    }
+
+    let hasUnsavedChanges = false;
+    // Track changes when user modifies schedule
+    function markUnsavedChanges() {
+        hasUnsavedChanges = true;
+    }
+    // Listen for input or change events to track modifications (Reacher)
+    document.addEventListener("input", markUnsavedChanges);
+    document.addEventListener("change", markUnsavedChanges);
+
+    window.addEventListener("beforeunload", (event) => {
+        if (hasUnsavedChanges) {
+            event.preventDefault();
+            event.returnValue = ""; // Required for some browsers? says internet
+        }
+    });
+    // Custom confirmation when user clicks a link or tries to navigate
+    window.addEventListener("click", (event) => {
+        if (hasUnsavedChanges && event.target.tagName === "A") { // Checks for changes and if anchor tag was activated
+            event.preventDefault(); // Stop in the name of the law
+            showLeavePopup(event.target.href);
+        }
+    });
+    function showLeavePopup(redirectUrl) { // Hold on, wait a minute - Willow
+        const leavePage = confirm("You may have unsaved changes. Are you sure you want to leave?"); // Be polite
+        if (leavePage) {
+            hasUnsavedChanges = false; // Reset changes to avoid looper
+            sessionStorage.removeItem("selectedSchedule"); // Be gone satan
+            window.location.href = redirectUrl; // Navigate to new page
+        }
     }
 
     const events = { // Events holds all the classes saved for each day. All days (including events in once dict)
@@ -204,7 +280,7 @@
         selectedDays.forEach(day => { // FORMATTING IS HERE - LOOK HERE!!!!!!!!!!!!!!!!
             events[day].push({ title, startTime, endTime, color: selectedColor, eventNum});
         });
-        eventNum++;
+        eventNum++; // TODO: Move inside loop?
 
         titleInput.value = '';
         startTimeInput.value = '';
@@ -213,33 +289,68 @@
         updateTimeRange();
     }
 
-    async function saveSchedule() {
+    async function saveSchedule() { 
         const scheduleName = document.getElementById("schedule-title").value;
         const user_id = window.sessionStorage.getItem('id');
-
+        const schedule_id = JSON.parse(sessionStorage.getItem("selectedSchedule")); // get data from session storage -- but then when to destroy? idk 
         if (!user_id) {
             alert("Error: No user logged in.");
             return;
         }
-
         if (!scheduleName) {
             alert("Please enter a schedule name.");
             return;
         }
-    
-        const response = await fetch('/save-schedule', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({user_id, scheduleName, events})
-        });
-    
-        const result = await response.json();
-        //console.log(result.status);
-        console.log(result)
-        if (response.ok) { // Checks if successful
-            alert(result.message);
-        } else {
-            alert(result.error || "Error saving schedule. :(");
+
+        try {
+            // Get schedule screenshot as Blob
+            // const canvas = await html2canvas(document.getElementById('schedule-container'));
+            // canvas.toBlob(async (blob) => { // Remember to change img column to longblob
+            //     // Append Blob image to FormData
+            //     const formData = new FormData();
+            //     formData.append("user_id", user_id);
+            //     formData.append("schedule_id", schedule_id ?? null);
+            //     formData.append("scheduleName", scheduleName);
+            //     formData.append("events", JSON.stringify(events));
+            //     formData.append("image", blob, "schedule.png"); // Get associated title?
+
+            //     const response = await fetch('/save-schedule', {
+            //         method: 'POST',
+            //         body: formData, // FormData sets headers automatically
+            //     });
+
+            //     const result = await response.json();
+            //     if (result.ok) {
+            //         alert(result.message);
+            //     } else {
+            //         alert(result.error || "Error saving schedule. :(");
+            //     }
+            // }, "image/png");
+
+            const data = {
+                user_id,
+                schedule_id: schedule_id ?? null, // If schedule_id is null or undefined, send null
+                scheduleName,
+                events
+            };
+
+            // If selectedSchedule (sessionStorage) exists call other API || add id (empty or not) to body
+            const response = await fetch('/save-schedule', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+        
+            const result = await response.json();
+            //console.log(result.status);
+            console.log(result)
+            if (response.ok) { // Checks if successful
+                alert(result.message);
+            } else {
+                alert(result.message || "Error saving schedule. :(");
+            }
+        } catch (error) {
+            console.error("Error:", error);
         }
     }
 
@@ -251,8 +362,10 @@
             }
             const {schedule_name, courses} = await response.json();
             console.log("Fetched schedule:", schedule_name, courses);
-            // Remake schedule format
-            document.getElementById("schedule-title").textContent = schedule_name; // Displays name hopefully
+            // Put up the schedule title again
+            //console.log(document.getElementById("schedule-title"));
+            document.getElementById("schedule-title").value = schedule_name; // Displays name with VALUE
+            // What's the point of inner whatever?
 
             // Remake courses - whyyyyyy
             courses.forEach(row => {
@@ -265,7 +378,7 @@
                             endTime: row.custom_end,
                             color: row.color,
                             eventNum: eventNum++
-                        });
+                        }); // Twas actually much easier than inserting
                     }
                 });
             });

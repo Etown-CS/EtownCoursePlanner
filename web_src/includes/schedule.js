@@ -4,13 +4,16 @@
     window.addEventListener("load", init);
     
     function init() {
-        displaySchedules();
+        const user_id = window.sessionStorage.getItem('id');
+        if (user_id){ // If the user is logged in, otherwise show default square things - use for report page
+            displaySchedules();
+        }
     }
 
     // Description here
     async function displaySchedules() {
         try {
-            const response = await fetch("/schedule-view");
+            const response = await fetch('/schedule-view');
             const schedules = await response.json();
             // Error handling?
             const schedulesContainer = document.querySelector('.schedules'); // Gets schedule SECTION
@@ -23,25 +26,30 @@
                 return;
             }
 
-            //schedulesContainer.classList.remove('hidden');
-            
             schedules.forEach(schedule => {
                 const scheduleDiv = document.createElement('div');
                 scheduleDiv.classList.add('Schedule');
-
+                // If there's an img, create tag
+                // let imgHTML = '';
+                // if (schedule.img) {
+                //     imgHTML = `<img src="data:image/png;base64,${schedule.img}" class="Schedule_display"`;
+                // }
                 scheduleDiv.innerHTML = 
                 `<div class="Schedule_display"></div>
                 <h5 class="title">${schedule.name}</h5>
                 <div class="sched_btn">
                     <button type="button" class="btn btn-primary view-sched-btn" data-id="${schedule.id}">View</button>
+                    <button type="button" class="btn btn-primary del-sched-btn" style="margin-left:4px;background-color:red" data-id="${schedule.id}">Delete</button>
                 </div>`;
                 schedulesContainer.appendChild(scheduleDiv);
-                // export const schedule_id = schedule.id BUT NOT in loop
             });
 
             // Add event listeners?
             document.querySelectorAll(".view-sched-btn").forEach(button => {
                 button.addEventListener("click", loadSchedule);
+            });
+            document.querySelectorAll(".del-sched-btn").forEach(button => {
+                button.addEventListener("click", deleteSchedule);
             });
         } catch (error) {
             console.error("Error fetching schedules:", error);
@@ -50,7 +58,6 @@
 
 
     // Send only schedule ID to a get request and then fetch the get request to create.js
-    // EXPORT IT EXPORT IT EXPORT VARIABLE
     // Description here
     async function loadSchedule(event) {
         const schedule_id = event.target.getAttribute("data-id");
@@ -64,26 +71,40 @@
             // const schedule = await response.json();
             // console.log("Schedule to be loaded:", schedule);
             sessionStorage.setItem("selectedSchedule", JSON.stringify(schedule_id));
-
-            // Redirect user to create.html - Sent with given schedule ID
-            // window.location.href = "createSchedule.html"
-                // or `createSchedule.html?schedule_id=${schedule_id}`;
-
-        
-
-            // Save to session storage?
-            // sessionStorage.setItem("loadedSchedule", JSON.stringify(savedEvents));
-            // // Redirect user to calendar
-            // window.location.href = "create.html"; // May have to change -- Testing -- GCP :(
-            // /* For later use: 
-            // if (sessionStorage.getItem("loadedSchedule")) {
-            // Object.assign(events, JSON.parse(sessionStorage.getItem("loadedSchedule")));
-            // sessionStorage.removeItem("loadedSchedule");
-            // updateTimeRange(); 
-            // }*/
             window.location.href = "create.html"; // May have to change for GCP
         } catch (error) {
-            console.error("Error");
+            console.error("Error in loading schedule:", error);
+        }
+    }
+
+    // Add description here for deleting stuff
+    async function deleteSchedule(event) {
+        const user_id = window.sessionStorage.getItem('id');
+        const schedule_id = event.target.getAttribute("data-id");
+        if (!user_id) {
+            console.error("User not logged in.");
+            return;
+        }
+        if (!schedule_id) {
+            console.error("Schedule ID is missing.");
+            return;
+        }
+        try {
+            const response = await fetch('/delete-schedule', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({user_id, schedule_id})
+            });
+        
+            const result = await response.json();
+            if (response.ok) { // Checks if successful
+                alert(result.message);
+                window.location.reload();
+            } else {
+                alert(result.message || "Error deleting schedule.");
+            }
+        } catch (error) {
+            console.error("Error in deleting schedule:", error);
         }
     }
 
