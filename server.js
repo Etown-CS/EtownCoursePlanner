@@ -589,6 +589,40 @@ app.post('/add-oc-course', async function (req, res) {
     }
 });
 
+app.post('/add-transfer-course', async function (req, res) {
+    try {
+        const email = req.body.email;
+        const course_code = req.body.course_code;
+        const course_name = req.body.course_name;
+        const t_semester = req.body.t_semester;
+        const credits = req.body.credits;
+        const core = req.body.core;
+
+        const db = await getDbPool();
+
+        const query1 = `SELECT * FROM user WHERE email = ?;`;
+        const [user] = await db.query(query1, [email]);
+
+        const result = await addTransferCourse(user[0].id, course_code, course_name, t_semester, credits, core);
+        if (result) {
+            return res.status(200).json({
+                message: "Course added successfully!"
+            });
+        } else {
+            return res.status(400).json({
+                message: "Course could not be added."
+            });
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Error"
+        });
+    }
+});
+
 // Add description here - surely theres already a function for this???
 function convertToMilitaryTime(time) {
     if (!time) return null;
@@ -621,8 +655,29 @@ function convertToMilitaryTime(time) {
 async function addCourse(id, course_id, semester) {
     const db = await getDbPool();
 
-    const query = "INSERT INTO completed_course VALUES (?, ?, ?);";
+    const query = "INSERT INTO completed_course (user_id, course_id, semester) VALUES (?, ?, ?);";
     const res = await db.query(query, [id, course_id, semester]);
+    //await db.end();
+
+    return res;
+}
+
+/**
+ * Updating the user's minor and minor advisor.
+ * Any errors that occur should be caught in the function that calls this one.
+ * @param {int} id - The id of the user.
+ * @param {string} course_code - The transfer course code to insert.
+ * @param {string} course_name - The name of the transfer course to insert.
+ * @param {string} semester - The semester the course was taken to insert.
+ * @param {int} credits - The number of credits the course was taken to insert.
+ * @param {string} core - The core the course fulfills to insert.
+ * @returns {object} - The course record stored in the database.
+ */
+async function addTransferCourse(id, course_code, course_name, semester, credits, core) {
+    const db = await getDbPool();
+
+    const query = "INSERT INTO completed_course (user_id, semester, transfer_ccode, transfer_cname, transfer_credits, transfer_core) VALUES (?, ?, ?, ?, ?, ?);";
+    const res = await db.query(query, [id, semester, course_code, course_name, credits, core]);
     //await db.end();
 
     return res;
