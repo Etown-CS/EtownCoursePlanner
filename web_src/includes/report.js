@@ -18,6 +18,7 @@
         try {
             const response = await fetch("/core");
             const data = await response.json();
+            console.log(data);
             const percentage = data.progressPercentage;
             const bar = document.getElementById("core-progress-bar");
             bar.style.width = `${percentage}%`;
