@@ -7,7 +7,6 @@
             id("on_campus").addEventListener("click", classType);
             id("transfer").addEventListener("click", classType);
             id("course-btn").addEventListener("click", addCourse)
-            id("transfer-course-btn").addEventListener("click", addTransferCourse);
         }
         if (id("minor-btn") != null) {
             id("minor-btn").addEventListener("click", addMinor);
@@ -30,34 +29,6 @@
         .then((data) => {
             id('message').textContent = data['message'];
         })
-        alert("Click ok to add another course.");
-        window.location.href = "../course.html";
-    }
-
-    function addTransferCourse() {
-        const url = "/add-transfer-course";
-        let params = new FormData();
-        let course_code = id("course-code").value;
-        let course_name = id("course-name").value;
-        let t_semester = id("t-semester").value;
-        let credits = id("credits").value;
-        let core = id("core").value;
-
-        params.append("email", window.sessionStorage.getItem("email"));
-        params.append("course_code", course_code);
-        params.append("course_name", course_name);
-        params.append("t_semester", t_semester);
-        params.append("credits", credits);
-        params.append("core", core);
-
-        const options = {method: "POST", body: params};
-        fetch(url, options)
-        .then(checkStatus)
-        .then((data) => {
-            id('message').textContent = data['message'];
-        })
-        alert("Click ok to add another course.");
-        window.location.href = "../course.html";
     }
 
     function addMinor() {

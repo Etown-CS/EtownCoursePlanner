@@ -53,14 +53,17 @@
                 <form class="settings-form hidden" id="transfer-class-add">
                     <p>All information needed for this can be found on your Off Campus Approval Request form from Registration & Records.</p>
 
-                    <label for="course-name" class="form-label">Enter Course Name:</label><br>
+                    <label for="credits" class="form-label">Enter Credit Amount</label><br>
+                    <input type="text" class="form-control" id="credits" name="credits"><br>
+
+                    <label for="course-name" class="form-label">Enter Course Name</label><br>
                     <input type="text" class="form-control" id="course-name" name="course-name" placeholder="eg Spanish 1"><br>
 
-                    <label for="course-code" class="form-label">Enter Course Code:</label><br>
+                    <label for="course-code" class="form-label">Enter Course Code</label><br>
                     <input type="text" class="form-control" id="course-code" name="course-code" placeholder="eg SP111"><br>
 
-                    <label for="credits" class="form-label">Enter Credit Amount:</label><br>
-                    <input type="number" class="form-control" id="credits" name="credits"><br>
+                    <label for="req" class="form-label">Enter Requirement Fulfilled</label><br>
+                    <input type="text" class="form-control" id="req" name="req" placeholder="eg CS121"><br>
 
                     <label for="core" class="form-label">Core Fulfillment, if any:</label>
                     <select class="form-control" id="core" name="core">
@@ -68,16 +71,14 @@
                         <option value="PLE">PLE - Power of Language, English</option>
                         <option value="PLO">PLO - Power of Language</option>
                         <option value="MA">MA - Mathematics</option>
+                        <option value="CE">CE - Creative Expression</option>
                         <option value="WCH">WCH - Western Cultural Heritage</option>
                         <option value="NCH">NCH - NonWestern Cultural Heritage</option>
                         <option value="NPS">NPS - Natural Physical Science, with or without Lab</option>
                         <option value="NPSL">NPSL - Natural Physical Science, with Lab</option>
                         <option value="SSC">SSC - Social Science</option>
                         <option value="HUM">HUM - Humanities</option>
-                    </select><br>
-
-                    <label for="t-semester" class="form-label">Enter Semester Taken</label><br>
-                    <input type="text" class="form-control" id="t-semester" name="t-semester" placeholder="eg FA2023"><br>
+                    </select>
 
                     <br>
                     <button type="button" class="submit-btn" id="transfer-course-btn">Add Course</button>
