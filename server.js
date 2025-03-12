@@ -19,7 +19,7 @@ const openai = new OpenAI({
 
 module.exports = openai;
 
-const { generateMeta } = require('./openaiController')
+//const { generateMeta } = require('./openaiController')
 // const dbPath = 'course_planner.db';
 const PORT = process.env.PORT || 8080;
 
@@ -777,7 +777,6 @@ app.listen(PORT, () => {
 
 //get the AI response
 const { summarizePDF } = require('./openaiController.js');
-app.use(express.json());
 
 app.get('/summarize-pdf', async (req, res) => {
     try {
@@ -794,6 +793,6 @@ app.get('/api/get-key', (req, res) => {
     // Replace with authentication if needed
     const apiKey = process.env.API_KEY;
     res.json({ apiKey });
-  });
+});
   
-  app.listen(3000, () => console.log('Server running on port 3000'));
+app.listen(3000, () => console.log('Server running on port 3000'));
