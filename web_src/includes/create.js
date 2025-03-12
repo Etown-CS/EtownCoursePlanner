@@ -4,8 +4,6 @@
     window.addEventListener("load", init);
     let eventNum =0;
 
-    
-
     function init() {
         $('#navbar').load('includes/navbar.html', function() {
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -27,7 +25,6 @@
 
         // document.getElementById("add").addEventListener("click", addEvent);
         document.getElementById("msg_btn").addEventListener("click", msgBox);
-        document.getElementById("generate").addEventListener("click", generateMsg);
         document.getElementById("manual_add").addEventListener("click", addEvent2);
         // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
         document.getElementById("save").addEventListener("click", saveSchedule);
