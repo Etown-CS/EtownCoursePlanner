@@ -393,15 +393,15 @@
 
     function msgBox() {
             // Check if the card already exists
-        let existingCard = document.getElementById("message-container");
+        let existingCard = document.getElementById("message");
         if (existingCard) {
             existingCard.remove(); // Remove the old card to avoid duplicates
         }
 
         // Create the container for the card
         const messageContainer = document.createElement("div");
-        messageContainer.id = "message-container";
-        messageContainer.className = "container";
+        messageContainer.id = "message";
+        messageContainer.className = "message-container";
 
         // Create the card
         const card = document.createElement("div");
@@ -443,7 +443,12 @@
         sendButton.id = "sendBtn"
         sendButton.textContent = "Send";
         sendButton.style.marginTop = "10px";
-        sendButton.addEventListener("click", sendEmail);
+        sendButton.addEventListener("click", () => {
+            // Call the sendEmail function
+            sendEmail();
+            messageContainer.remove();
+
+        });
 
         // Assemble the card
         cardBody.appendChild(cardText);
@@ -616,6 +621,9 @@
         .catch(error => {
           console.error("Error sending email:", error);
         });
+        document.getElementById("message");
+
+        // Add the textarea after loading completes
       }
 
 
@@ -631,7 +639,7 @@
         // Create the container for the card
         const messageContainer = document.createElement("div");
         messageContainer.id = "output-card";
-        messageContainer.className = "container";
+        messageContainer.className = "message-container";
     
         // Create the card
         const card = document.createElement("div");
@@ -695,16 +703,17 @@
     
             // Remove the spinner and enable the textarea
             cardBody.removeChild(loadingSpinner);
+            
             cardText.value = data.summary;
             cardText.disabled = false; // Enable input after loading
+            cardBody.appendChild(cardText);
         } catch (error) {
             console.error("Error fetching summary:", error);
             cardText.value = "Error fetching summary.";
             cardText.disabled = false; // Enable input in case of error
         }
     
-        // Add the textarea after loading completes
-        cardBody.appendChild(cardText);
+        
     }
 
 
