@@ -1,5 +1,6 @@
 "use strict";
 require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const app = express();
 // const axios = require('axios');
@@ -10,11 +11,21 @@ const bodyParser = require('body-parser'); // Parses form body
 const jwt = require('jsonwebtoken');
 const jwtSecret = "0f21f0a8883cdbfab0d88578e409b702a6461977c93a101ad81ba96b04281563";
 const cookieParser = require("cookie-parser");
+const readline = require("readline");
+const OpenAI = require("openai");
+const openai = new OpenAI({
+    apiKey: process.env.API_KEY2,
+});
 
+module.exports = openai;
+
+const { generateMeta } = require('./openaiController')
+// const dbPath = 'course_planner.db';
 const PORT = process.env.PORT || 8080;
-require('dotenv').config();
+
 const { Connector } = require('@google-cloud/cloud-sql-connector');
 const connector = new Connector();
+
 
 app.use(multer().none());
 app.use(cookieParser());
@@ -763,8 +774,21 @@ app.listen(PORT, () => {
     testDbConnection();
 });
 
-//yipieee go me
+
+//get the AI response
+const { summarizePDF } = require('./openaiController.js');
 app.use(express.json());
+
+app.get('/summarize-pdf', async (req, res) => {
+    try {
+        const summary = await summarizePDF();
+        res.json({ summary });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to summarize PDF" });
+    }
+});
+
+//yipieee go me
 
 app.get('/api/get-key', (req, res) => {
     // Replace with authentication if needed
