@@ -39,11 +39,11 @@
 
     function addMinor() {
         if (id("min-yes").checked) {
-            id('minor').classList.remove("hidden");
-            id('minor-advisor').classList.remove("hidden");
+            id('minor-sect').classList.remove("hidden");
+            id('minor-advisor-sect').classList.remove("hidden");
         } else {
-            id('minor').classList.add("hidden");
-            id('minor-advisor').classList.add("hidden");
+            id('minor-sect').classList.add("hidden");
+            id('minor-advisor-sect').classList.add("hidden");
         }
     }
 
@@ -58,9 +58,9 @@
         params.append("major", id("major").value);
         params.append("advisor", id("advisor").value);
         params.append("password", id("password").value);
-        if (id("minor") != null) {
+        if (id("minor").value != null) {
             params.append("minor", id("minor").value);
-            params.append("min_advisor_id", id("advisor").value);
+            params.append("min_advisor", id("min_advisor").value);
         }
 
         let pwd = id('password').value;
@@ -78,6 +78,8 @@
         .then((data) => {
             id('message').textContent = data['message'];
         });
+        alert("Click ok to login, then go to settings to add your course history.");
+        window.location.href = ("../login.html");
     }
 })();
 
