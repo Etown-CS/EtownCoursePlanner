@@ -129,6 +129,59 @@ app.get('/major', async (req, res) => {
     }
 });
 
+app.get('/majorCompleted', async (req, res) => { 
+    const courseIds= [1, 2, 3, 31, 23, 7, 8, 12, 24, 10, 13, 14, 15, 25, 26, 21, 22, 18, 17, 19];
+    // Extract token from cookie?
+    const token = req.cookies.jwt;
+    if (!token) {
+        return res.status(400).json({message: "User not logged in."});
+    }
+
+    // Verify token
+    const decoded = jwt.verify(token, jwtSecret);
+    if (!decoded || !decoded.email) {
+        return res.status(400).json({message: "Invalid token."});
+    }
+    
+    const db = await getDbPool();
+
+    // Retrieve user ID from email
+    const user = await getUser(decoded.email);
+    const userId = user[0].id;
+    if (!userId) {
+        return res.status(400).json({ message: "User not found." });
+    }
+    try {
+        const db = await getDbPool();
+        const query = `SELECT c.course_code, c.name, c.credits, c.core 
+        FROM completed_course cc 
+        JOIN course c ON cc.course_id = c.id 
+        WHERE cc.user_id = ? AND c.id IN (${courseIds.join(', ')});`;
+        const [completedCourses] = await db.query(query, [userId]);
+        //await db.end();
+        
+        const completedMajorCourses = [];
+
+        completedCourses.forEach(course => {
+            completedMajorCourses.push(course);
+        });
+
+        const totalMajor = courseIds.length;
+        const fulfilledMajor = completedMajorCourses.length;
+        const progressPercentage = Math.round((fulfilledMajor/totalMajor)*100);
+
+        res.type('json').send({
+            completedMajorCourses,
+            fulfilledMajor,
+            totalMajor,
+            progressPercentage
+        });
+    } catch (error) {
+        console.error("Error fetching progress data:", error);
+        res.status(500).send("Error on server. Please try again later.");
+    }
+});
+
 app.get('/advisors', async (req, res) => {
     try {
         const db = await getDbPool();

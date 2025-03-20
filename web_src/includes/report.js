@@ -7,6 +7,7 @@
 
     function init() {
         loadCoreProgress();
+        loadMajorProgress();
         populateCompletedTable();
         populateMajorTable();
     }
@@ -26,6 +27,27 @@
             bar.innerText = `${percentage}% Completed`;
             const coreCreditsInfo = document.getElementById("core-credits-info");
             coreCreditsInfo.innerText = `${data.fulfilledCoreCategories} out of ${data.totalCoreCategories} core completed.`;
+
+        } catch (error) {
+            console.error("Error loading progress:", error);
+        }
+    }
+
+    /**
+     * Populates progress bar for major courses
+     */
+    async function loadMajorProgress() {
+        try {
+            const response = await fetch("/majorCompleted");
+            const data = await response.json();
+            console.log(data);
+            const percentage = data.progressPercentage;
+            const bar = document.getElementById("major-progress-bar");
+            bar.style.width = `${percentage}%`;
+            bar.setAttribute('aria-valuenow', percentage);
+            bar.innerText = `${percentage}% Completed`;
+            const majorCreditsInfo = document.getElementById("major-credits-info");
+            majorCreditsInfo.innerText = `${data.fulfilledMajor} out of ${data.totalMajor} core completed.`;
 
         } catch (error) {
             console.error("Error loading progress:", error);
