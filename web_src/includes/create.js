@@ -296,6 +296,7 @@
         const scheduleName = document.getElementById("schedule-title").value;
         const user_id = window.sessionStorage.getItem('id');
         const schedule_id = JSON.parse(sessionStorage.getItem("selectedSchedule")); // get data from session storage -- but then when to destroy? idk 
+        const scheduleContainer = document.getElementById("schedule-container");
         if (!user_id) {
             alert("Error: No user logged in.");
             return;
@@ -306,6 +307,12 @@
         }
 
         try {
+            // Get screenshot of schedule
+            const canvas = await html2canvas(scheduleContainer, {backgroundColor: null});
+            // Compress img and convert to base64
+            const screenshotData = canvas.toDataURL("image/jpeg", 0.7) // 0.7 is quality
+
+
             // Get schedule screenshot as Blob
             // const canvas = await html2canvas(document.getElementById('schedule-container'));
             // canvas.toBlob(async (blob) => { // Remember to change img column to longblob
@@ -334,7 +341,8 @@
                 user_id,
                 schedule_id: schedule_id ?? null, // If schedule_id is null or undefined, send null
                 scheduleName,
-                events
+                events,
+                screenshot: screenshotData // Send screenshot as base64 string
             };
 
             // If selectedSchedule (sessionStorage) exists call other API || add id (empty or not) to body
@@ -349,6 +357,7 @@
             console.log(result)
             if (response.ok) { // Checks if successful
                 alert(result.message);
+                hasUnsavedChanges = false;
             } else {
                 alert(result.message || "Error saving schedule. :(");
             }

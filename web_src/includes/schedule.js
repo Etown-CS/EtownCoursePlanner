@@ -30,12 +30,12 @@
                 const scheduleDiv = document.createElement('div');
                 scheduleDiv.classList.add('Schedule');
                 // If there's an img, create tag
-                // let imgHTML = '';
-                // if (schedule.img) {
-                //     imgHTML = `<img src="data:image/png;base64,${schedule.img}" class="Schedule_display"`;
-                // }
+                let imgHTML = '';
+                if (schedule.img) {
+                    imgHTML = `<img src="data:image/jpeg;base64,${schedule.img}" class="Schedule_display"`;
+                }
                 scheduleDiv.innerHTML = 
-                `<div class="Schedule_display"></div>
+                `<div class="Schedule_display">${imgHTML}</div>
                 <h5 class="title">${schedule.name}</h5>
                 <div class="sched_btn">
                     <button type="button" class="btn btn-primary view-sched-btn" data-id="${schedule.id}">View</button>

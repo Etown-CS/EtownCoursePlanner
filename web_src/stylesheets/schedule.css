@@ -172,6 +172,8 @@ color: #C8C8C8;
       margin-right: 10%;
       grid-template-columns: repeat(2, 1fr);
       grid-gap: 16px;
+      justify-items: center; /*Center horizontally*/
+      /* grid-auto-rows: auto; */
   }
   
   /* Individual Schedule */
@@ -181,13 +183,16 @@ color: #C8C8C8;
   padding: 16px;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  margin-bottom: 10px;
   }
   
   .Schedule_display {
-  margin-top: 3%;
-  width: 300px;
-  height: 300px;
+  /* margin-top: 3%; */
+  width: 320px;
+  height: 250px;
   background-color: black;
+  border-radius: 8px;
 }
 .sched_btn {
   display: flex;
@@ -195,6 +200,11 @@ color: #C8C8C8;
   align-items: center;
   justify-content: center;
 }
+
+.del-sched-btn {
+  color: red;
+}
+
 #schedule_Maker{
   display: flex;
 
