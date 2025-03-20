@@ -8,6 +8,11 @@
         if (user_id){ // If the user is logged in, otherwise show default square things - use for report page
             displaySchedules();
         }
+        document.getElementById("createNew").addEventListener("click", function() {
+            // Redirect to the desired page
+            window.location.href = "create.html"; // Replace 'newPage.html' with your desired URL
+            sessionStorage.removeItem("selectedSchedule");
+        });
     }
 
     // Description here
