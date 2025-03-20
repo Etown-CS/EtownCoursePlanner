@@ -63,7 +63,29 @@ app.get('/courses', async (req, res) => {
 });
 
 app.get('/courses-completed', async (req, res) => {
-    const userId = 1; // Hard code user for now
+    // Extract token from cookie?
+    const token = req.cookies.jwt;
+    if (!token) {
+        return res.status(400).json({message: "User not logged in."});
+    }
+
+    // Verify token
+    const decoded = jwt.verify(token, jwtSecret);
+    if (!decoded || !decoded.email) {
+        return res.status(400).json({message: "Invalid token."});
+    }
+    
+    const db = await getDbPool();
+
+    // Retrieve user ID from email
+    const user = await getUser(decoded.email);
+    const userId = user[0].id;
+    if (!userId) {
+        return res.status(400).json({ message: "User not found." });
+    }
+    // const user_id = req.body.user_id;
+    console.log("User's ID is", userId);
+
     try {
         const db = await getDbPool();
         const query = `SELECT c.course_code, c.name, c.department, c.credits 
@@ -144,7 +166,26 @@ app.get('/advisors/emails', async (req, res) => {
 });
 
 app.get('/core', async (req, res) => { // Switch POST?
-    const userId = 1; // Hard code user for now
+    // Extract token from cookie?
+    const token = req.cookies.jwt;
+    if (!token) {
+        return res.status(400).json({message: "User not logged in."});
+    }
+
+    // Verify token
+    const decoded = jwt.verify(token, jwtSecret);
+    if (!decoded || !decoded.email) {
+        return res.status(400).json({message: "Invalid token."});
+    }
+    
+    const db = await getDbPool();
+
+    // Retrieve user ID from email
+    const user = await getUser(decoded.email);
+    const userId = user[0].id;
+    if (!userId) {
+        return res.status(400).json({ message: "User not found." });
+    }
     try {
         const db = await getDbPool();
         const query = `SELECT c.course_code, c.name, c.credits, c.core 

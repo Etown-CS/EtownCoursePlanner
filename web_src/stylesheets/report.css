@@ -50,3 +50,7 @@ HEX #C8C8C8 (Light Gray)
 .hidden {
   display: none !important;
 }
+
+#prog-bar {
+  margin: 40px;
+}
