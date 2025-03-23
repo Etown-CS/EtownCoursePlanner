@@ -47,7 +47,7 @@
             bar.setAttribute('aria-valuenow', percentage);
             bar.innerText = `${percentage}% Completed`;
             const majorCreditsInfo = document.getElementById("major-credits-info");
-            majorCreditsInfo.innerText = `${data.fulfilledMajor} out of ${data.totalMajor} core completed.`;
+            majorCreditsInfo.innerText = `${data.fulfilledMajor} out of ${data.totalMajor} classes completed.`;
 
         } catch (error) {
             console.error("Error loading progress:", error);
