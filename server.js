@@ -1,6 +1,5 @@
 "use strict";
 require('dotenv').config();
-require('dotenv').config();
 const express = require('express');
 const app = express();
 // const axios = require('axios');
@@ -11,6 +10,7 @@ const bodyParser = require('body-parser'); // Parses form body
 const jwt = require('jsonwebtoken');
 const jwtSecret = "0f21f0a8883cdbfab0d88578e409b702a6461977c93a101ad81ba96b04281563";
 const cookieParser = require("cookie-parser");
+const fs = require('fs'); // For img buffer
 const readline = require("readline");
 const OpenAI = require("openai");
 const openai = new OpenAI({
@@ -322,18 +322,18 @@ app.get('/schedule-view', async (req, res) => {
             return res.status(400).json({ message: "User not found." });
         }
         // const user_id = req.body.user_id;
-        console.log("User's ID is", user_id);
+        //console.log("User's ID is", user_id);
 
         // Query out a students saved schedules
-        const query = "SELECT id, name FROM schedule WHERE user_id = ?"; // add img
+        const query = "SELECT id, name, img FROM schedule WHERE user_id = ?"; // add img
         const [schedules] = await db.query(query, [user_id]);
 
-        // Convert img to buffers
-        // schedules.forEach(schedule => {
-        //     if (schedule.img) {
-        //         schedule.img = Buffer.from(schedule.img).toString('base64');
-        //     }
-        // });
+        // Convert img to back to base64 if exists
+        schedules.forEach(schedule => {
+            if (schedule.img) {
+                schedule.img = Buffer.from(schedule.img).toString('base64'); // blob
+            }
+        })
 
         res.type('json').send(schedules);
     } catch (error) {
@@ -394,7 +394,7 @@ app.get('/load-schedule', async (req, res) => { // Changes based on schedule_id
 
 app.post('/save-schedule', async (req, res) => { // upload.single('image')
     try {
-        const {user_id, schedule_id, scheduleName, events} = req.body;
+        const {user_id, schedule_id, scheduleName, events, screenshot} = req.body;
         if (!user_id || !scheduleName || !events || Object.keys(events).length === 0) {
             return res.status(400).json({message: "Missing required data."});
         }
@@ -412,21 +412,28 @@ app.post('/save-schedule', async (req, res) => { // upload.single('image')
         //     }
         // }
 
+        // Decode img to binary data
+        let imgBuffer = null;
+        if (screenshot) {
+            const base64Data = screenshot.replace(/^data:image\/jpeg;base64,/, ''); // Remove metadata
+            imgBuffer = Buffer.from(base64Data, 'base64'); // Decode to binary
+        }
+
         const db = await getDbPool();
         let sched_id = schedule_id; // Variable for seeing if the schedule_id is null or not
         // TODO: Check if schedule_id is empty instead of null
         if (schedule_id) { // IF THE SCHEDULE ID IS EXISTING and NOT new
             // Update schedule name
-            const nameQuery = "UPDATE schedule SET name = ? WHERE id = ? AND user_id = ?"; // add img
-            const [name] = await db.query(nameQuery, [scheduleName, schedule_id, user_id]);
+            const nameQuery = "UPDATE schedule SET name = ?, img = ? WHERE id = ? AND user_id = ?"; // add img
+            const [name] = await db.query(nameQuery, [scheduleName, imgBuffer, schedule_id, user_id]);
             console.log(name);
             // Delete old associated events
             const delQuery = "DELETE FROM schedule_course WHERE schedule_id = ?";
             await db.query(delQuery, [schedule_id]);
         } else { // If there is no schedule id because the schedule is NEW
             // Insert schedule into schedule table
-            const insertSchedule = "INSERT INTO schedule (user_id, name) VALUES (?, ?)"; // add img
-            const [scheduleResult] = await db.query(insertSchedule, [user_id, scheduleName]);
+            const insertSchedule = "INSERT INTO schedule (user_id, name, img) VALUES (?, ?, ?)"; // add img
+            const [scheduleResult] = await db.query(insertSchedule, [user_id, scheduleName, imgBuffer]);
             // Get inserted schedule id
             sched_id = scheduleResult.insertId;
         }
@@ -477,19 +484,19 @@ app.post('/delete-schedule', async (req, res) => {
             return res.status(400).json({message: "Missing required data."});
         }
         const db = await getDbPool();
-        await db.query("START TRANSACTION");
+        await db.query("START TRANSACTION"); // Cash or credit?
         // Delete courses
         const delCourses = "DELETE FROM schedule_course WHERE schedule_id = ?";
         await db.query(delCourses, [schedule_id]);
         // Delete schedule
         const delSchedule = "DELETE FROM schedule WHERE id = ? and user_id = ?";
         const [result] = await db.query(delSchedule, [schedule_id, user_id]);
-        if (result.affectedRows === 0) {
-            await db.query("ROLLBACK");
+        if (result.affectedRows === 0) { // If all else fails
+            await db.query("ROLLBACK"); // Hollaback
             return res.status(400).json({message: "Schedule not found or unauthorized."});
         }
         // Commit transaction
-        await db.query("COMMIT");
+        await db.query("COMMIT"); // Double check - show work
         res.status(200).send({message: "Schedule deleted successfully."});
     } catch (error) {
         console.error("Error deleting schedule:", error);
