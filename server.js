@@ -143,54 +143,69 @@ app.get('/advisors/emails', async (req, res) => {
     }
 });
 
-app.get('/core', async (req, res) => { // Switch POST?
-    const userId = 1; // Hard code user for now
+app.get('/core', async (req, res) => { 
+    const userId = 12; // Hard code user for now
     try {
         const db = await getDbPool();
-        const query = `SELECT c.course_code, c.name, c.credits, c.core 
+        const query = `SELECT c.course_code, c.name, c.credits, c.core,
+        cc.transfer_ccode, cc.transfer_cname, cc.transfer_credits, cc.transfer_core 
         FROM completed_course cc 
-        JOIN course c ON cc.course_id = c.id 
-        WHERE cc.user_id = ?;`;
+        LEFT JOIN course c ON cc.course_id = c.id 
+        WHERE cc.user_id = ?`; // Grabs from courses AND completed courses (Not all matching rows)
+
         const [completedCourses] = await db.query(query, [userId]);
         //await db.end();
 
         const coreRequirements = {
-            "PLE" : 1,
-            "PLO" : 1,
-            "MA" : 1,
-            "CE" : 4,
-            "WCH" : 1,
-            "NCH" : 1,
-            "NPS" : 1,
-            "NPSL" : 1,
-            "SSC" : 1,
-            "HUM" : 1,
-            "SLE" : 2
+            "PLE" : false,
+            "PLO" : false,
+            "MA" : false,
+            "CE" : 0,
+            "WCH" : false,
+            "NCH" : false,
+            "NPS" : false,
+            "NPSL" : false,
+            "SSC" : false,
+            "HUM" : false,
+            "SLE" : false
         };
         
-        const coreFulfilled = {};
-        let ceCredits = 0;
         const completedCoreCourses = [];
 
         completedCourses.forEach(course => {
-            const coreType = course.core;
-            if (coreType && coreType in coreRequirements) {
-                completedCoreCourses.push(course);
+            let coreType = null;
+            let credits = 0;
+            let courseInfo = {};
 
-                if (coreType === "CE") {
-                    ceCredits += course.credits;
+            // Check if on-campus or transfer
+            if (course.course_code) { // on-campus
+                coreType = course.core;
+                credits = course.credits;
+                courseInfo = {course_code: course.course_code, name: course.name, credits, core: coreType};
+            } else if (course.transfer_ccode) { // Transfer obv
+                coreType = course.transfer_core;
+                credits = course.transfer_credits;
+                courseInfo = {course_code: course.transfer_ccode, name: course.transfer_cname, credits, core: coreType};
+            }
+
+            if (coreType && coreType in coreRequirements) { // If core exists AND in the dict
+                completedCoreCourses.push(courseInfo); // posh
+
+                if (coreType === "CE") { // Only for CE bc weird
+                    coreRequirements["CE"] += credits;
                 } else {
-                    coreFulfilled[coreType] = true;
+                    coreRequirements[coreType] = true;
                 }
             }
         });
 
-        if (ceCredits >= coreRequirements["CE"]) {
-            coreFulfilled["CE"] = true;
-        }
-
+        // if (ceCredits >= coreRequirements["CE"]) { // If 4 credits or over, mission accomplished
+        //     coreFulfilled["CE"] = true;
+        // }
+        coreRequirements["CE"] = coreRequirements["CE"] >= 4;
+        // console.log(coreRequirements);
         const totalCoreCategories = Object.keys(coreRequirements).length;
-        const fulfilledCoreCategories = Object.keys(coreFulfilled).length;
+        const fulfilledCoreCategories = Object.values(coreRequirements).filter(value => value === true).length;
         const progressPercentage = Math.round((fulfilledCoreCategories/totalCoreCategories)*100);
 
         res.type('json').send({
