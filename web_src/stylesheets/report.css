@@ -51,6 +51,7 @@ HEX #C8C8C8 (Light Gray)
   display: none !important;
 }
 
-#prog-bar {
-  margin: 40px;
+
+#credits {
+  margin: 20px;
 }
