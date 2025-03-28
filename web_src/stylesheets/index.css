@@ -156,3 +156,15 @@ blockquote {
 .hidden {
   display: none !important;
 }
+
+#semester-plan table, 
+#semester-plan th, 
+#semester-plan td {
+  border: 5px solid white;
+  border-collapse: collapse;
+}
+
+#semester-plan th, 
+#semester-plan td {
+  background-color: gainsboro;
+}
