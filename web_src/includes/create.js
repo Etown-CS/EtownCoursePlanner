@@ -625,11 +625,12 @@
 
         // Add the textarea after loading completes
       }
-
+    
+     
 
     async function generateMsg(){
         console.log("Generate button clicked");
-
+        
         // Check if the card already exists
         let existingCard = document.getElementById("output-card");
         if (existingCard) {
@@ -699,7 +700,7 @@
             console.log("Fetching summary...");
             const response = await fetch("/summarize-pdf");
             const data = await response.json();
-            console.log("PDF Summary:", data.summary);
+            //console.log("PDF Summary:", data.summary);
     
             // Remove the spinner and enable the textarea
             cardBody.removeChild(loadingSpinner);

@@ -2,11 +2,33 @@
 const openai = require('./server');
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
-// You might need a package like 'mammoth' or 'docx-parser' for DOCX files.
+
+//a function to get the compleated courses to feed to the AI from the database
+const fetchCoursesTaken = async () => {
+    const url = "/courses-completed";
+    
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Response not ok");
+
+        const data = await res.json();
+        const courseList = data.map(course => ({
+            course_code: course.course_code,
+            name: course.name
+        }));
+
+        console.log(courseList); // Now logs correctly after fetching data
+        return courseList; // Returning the fetched courses if needed
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+    }
+    return courseList;
+}; 
+
 
 function FindDocuments() {
-    let track = "AI & Data Science";
-    let PDF1path;  // Declare PDF1path variable outside the switch statement
+    let track = "AI & Data Science";//Hard coded for cs but code can be used in future for other majors 
+    let PDF1path;  
 
     switch (track) {
         case "Hardware":
@@ -14,7 +36,7 @@ function FindDocuments() {
             console.log("Hardware");
             break;
         case "AI & Data Science":
-            PDF1path = "AIDocs/2024-2025_Computer_Science_Degree_Planner_(4_Concentrations).pdf"; // Ensure this is a PDF path.
+            PDF1path = "AIDocs/2024-2025_Computer_Science_Degree_Planner_(4_Concentrations).pdf"; 
             console.log("Data Science");
             break;
         case "Cyber Security":
@@ -29,12 +51,15 @@ function FindDocuments() {
             PDF1path = "AIDocs/2024-2025_B.S._in_Computer_Science_Degree_Planner.pdf";
             console.log("Untracked");
     }
-    return PDF1path;  // Return the file path after the switch block
+    return PDF1path;  
 }
 
 const summarizePDF = async () => {
+    console.log("Inside summarizePDF()...");
     const pdf1 = FindDocuments();  // First PDF
     const pdf3 = "AIDocs\\Spring2025CourseListings.pdf";  // Third PDF (Separate Content)
+    console.log("Calling fetchCourses..."); 
+    const coursesTaken = await fetchCoursesTaken();
 
     try {
         // Step 1: Read and extract text from the first two PDFs (combined)
@@ -53,9 +78,7 @@ const summarizePDF = async () => {
             messages: [
                 {
                     role: "user", 
-                    content: `A student has  a Data and AI conecntration they already taken the following classes: CS 121 – Computer Science I, EN 100 – PLE Writing & Language, 
-                    FYS 100 – First Year Seminar, MA 121 – Calculus I, CS 122 - Computer Science II, MA 251 - Probability & Statistics, CS 230 - Computer Architecture, 
-                    Core Course (Humanities) - PH 263 – Societal Impacts of Computing, Artificial Intelligence, and Robotics
+                    content: `A student has a Data and AI conecntration they already taken the following classes: ${coursesTaken}
                     Make a schedule for the spring. The student has 6 semesters left. The following is a document with when classes are typically offered and 
                     taken in addtion to what is needed to graduate. \n\nn${pdfText1}
                     
@@ -68,12 +91,21 @@ const summarizePDF = async () => {
                     Only include classes from the provided document.
                     M = Monday, T = Tuesday, W = Wednesday, H = Thursday, and F = Friday.
                     A typical semester consists of four 4-credit classes.
-                    The schedule must include at least 12 credits and no more than 18 credits.
+                    The schedule must include 16 credits.
                     Ensure that class times and days do not overlap.
                     If it is not in the PDF bleow do not include that class as it is not offered.
-                    Please format the output in JSON formatting with calss code, Name, credits, day&time of class and indicate whether the prerequisite is satisfied (Yes/No) if no find a new class and do not output this class :
+                    Please the output with calss code, Name, credits, day&time of class and indicate whether the prerequisite is satisfied (Yes/No) if no find a new class and do not output this class :
 
                     The input for the schedule is as follows:
+                    Common Core Requirements abberviations used in the following document are as follows :
+                    PLO Power of Language
+                    MA Mathematics 
+                    CE Creative Expression 
+                    WCH Western Cultural Heritage 
+                    NCH Non-Western Cultural Heritage 
+                    NPS Natural and Physical Sciences 
+                    SSC Social Sciences
+                    HUM Humanities 
                     \n\n${pdfText3}`
                 }
             ],
@@ -91,3 +123,6 @@ const summarizePDF = async () => {
     summarizePDF();
 
 module.exports = { summarizePDF };
+
+
+
