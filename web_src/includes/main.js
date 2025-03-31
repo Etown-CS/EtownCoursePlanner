@@ -33,10 +33,7 @@
             });
         });
 
-        
-
         // Load the footer
         $('#footer').load('includes/footer.html');
-    }
-    
+    }   
 })();

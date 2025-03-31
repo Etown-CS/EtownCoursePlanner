@@ -314,6 +314,31 @@ app.get('/core', async (req, res) => { // Switch POST?
     }
 });
 
+app.get('/recommended-plan', async (req, res) => { // Load default course plan -> Or load in existing plan?
+    try {
+        const db = await getDbPool();
+        const query = `
+        SELECT course.course_code, course.name, plan.semester_id, course.credits
+        FROM recommended_plan AS plan
+        JOIN course ON plan.course_id = course.id
+        ORDER BY plan.semester_id;
+        `;
+        const [rows] = await db.query(query);
+        // Structure for front end ?
+        const semesters = Array.from({length: 8}, () => ({courses: [], total_credits: 0})); // Makes 8 arrays with corresponding courses
+        rows.forEach(({course_code, name, semester_id, credits}) => {
+            semesters[semester_id - 1].courses.push({course_code, name, credits});
+            semesters[semester_id - 1].total_credits += credits; // May move to front end
+        });
+        
+        res.type('json').send(semesters); // rows
+    } catch (error) {
+        // erroar
+        console.error("Error fetching recommended course plans:", error);
+        res.status(500).send("Error on server. Please try again later.");
+    }
+});
+
 app.get('/schedule-view', async (req, res) => {
     try {
         // Extract token from cookie?
