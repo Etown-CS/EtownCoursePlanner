@@ -168,3 +168,104 @@ blockquote {
 #semester-plan td {
   background-color: gainsboro;
 }
+
+#semester-plan-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;  
+  height: auto; 
+  overflow: visible;
+}
+
+.edit-button {
+  display: block;  
+  margin-top: 5px; 
+  font-size: 12px;
+  background-color: #004B98; 
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.message-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1050; 
+  width: 80%;
+  max-width: 600px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 80vh; 
+}
+
+.card {
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.card-body {
+  overflow-y: auto;  
+  max-height: 70vh;  
+  padding: 15px;
+}
+
+.card-header {
+  padding: 10px 15px;
+  background-color: #0A2240 !important;
+  color: white;
+  text-align: center;
+}
+
+.card-header .btn-close {
+  background-color: transparent;
+  border: none;
+  color: white;
+}
+
+.card-body .btn-primary {
+  margin-top: 10px;
+  border: none;
+}
+
+.btn {
+  background-color: #E1261C !important;
+  color: white;
+  border: none;
+}
+
+
+.btn-close-white {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.selected {
+  background-color: #3DB5E6 !important;  
+  border: 2px solid #007bff;  
+}
+
+.course-list-container {
+  max-height: 275px;  
+  overflow-y: scroll;
+  margin-bottom: 70px;  
+}
+
+.button-container {
+  position: fixed;
+  bottom: 20px;  
+  left: 20px;    
+  width: auto;   
+  max-width: 200px; 
+  padding: 10px;
+  z-index: 100;  
+}
