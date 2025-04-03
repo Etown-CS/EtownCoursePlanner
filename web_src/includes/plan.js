@@ -130,7 +130,7 @@
         // Fetch and display courses
         const courses = await fetchCourses();
     
-        function displayCourses(courses) {
+        function displayCourses(courses) { // Add an empty selection for 'Core or Elective'
             courseList.innerHTML = ''; 
             courses.forEach(course => {
                 const listItem = document.createElement("li");
@@ -159,7 +159,7 @@
                     console.log('Swapping course:', selectedCourse.textContent);
                     courseText.textContent = `${course.course_code} ${course.name}`;
                     //SWAP COURSE 
-                    document.getElementById("save-btn").classList.remove("hidden");
+                    document.getElementById("save-btn").classList.remove("hidden"); // Refresh page/table?
                     messageContainer.remove();
                 } else {
                     console.log('No course selected.');

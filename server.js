@@ -316,14 +316,49 @@ app.get('/core', async (req, res) => { // Switch POST?
 
 app.get('/recommended-plan', async (req, res) => { // Load default course plan -> Or load in existing plan?
     try {
+        const token = req.cookies.jwt;
+        if (!token) {
+            return res.status(400).json({message: "User not logged in."});
+        }
+
+        // Verify token
+        const decoded = jwt.verify(token, jwtSecret);
+        if (!decoded || !decoded.email) {
+            return res.status(400).json({message: "Invalid token."});
+        }
+        
         const db = await getDbPool();
-        const query = `
-        SELECT course.course_code, course.name, plan.semester_id, course.credits
-        FROM recommended_plan AS plan
-        JOIN course ON plan.course_id = course.id
-        ORDER BY plan.semester_id;
-        `;
-        const [rows] = await db.query(query);
+
+        // Retrieve user ID from email
+        const user = await getUser(decoded.email);
+        const user_id = user[0].id;
+        if (!user_id) {
+            return res.status(400).json({ message: "User not found." });
+        }
+
+        const planQuery = "SELECT * FROM user_plan WHERE user_id = ?";
+        const [users_plan] = await db.query(planQuery, [user_id]);
+
+        let rows;
+        if (users_plan.length > 0) { // If changes exist
+            const query = `
+            SELECT course.course_code, course.name, plan.semester_id, course.credits
+            FROM user_plan AS plan
+            JOIN course ON plan.course_id = course.id
+            WHERE plan.user_id = ?
+            ORDER BY plan.semester_id;
+            `;
+            [rows] = await db.query(query, [user_id]);
+        } else { // Default plan
+            const query = `
+            SELECT course.course_code, course.name, plan.semester_id, course.credits
+            FROM recommended_plan AS plan
+            JOIN course ON plan.course_id = course.id
+            ORDER BY plan.semester_id;
+            `;
+            [rows] = await db.query(query);
+        }
+
         // Structure for front end ?
         const semesters = Array.from({length: 8}, () => ({courses: [], total_credits: 0})); // Makes 8 arrays with corresponding courses
         rows.forEach(({course_code, name, semester_id, credits}) => {
@@ -385,7 +420,7 @@ app.post('/save-plan', async (req, res) => {
 
 app.get('/schedule-view', async (req, res) => {
     try {
-        // Extract token from cookie?
+        // Extract token from cookie
         const token = req.cookies.jwt;
         if (!token) {
             return res.status(400).json({message: "User not logged in."});
