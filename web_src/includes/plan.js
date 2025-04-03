@@ -151,9 +151,11 @@
             // Add highlight to the selected course
             listItem.classList.add("selected");
             const swapButton = document.getElementById("swapButton");
+            swapButton.removeEventListener("click", swap);
             swapButton.disabled = false;  // Enable the button when a course is selected
 
-            document.getElementById("swapButton").addEventListener("click", function() {
+            swapButton.addEventListener("click", swap, { once: true });
+            function swap () {
                 const selectedCourse = document.querySelector(".list-group-item.selected");
                 if (selectedCourse) {
                     console.log('Swapping course:', selectedCourse.textContent);
@@ -161,48 +163,15 @@
                     //SWAP COURSE 
                     document.getElementById("save-btn").classList.remove("hidden"); // Refresh page/table?
                     messageContainer.remove();
+                    const saveButton = document.getElementById("save-btn");
+
+                    // Remove previous event listener before adding a new one
+                    saveButton.removeEventListener("click", savePlan);
+                    saveButton.addEventListener("click", savePlan, { once: true });
                 } else {
                     console.log('No course selected.');
                 }
-            });
-
-            document.getElementById("save-btn").addEventListener("click", function() {
-                const url = "/save-plan";
-                const courses = getSchedule();
-
-                let params = new FormData();
-                let userID = window.sessionStorage.getItem('id');
-
-                params.append("userID", userID);
-
-                // Iterating through courses and extracting data
-                courses.forEach((course, index) => {
-                    params.append(`courses[${index}][courseCode]`, course.courseCode);
-                    params.append(`courses[${index}][semester]`, course.semester);
-                });
-
-                const options = {method: "POST", body: params};
-
-                fetch(url, options)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Failed to save schedule.");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    if (data.message === "Plan saved successfully!") {
-                        alert("Plan saved successfully!");
-                    } else {
-                        console.error("Failed to save the plan:", data);
-                        alert("Failed to save plan. Please try again later.");
-                    }
-                });
-                window.location.reload();
-
-            });
-        
-            console.log('Selected Course:', course);
+            }
    
         }
 
@@ -248,6 +217,43 @@
 
         displayCourses(courses);
     }
+
+
+            function savePlan() {
+                const url = "/save-plan";
+                const courses = getSchedule();
+
+                let params = new FormData();
+                let userID = window.sessionStorage.getItem('id');
+
+                params.append("userID", userID);
+
+                // Iterating through courses and extracting data
+                courses.forEach((course, index) => {
+                    params.append(`courses[${index}][courseCode]`, course.courseCode);
+                    params.append(`courses[${index}][semester]`, course.semester);
+                });
+
+                const options = {method: "POST", body: params};
+
+                fetch(url, options)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to save schedule.");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.message === "Plan saved successfully!") {
+                        alert("Plan saved successfully!");
+                    } else {
+                        console.error("Failed to save the plan:", data);
+                        alert("Failed to save plan. Please try again later.");
+                    }
+                });
+                window.location.reload();
+            }
+        
     
     async function fetchCourses() {
         try {
