@@ -172,7 +172,6 @@
                     console.log('No course selected.');
                 }
             }
-   
         }
 
       
@@ -251,6 +250,7 @@
                         alert("Failed to save plan. Please try again later.");
                     }
                 });
+                window.location.reload();
             }
         
             console.log('Selected Course:', course);
