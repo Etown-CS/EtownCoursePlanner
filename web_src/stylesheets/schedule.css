@@ -18,6 +18,16 @@ color: #61BF1A;
 color: #C8C8C8;
 } */
 
+
+/*My schedules title*/
+.page-title {
+  font-size: 2rem;
+  color: #0056b3; /* Primary Etown blue */
+  font-weight: bold;
+  border-bottom: 2px solid #0056b3; /* Underline effect */
+  padding-bottom: 10px;
+}
+
 /* Fonts */
 .crete-round-regular {
   font-family: "Crete Round", serif;
@@ -99,20 +109,19 @@ color: #C8C8C8;
       box-shadow: 0 0 5px var(--primary-color); 
   }
 
-  /* Schedule Title Styling */
+/* Title Styling */
+/* Title Styling */
 .schedule-title {
-  position: relative;
-  margin: 10px auto;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: bold;
-  padding: 10px;
-  color: #ffffff;
-  background-color: #004080; /* Etown blue */
-  border-radius: 8px;
-  text-align: center;
-  width: fit-content;
-  display: block;
+  color: white;
+  /*background-color: white;*/ /* White background */
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for contrast */
 }
+
 
   #filter_btns{
   padding: 3%;
@@ -165,16 +174,66 @@ color: #C8C8C8;
       margin-bottom: 20px;
   }
   
+  /*Beginning of CREATE schedule css */
+
   /* Schedules Grid */
   .schedules {
-      display: grid;
+      /* display: grid;
       margin-left: 10%;
       margin-right: 10%;
       grid-template-columns: repeat(2, 1fr);
       grid-gap: 16px;
-      justify-items: center; /*Center horizontally*/
-      /* grid-auto-rows: auto; */
+      justify-items: center; Center horizontally */
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 20px;
   }
+
+  /* Card-style layout for schedules */
+  .schedule-card {
+    background: #0A2240;
+    border-radius: 12px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 300px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    color: #003366; /* Dark blue text for contrast */
+  }
+
+  .schedule-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Schedule Image */
+  .schedule-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+
+  /* Button Container */
+  .schedule-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /* Buttons */
+  .view-sched-btn, .del-sched-btn {
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+
+  /*End of CREATE Schedule CSS */
+
+  
   
   /* Individual Schedule */
   .Schedule {
