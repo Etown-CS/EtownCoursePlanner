@@ -65,3 +65,9 @@ footer {
 .hidden {
   display: none !important;
 }
+
+.login-submission {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
