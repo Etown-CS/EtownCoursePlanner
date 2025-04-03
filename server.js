@@ -375,8 +375,6 @@ app.get('/recommended-plan', async (req, res) => { // Load default course plan -
 });
 
 app.post('/save-plan', async (req, res) => {
-    console.log("Received request to save plan");  // Check if route is hit
-
     try {
         const db = await getDbPool();
         const userID = req.body.userID;
@@ -391,7 +389,6 @@ app.post('/save-plan', async (req, res) => {
             WHERE user_id = ?;
         `;
         const [plan] = await db.query(query, [userID]);
-        console.log(userID);
         if (plan.length != 0) {
             // Delete the row so that we can re-insert.
             const deleteQuery = `DELETE FROM user_plan WHERE user_id = ?;`;
@@ -400,7 +397,6 @@ app.post('/save-plan', async (req, res) => {
         req.body.courses.forEach(async (course) => {
             const { courseCode, semester } = course; // Extract course data
 
-            console.log(`Inserting course:`, courseCode, semester);
             const coursequery = `SELECT id FROM course WHERE course_code = ?;`;
             let [id] = await db.query(coursequery, [courseCode]);
 
