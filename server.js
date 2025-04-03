@@ -396,7 +396,6 @@ app.post('/save-plan', async (req, res) => {
         }
         req.body.courses.forEach(async (course) => {
             const { courseCode, semester } = course; // Extract course data
-
             const coursequery = `SELECT id FROM course WHERE course_code = ?;`;
             let [id] = await db.query(coursequery, [courseCode]);
 

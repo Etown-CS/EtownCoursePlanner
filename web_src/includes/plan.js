@@ -252,8 +252,6 @@
                 });
                 window.location.reload();
             }
-        
-            console.log('Selected Course:', course);
     
     async function fetchCourses() {
         try {
