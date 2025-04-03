@@ -47,7 +47,7 @@
                     editButton.classList.add("edit-button"); // Add a CSS class for styling
     
                     // Add click listener
-                    editButton.addEventListener("click", () => editCourse(course));
+                    editButton.addEventListener("click", () => editCourse(course, courseText));
     
                     cellDiv.appendChild(courseText);
                     cellDiv.appendChild(editButton);
@@ -72,7 +72,7 @@
         }
     }
 
-    async function editCourse(course) {
+    async function editCourse(course, courseText) {
         let existingCard = document.getElementById("message");
         if (existingCard) {
             existingCard.remove(); 
@@ -157,10 +157,47 @@
                 const selectedCourse = document.querySelector(".list-group-item.selected");
                 if (selectedCourse) {
                     console.log('Swapping course:', selectedCourse.textContent);
-                    //SWAP COURSE HERE
+                    courseText.textContent = `${course.course_code} ${course.name}`;
+                    //SWAP COURSE 
+                    document.getElementById("save-btn").classList.remove("hidden");
+                    messageContainer.remove();
                 } else {
                     console.log('No course selected.');
                 }
+            });
+
+            document.getElementById("save-btn").addEventListener("click", function() {
+                const url = "/save-plan";
+                const courses = getSchedule();
+
+                let params = new FormData();
+                let userID = window.sessionStorage.getItem('id');
+
+                params.append("userID", userID);
+
+                // Iterating through courses and extracting data
+                courses.forEach((course, index) => {
+                    params.append(`courses[${index}][courseCode]`, course.courseCode);
+                    params.append(`courses[${index}][semester]`, course.semester);
+                });
+
+                const options = {method: "POST", body: params};
+
+                fetch(url, options)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to save schedule.");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.message === "Plan saved successfully!") {
+                        alert("Plan saved successfully!");
+                    } else {
+                        console.error("Failed to save the plan:", data);
+                        alert("Failed to save plan. Please try again later.");
+                    }
+                });
             });
         
             console.log('Selected Course:', course);
@@ -223,6 +260,35 @@
             alert('Error fetching courses. Please try again later.');
             return [];
         }
+    }
+
+    function getSchedule() {
+        const tableBody = document.getElementById("semester-body");
+        const rows = tableBody.getElementsByTagName("tr");
+
+        let schedule = [];
+
+        // Iterating through each row
+        for (let i=0; i<rows.length-1; i++) {
+            let cells = rows[i].getElementsByTagName("td");
+            let semesterIndex = 1;
+
+            // Iterating through each cell
+            for (let cell of cells) {
+                let courseText = cell.querySelector("span")?.textContent?.trim();
+                if (courseText && courseText !== "Core or Elective") {
+                    let [courseCode, ...courseNameParts] = courseText.split(" ");
+
+                    // Saving the course codes and semester for each course
+                    schedule.push({
+                        courseCode: courseCode,
+                        semester: semesterIndex
+                    });
+                }
+                semesterIndex += 1;
+            }
+        }
+        return schedule;
     }
 
 }) ();

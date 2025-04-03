@@ -269,3 +269,10 @@ blockquote {
   padding: 10px;
   z-index: 100;  
 }
+
+#save-btn {
+  display: block;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

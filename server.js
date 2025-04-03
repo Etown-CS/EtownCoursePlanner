@@ -339,6 +339,50 @@ app.get('/recommended-plan', async (req, res) => { // Load default course plan -
     }
 });
 
+app.post('/save-plan', async (req, res) => {
+    console.log("Received request to save plan");  // Check if route is hit
+
+    try {
+        const db = await getDbPool();
+        const userID = req.body.userID;
+
+        if (!userID) {
+            return res.status(400).json({message: "Missing userID" });
+        }
+
+        const query = `
+            SELECT * 
+            FROM user_plan
+            WHERE user_id = ?;
+        `;
+        const [plan] = await db.query(query, [userID]);
+        console.log(userID);
+        if (plan.length != 0) {
+            // Delete the row so that we can re-insert.
+            const deleteQuery = `DELETE FROM user_plan WHERE user_id = ?;`;
+            await db.query(deleteQuery, [userID]);
+        }
+        req.body.courses.forEach(async (course) => {
+            const { courseCode, semester } = course; // Extract course data
+
+            console.log(`Inserting course:`, courseCode, semester);
+            const coursequery = `SELECT id FROM course WHERE course_code = ?;`;
+            let [id] = await db.query(coursequery, [courseCode]);
+
+            const query1 = `INSERT INTO user_plan (user_id, course_id, semester_id) VALUES (?, ?, ?);`;
+            await db.query(query1, [userID, id[0].id, semester]);
+        });
+
+        return res.status(200).json({
+            message: "Plan saved successfully!"
+        });
+        
+    } catch (error) {
+        console.error("Error saving plan:", error);
+        res.status(500).send("Error on server. Please try again later.");
+    }
+});
+
 app.get('/schedule-view', async (req, res) => {
     try {
         // Extract token from cookie?
