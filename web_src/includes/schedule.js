@@ -7,6 +7,11 @@
         const user_id = window.sessionStorage.getItem('id');
         if (user_id){ // If the user is logged in, otherwise show default square things - use for report page
             displaySchedules();
+        } else {
+            // Clear the schedules
+            schedulesContainer.innerHTML = '';
+            schedulesContainer.innerHTML = '<p>No schedules found. Create New!</p>';
+
         }
         document.getElementById("createNew").addEventListener("click", function() {
             // Redirect to the desired page
@@ -14,6 +19,7 @@
             sessionStorage.removeItem("selectedSchedule");
         });
     }
+    
 
     // Description here
     async function displaySchedules() {
@@ -26,28 +32,39 @@
 
             // If schedules doesn't return anything
             if (schedules.length === 0) {
-                schedulesContainer.innerHTML = '<p>No schedules found.</p>';
+                schedulesContainer.innerHTML = '<p>No schedules found. Create New!</p>';
                 // schedulesContainer.classList.add("hidden");
                 return;
             }
 
             schedules.forEach(schedule => {
                 const scheduleDiv = document.createElement('div');
-                scheduleDiv.classList.add('Schedule');
-                // If there's an img, create tag
+                scheduleDiv.classList.add('schedule-card'); // Added a new class for styling
+            
                 let imgHTML = '';
                 if (schedule.img) {
-                    imgHTML = `<img src="data:image/jpeg;base64,${schedule.img}" class="Schedule_display"`;
+                    imgHTML = `<img src="data:image/jpeg;base64,${schedule.img}" class="schedule-image" alt="Schedule Image">`;
                 }
-                scheduleDiv.innerHTML = 
-                `<div class="Schedule_display">${imgHTML}</div>
-                <h5 class="title">${schedule.name}</h5>
-                <div class="sched_btn">
-                    <button type="button" class="btn btn-primary view-sched-btn" data-id="${schedule.id}">View</button>
-                    <button type="button" class="btn btn-primary del-sched-btn" style="margin-left:4px;background-color:red" data-id="${schedule.id}">Delete</button>
-                </div>`;
+            
+                scheduleDiv.innerHTML = `
+                    <div class="schedule-content">
+                        <h5 class="schedule-title">${schedule.name}</h5> <!-- Title comes first -->
+                        ${imgHTML}
+                        <div class="schedule-actions">
+                            <button type="button" class="btn btn-outline-primary view-sched-btn" data-id="${schedule.id}">
+                                <i class="fa fa-eye"></i> View
+                            </button>
+                            <button type="button" class="btn btn-outline-danger del-sched-btn" data-id="${schedule.id}">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            
                 schedulesContainer.appendChild(scheduleDiv);
             });
+            
+            
 
             // Add event listeners?
             document.querySelectorAll(".view-sched-btn").forEach(button => {
