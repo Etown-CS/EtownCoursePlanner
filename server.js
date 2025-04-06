@@ -94,9 +94,9 @@ app.get('/courses-completed', async (req, res) => {
         const [completedCourses] = await db.query(query, [userId]);
         //await db.end();
 
-        if (completedCourses.length === 0) {
-            return res.status(404).json({ message: "No completed courses found."});
-        }
+        // if (completedCourses.length === 0) {
+        //     return res.status(404).json([]);
+        // }
 
         res.type('json').send(completedCourses);
         //console.log(completedCourses);

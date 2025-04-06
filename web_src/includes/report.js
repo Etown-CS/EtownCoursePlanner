@@ -62,12 +62,31 @@
         const url = "/courses-completed";
         fetch(url)
         .then(res => {
-            if(!res.ok) throw new Error('Response not ok');
+            console.log("Response Status:", res.status);
+            if (res.status === 404) {
+                return []; // Manually return empty array if API sends 404
+            }
+            if (!res.ok) {
+                throw new Error(`Response not ok: ${res.status}`);
+            }
             return res.json();
+            // if(!res.ok) throw new Error('Response not ok');
+            // return res.json();
         })
         .then(data => {
+            console.log("Response Data:", data);
             const tableBody = document.getElementById('completed-classes-body');
             tableBody.innerHTML = "";
+
+            if (data.length === 0) {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 4;
+                cell.innerText = "No completed courses.";
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+                return;
+            }
             data.forEach(course => {
                 const row = document.createElement('tr');
 
@@ -97,7 +116,12 @@
         // PROMISE ALL 
         Promise.all([
             fetch("/courses-completed").then(res => {
-                if(!res.ok) throw new Error('Response not ok');
+                if (res.status === 404) {
+                    return Promise.resolve([]);
+                }
+                if (!res.ok) {
+                    throw new Error(`Response not ok: ${res.status}`);
+                }
                 return res.json();
             }),
             fetch("/major").then(res => {
