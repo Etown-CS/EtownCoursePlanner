@@ -4,9 +4,20 @@
     window.addEventListener("load", init);
     
     function init() {
+       
+        
+
         const user_id = window.sessionStorage.getItem('id');
         if (user_id){ // If the user is logged in, otherwise show default square things - use for report page
-            displaySchedules();
+            let sortOption = 'newest';  // Default value
+        displaySchedules(sortOption);
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    const sortOption = event.target.textContent.trim().toLowerCase(); // 'newest' or 'oldest'
+                    console.log("Sort option selected:", sortOption);  // Check this in your browser's console
+                    displaySchedules(sortOption);
+                });
+            });
         } else {
             // Clear the schedules
             schedulesContainer.innerHTML = '';
@@ -22,7 +33,7 @@
     
 
     // Description here
-    async function displaySchedules() {
+    async function displaySchedules(sortBy) {
         try {
             const response = await fetch('/schedule-view');
             const schedules = await response.json();
@@ -35,6 +46,14 @@
                 schedulesContainer.innerHTML = '<p>No schedules found. Create New!</p>';
                 // schedulesContainer.classList.add("hidden");
                 return;
+            }
+
+                // Sort schedules based on the sortBy parameter
+            if (sortBy === 'newest') {
+                schedules.reverse();  // Reverse to show the newest first
+            } else if (sortBy === 'oldest') {
+                // No change needed if the original order is from oldest to newest
+                // If necessary, reverse again to restore the original order;  
             }
 
             schedules.forEach(schedule => {
