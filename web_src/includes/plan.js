@@ -59,11 +59,41 @@
                 tableBody.appendChild(tr);
             }
 
+            const creditThreshold = 18;
+
+            //Checks which semesters exceed the credit threshold and stores them in the column pos
+            const overloadedIndices = semesters.map((s, i) => s.total_credits > creditThreshold ? i : -1).filter(i => i !== -1);
+
             const creditRow = document.createElement("tr"); // Death row
-            semesters.forEach(semester => {
+            semesters.forEach((semester, index) => {
                 const td = document.createElement("td");
+
                 td.textContent = `Total Credits: ${semester.total_credits}`;
                 td.style.fontWeight = "bold"; // idk
+
+                //Outline and Highlight if overloaded
+                if (overloadedIndices.includes(index)) {
+                    td.classList.add("overloaded");
+
+                    // Create a question mark icon
+                    const questionMarkIcon = document.createElement("span");
+                    questionMarkIcon.classList.add("fa", "fa-question-circle"); // FontAwesome icon
+                    questionMarkIcon.style.position = "absolute";
+                    questionMarkIcon.style.top = "5px";
+                    questionMarkIcon.style.right = "5px";
+                    questionMarkIcon.style.cursor = "pointer";
+
+                    // Create tooltip with explanation
+                    const tooltip = document.createElement("div");
+                    tooltip.classList.add("tooltip");
+                    tooltip.textContent = "This semester is overloaded! Credits exceed the limit.";
+
+                    // Append the tooltip to the td
+                    td.appendChild(tooltip);
+                    td.appendChild(questionMarkIcon);
+
+                }
+
                 creditRow.appendChild(td);
             });
             tableBody.appendChild(creditRow); // Append at bottom

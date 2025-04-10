@@ -276,3 +276,32 @@ blockquote {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+.overloaded {
+  background-color: #ffe6e6 !important;
+  outline: 3px solid red !important;   /* Ensures outline appears */
+  border: .5px solid transparent;    
+  position: relative;   
+}
+
+/* Tooltip styling */
+.tooltip {
+  position: absolute;
+  top: -10px;
+  right: -25px;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 12px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+
+/* Show tooltip on hover */
+.overloaded:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
