@@ -5,7 +5,8 @@
     
     function init() {
         loadSemesters();
-        console.log("HELLO?");
+        document.getElementById("add-row").addEventListener("click", addRow);
+        document.getElementById("remove-row").addEventListener("click", removeRow);
     }
 
     async function loadSemesters() {
@@ -71,6 +72,65 @@
             console.error("Error fetching semesters:", error);
         }
     }
+
+    function addRow() {
+        const tableBody = document.getElementById("semester-body");
+        const rows = tableBody.getElementsByTagName("tr");
+        // Assume the last row is credit row
+        const creditRow = rows[rows.length - 1];
+        const currentRowCount = rows.length - 1; // Exclude credit row
+    
+        if (currentRowCount < 7) {
+            // New row
+            const newRow = document.createElement("tr");
+            // Number of columns from the credit row
+            const numSemesters = creditRow.children.length;
+            for (let i = 0; i < numSemesters; i++) {
+                const td = document.createElement("td");
+                // Wrapper div
+                const cellDiv = document.createElement("div");
+                cellDiv.classList.add("cell-content");
+                // Default text span
+                const courseText = document.createElement("span");
+                courseText.textContent = "Core or Elective";
+    
+                // Add edit button
+                const editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.classList.add("edit-button");
+                editButton.addEventListener("click", () => editCourse(null, courseText));
+
+                cellDiv.appendChild(courseText);
+                cellDiv.appendChild(editButton);
+                td.appendChild(cellDiv);
+                newRow.appendChild(td);
+            }
+    
+            // Insert new row before the credit row
+            tableBody.insertBefore(newRow, creditRow);
+            document.getElementById("remove-row").classList.remove("hidden");
+        } else {
+            // alert("Maximum row limit reached (7 rows).");
+            // Just hide plus button
+            document.getElementById("add-row").classList.add("hidden");
+        }
+    }
+    
+    function removeRow() {
+        const tableBody = document.getElementById("semester-body");
+        const rows = tableBody.getElementsByTagName("tr");
+        
+        // Ensure there's at least one row (besides credit row) to remove
+        if (rows.length > 1) {
+            // Remove last row before the credit row
+            tableBody.removeChild(rows[rows.length - 2]);
+            document.getElementById("add-row").classList.remove("hidden");
+        } else {
+            // alert("No rows to remove.");
+            // Hide minus button
+            document.getElementById("remove-row").classList.add("hidden");
+        }
+    }    
 
     async function editCourse(course, courseText) {
         let existingCard = document.getElementById("message");
@@ -282,7 +342,7 @@
             // Iterating through each cell
             for (let cell of cells) {
                 let courseText = cell.querySelector("span")?.textContent?.trim();
-                if (courseText && courseText !== "Core or Elective") {
+                if (courseText && courseText !== "Core or Elective") { // Exclude holder rows
                     let [courseCode, ...courseNameParts] = courseText.split(" ");
 
                     // Saving the course codes and semester for each course
