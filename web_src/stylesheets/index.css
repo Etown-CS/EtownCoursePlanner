@@ -32,13 +32,23 @@ main {
   flex: 1;
 }
 
-
 #basic-instructions, #about-project {
-  background-color: #3DB5E6;
-  padding: 10px;
+  padding: 20px;
   margin-top: 10px;
   margin-bottom: 10px;
+  margin: 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   text-align: center;
+}
+
+#about-project {
+  background-color: #3DB5E6;
+}
+
+#basic-instructions {
+  background-color: #004B98;
+  color: white;
 }
 
 #basic-instructions p, #about-project p {
@@ -49,6 +59,7 @@ main {
   display: flex;
   justify-content: center; /* Centers the button horizontally */
   align-items: center;
+  margin-bottom: 40px;
 }
 .btn-primary{
   background-color: red;
@@ -91,7 +102,7 @@ main {
 }
 
 .feature-card {
-  background-color: #3DB5E6;
+  background-color: #004B98;
   color: white;
   border-radius: 10px;
   padding: 15px;
