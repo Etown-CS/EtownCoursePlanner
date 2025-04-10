@@ -59,7 +59,7 @@ main {
   border: none !important;
   }
   
-  .dropdown-toggle, .btn-primary {
+  #dropdownMenuButton, .btn-primary {
   background-color: #3DB5E6 !important;
   border: none !important;
   }
