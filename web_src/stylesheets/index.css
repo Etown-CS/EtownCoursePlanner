@@ -22,6 +22,16 @@ HEX #C8C8C8 (Light Gray)
   text-align: center;
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
 
 #basic-instructions, #about-project {
   background-color: #3DB5E6;
@@ -33,20 +43,6 @@ HEX #C8C8C8 (Light Gray)
 
 #basic-instructions p, #about-project p {
   text-align: left;
-}
-
-.nav-color{
-  background-color: #0A2240
-}
-
-.nav-link, .navbar-brand{
-  color: white !important;
-}
-
-.nav-link.active {
-  background-color: #3DB5E6; /* Light Blue */
-  color: white;
-  border-radius: 5px; /* Optional: Rounded corners */
 }
 
 .get-started{

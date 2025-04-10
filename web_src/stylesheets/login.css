@@ -17,19 +17,14 @@ HEX #C8C8C8 (Light Gray)
     font-weight: 400;
     font-style: normal;
   }
-
-.nav-color{
-  background-color: #0A2240
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
-
-.nav-link, .navbar-brand{
-  color: white !important;
-}
-
-.nav-link.active {
-  background-color: #3DB5E6; /* Light Blue */
-  color: white;
-  border-radius: 5px; /* Optional: Rounded corners */
+  
+main {
+  flex: 1;
 }
 
 h1 {
