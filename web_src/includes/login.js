@@ -8,6 +8,23 @@
 
     function init() {
         id('login').addEventListener('click', login);
+
+        // Password toggle
+        const pwdField = id("pwd");
+        const toggleShow = id("togglePasswordShow");
+        const toggleHide = id("togglePasswordHide");
+
+        toggleShow.addEventListener("click", () => {
+            pwdField.type = "text";
+            toggleShow.style.display = "none";
+            toggleHide.style.display = "inline";
+        });
+
+        toggleHide.addEventListener("click", () => {
+            pwdField.type = "password";
+            toggleHide.style.display = "none";
+            toggleShow.style.display = "inline";
+        });
     }
 
     /**
@@ -22,6 +39,7 @@
         params.append("password", id("pwd").value);
 
         const options = {method: "POST", body: params};
+  
 
         fetch(url, options)
         .then(checkStatus)

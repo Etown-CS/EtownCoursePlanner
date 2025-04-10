@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Crete+Round&display=swap" rel="stylesheet">
     <link href="stylesheets/login.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -33,12 +36,15 @@
                 <!-- <div class="valid-feedback">Valid.</div>
                 <div class="invalid-feedback">Please fill out this field.</div> -->
             </div>
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
                 <label for="pswd" class="form-label">Password:</label>
-                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd"> <!-- required -->
-                <!-- <div class="valid-feedback">Valid.</div>
-                <div class="invalid-feedback">Please fill out this field.</div> -->
+                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
+                
+                <!-- Toggle Icons -->
+                <i class="bi bi-eye" id="togglePasswordShow" style="position: absolute; top: 38px; right: 10px; cursor: pointer;"></i>
+                <i class="bi bi-eye-slash" id="togglePasswordHide" style="position: absolute; top: 38px; right: 10px; display: none; cursor: pointer;"></i>
             </div>
+            
 
             <div class="login-submission">
                 <button type="button" class="submit-btn" id="login">Submit</button>
