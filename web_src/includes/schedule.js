@@ -101,7 +101,7 @@
     // Send only schedule ID to a get request and then fetch the get request to create.js
     // Description here
     async function loadSchedule(event) {
-        const schedule_id = event.target.getAttribute("data-id");
+        const schedule_id = event.currentTarget.getAttribute("data-id");
         if (!schedule_id) {
             console.error("Schedule ID is missing.");
             return;
@@ -121,7 +121,7 @@
     // Add description here for deleting stuff
     async function deleteSchedule(event) {
         const user_id = window.sessionStorage.getItem('id');
-        const schedule_id = event.target.getAttribute("data-id");
+        const schedule_id = event.currentTarget.getAttribute("data-id");
         if (!user_id) {
             console.error("User not logged in.");
             return;
