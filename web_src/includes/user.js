@@ -15,8 +15,8 @@
         if (email) {
             id("body").classList.remove("hidden");
 
-            if (id('email') != null) {
-                id('email').textContent = email;
+            if (id('name') != null) {
+                id('name').textContent = name;
             }
             populateFields(email, name, major, advisor);
             if (minor != null) {
