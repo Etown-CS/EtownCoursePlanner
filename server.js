@@ -389,7 +389,6 @@ app.post('/save-plan', async (req, res) => {
             WHERE user_id = ?;
         `;
         const [plan] = await db.query(query, [userID]);
-        console.log(userID);
         if (plan.length != 0) {
             // Delete the row so that we can re-insert.
             const deleteQuery = `DELETE FROM user_plan WHERE user_id = ?;`;

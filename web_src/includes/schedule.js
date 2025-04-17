@@ -4,9 +4,20 @@
     window.addEventListener("load", init);
     
     function init() {
+       
+        
+
         const user_id = window.sessionStorage.getItem('id');
         if (user_id){ // If the user is logged in, otherwise show default square things - use for report page
-            displaySchedules();
+            let sortOption = 'newest';  // Default value
+        displaySchedules(sortOption);
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    const sortOption = event.target.textContent.trim().toLowerCase(); // 'newest' or 'oldest'
+                    console.log("Sort option selected:", sortOption);  // Check this in your browser's console
+                    displaySchedules(sortOption);
+                });
+            });
         } else {
             // Clear the schedules
             schedulesContainer.innerHTML = '';
@@ -22,7 +33,7 @@
     
 
     // Description here
-    async function displaySchedules() {
+    async function displaySchedules(sortBy) {
         try {
             const response = await fetch('/schedule-view');
             const schedules = await response.json();
@@ -35,6 +46,14 @@
                 schedulesContainer.innerHTML = '<p>No schedules found. Create New!</p>';
                 // schedulesContainer.classList.add("hidden");
                 return;
+            }
+
+                // Sort schedules based on the sortBy parameter
+            if (sortBy === 'newest') {
+                schedules.reverse();  // Reverse to show the newest first
+            } else if (sortBy === 'oldest') {
+                // No change needed if the original order is from oldest to newest
+                // If necessary, reverse again to restore the original order;  
             }
 
             schedules.forEach(schedule => {
@@ -82,7 +101,7 @@
     // Send only schedule ID to a get request and then fetch the get request to create.js
     // Description here
     async function loadSchedule(event) {
-        const schedule_id = event.target.getAttribute("data-id");
+        const schedule_id = event.currentTarget.getAttribute("data-id");
         if (!schedule_id) {
             console.error("Schedule ID is missing.");
             return;
@@ -102,7 +121,7 @@
     // Add description here for deleting stuff
     async function deleteSchedule(event) {
         const user_id = window.sessionStorage.getItem('id');
-        const schedule_id = event.target.getAttribute("data-id");
+        const schedule_id = event.currentTarget.getAttribute("data-id");
         if (!user_id) {
             console.error("User not logged in.");
             return;

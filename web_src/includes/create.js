@@ -31,6 +31,9 @@
         document.getElementById("manual_add").addEventListener("click", addEvent2);
         // document.getElementById("delete-selected").addEventListener("click", deleteSelectedEvents); // TODO fix this so it doesnt error when no event is present
         document.getElementById("save").addEventListener("click", saveSchedule);
+        document.getElementById("back").addEventListener("click", () => {
+            window.location.href = "schedule.html";
+        })
 
         let isGenerating = false; // Prevent multiple clicks
     
