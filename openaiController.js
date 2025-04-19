@@ -34,7 +34,7 @@ function FindDocuments() {
 
 const summarizePDF = async () => {
     const pdf1 = FindDocuments();  // First PDF
-    const pdf3 = "AIDocs\\Spring2025CourseListings.pdf";  // Third PDF (Separate Content)
+    const pdf3 = "AIDocs/Spring2025CourseListings.pdf";  // Third PDF (Separate Content)
 
     try {
         // Step 1: Read and extract text from the first two PDFs (combined)

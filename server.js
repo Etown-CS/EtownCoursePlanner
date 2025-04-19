@@ -14,7 +14,7 @@ const fs = require('fs'); // For img buffer
 const readline = require("readline");
 const OpenAI = require("openai");
 const openai = new OpenAI({
-    apiKey: process.env.API_KEY2,
+    apiKey: process.env.OPENAI_API_KEY,
 });
 
 module.exports = openai;

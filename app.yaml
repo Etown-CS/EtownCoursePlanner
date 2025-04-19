@@ -7,7 +7,7 @@ env_variables:
   DB_USER: web-api
   DB_PASS: Oe,+SNbTmq0Gk;H(
   DB_NAME: course_planner
-
+  OPENAI_API_KEY: openai-api-key
 handlers:
   - url: /
     static_files: web_src/index.html
