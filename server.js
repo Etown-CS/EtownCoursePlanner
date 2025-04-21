@@ -1052,7 +1052,7 @@ app.get('/summarize-pdf', async (req, res) => {
         }
         const apiKey = await getOpenAIKey();
         const openai = new OpenAI({ apiKey });
-        // Get completed courses straight from your DB
+        // Get completed courses straight no chaser
         const courseDict = await fetchCoursesTaken(user_id);
 
         // Generate

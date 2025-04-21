@@ -77,7 +77,7 @@ function FindDocuments() {
 }
 
 async function getOpenAIKey() {
-    const client = new SecretManagerServiceClient();
+    const client = new SecretManagerServiceClient(); // Google cloud secrets
     const [version] = await client.accessSecretVersion({
         name: "projects/477922637599/secrets/openai-api-key/versions/latest"
     });
