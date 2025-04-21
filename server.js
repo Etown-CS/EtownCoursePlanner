@@ -50,7 +50,6 @@ app.get('/courses', async (req, res) => {
         const query = "SELECT * FROM course"; 
         const [courses] = await db.query(query); // Fetch all rows from courses table
 
-        //await db.end();
         if (courses.length === 0) {
             return res.status(404).json({ message: "No courses found." });
         }
@@ -84,19 +83,27 @@ app.get('/courses-completed', async (req, res) => {
         return res.status(400).json({ message: "User not found." });
     }
     // const user_id = req.body.user_id;
-    console.log("User's ID is", userId);
+    // console.log("User's ID is", userId);
 
     try {
         const db = await getDbPool();
-        const query = `SELECT c.course_code, c.name, c.department, c.credits 
-            FROM completed_course cc JOIN course c ON cc.course_id = c.id 
+        const query = `SELECT 
+            c.course_code, c.name, c.department, c.credits,
+            cc.transfer_ccode, cc.transfer_cname, cc.transfer_credits
+            FROM completed_course cc
+            LEFT JOIN course c 
+            ON cc.course_id = c.id
             WHERE cc.user_id = ?;`;
-        const [completedCourses] = await db.query(query, [userId]);
-        //await db.end();
-
-        // if (completedCourses.length === 0) {
-        //     return res.status(404).json([]);
-        // }
+            
+        const [rows] = await db.query(query, [userId]);
+        const completedCourses = rows.map(course => {
+            // Check if on-campus or transfer
+            if (course.course_code) { // on-campus
+                return {course_code: course.course_code, name: course.name, department: course.department, credits: course.credits};
+            } else { // Transfer
+                return {course_code: course.transfer_ccode, name: course.transfer_cname, department: "TRANSFER", credits: course.transfer_credits};
+            }
+        });
 
         res.type('json').send(completedCourses);
         //console.log(completedCourses);
@@ -107,7 +114,7 @@ app.get('/courses-completed', async (req, res) => {
 });
 
 app.get('/major', async (req, res) => {
-    //const userId = 1; // have to get user's major too
+    // have to get user's major too
     const courseIds= [1, 2, 3, 31, 23, 7, 8, 12, 24, 10, 13, 14, 15, 25, 26, 21, 22, 18, 17, 19]
     try {
         const db = await getDbPool();
@@ -158,8 +165,6 @@ app.get('/majorCompleted', async (req, res) => {
         JOIN course c ON cc.course_id = c.id 
         WHERE cc.user_id = ? AND c.id IN (${courseIds.join(', ')});`;
         const [completedCourses] = await db.query(query, [userId]);
-        //await db.end();
-        
         const completedMajorCourses = [];
 
         completedCourses.forEach(course => {
@@ -191,7 +196,6 @@ app.get('/advisors', async (req, res) => {
         if (advisors.length === 0) {
             return res.status(404).json({ message: "No advisors found."});
         }
-        //await db.end();
         res.type('json').send(advisors); // Send results as JSON
 
     } catch (error) {
@@ -248,7 +252,6 @@ app.get('/core', async (req, res) => { // Switch POST?
         WHERE cc.user_id = ?`; // Grabs from courses AND completed courses (Not all matching rows)
 
         const [completedCourses] = await db.query(query, [userId]);
-        //await db.end();
 
         const coreRequirements = {
             "PLE" : false,
@@ -293,9 +296,6 @@ app.get('/core', async (req, res) => { // Switch POST?
             }
         });
 
-        // if (ceCredits >= coreRequirements["CE"]) { // If 4 credits or over, mission accomplished
-        //     coreFulfilled["CE"] = true;
-        // }
         coreRequirements["CE"] = coreRequirements["CE"] >= 4;
         // console.log(coreRequirements);
         const totalCoreCategories = Object.keys(coreRequirements).length;
@@ -512,19 +512,6 @@ app.post('/save-schedule', async (req, res) => { // upload.single('image')
         if (!user_id || !scheduleName || !events || Object.keys(events).length === 0) {
             return res.status(400).json({message: "Missing required data."});
         }
-        // const blob = req.file ? req.file.buffer : null; // Extract image blob
-        // console.log("Recieved file:", req.file);
-        // console.log("Received events:", events);
-        // console.log("Type of events:", typeof events);
-        // let events = req.body.events;
-
-        // if (typeof events === "string") {
-        //     try {
-        //         events = JSON.parse(events);
-        //     } catch (error) {
-        //         return res.status(400).json({ message: "Invalid events format." });
-        //     }
-        // }
 
         // Decode img to binary data
         let imgBuffer = null;
@@ -1044,11 +1031,16 @@ app.listen(PORT, () => {
 
 
 //get the AI response
-const { summarizePDF } = require('./openaiController.js');
+const { fetchCoursesTaken, summarizePDF } = require('./openaiController.js');
 
 app.get('/summarize-pdf', async (req, res) => {
     try {
-        const summary = await summarizePDF();
+        const jwt = req.cookies.jwt;
+        if (!jwt) return res.status(400).send("Not logged in.");
+        // Fetch completed courses dict 
+        const courseDict = await fetchCoursesTaken(jwt);
+        // Generate schedule
+        const summary = await summarizePDF(courseDict);
         res.json({ summary });
     } catch (error) {
         res.status(500).json({ error: "Failed to summarize PDF" });
@@ -1063,4 +1055,4 @@ app.get('/api/get-key', (req, res) => {
     res.json({ apiKey });
 });
   
-app.listen(3000, () => console.log('Server running on port 3000'));
+// app.listen(3000, () => console.log('Server running on port 3000'));

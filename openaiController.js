@@ -2,19 +2,60 @@
 const openai = require('./server');
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
-// You might need a package like 'mammoth' or 'docx-parser' for DOCX files.
-
+ 
+//a function to get the completed courses to feed to the AI from the database
+async function fetchCoursesTaken(jwt) {
+    const url = "http://localhost:8080/courses-completed";
+ 
+    try {
+        const res = await fetch(url, {
+            method: "GET",
+            //credentials: "include", // <-- Make sure cookies get sent!
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": `jwt=${jwt}`
+            }
+        });
+ 
+        console.log("Response Status:", res.status);
+ 
+        if (!res.ok) {
+            throw new Error(`Response not ok: ${res.status}`);
+        }
+ 
+        const data = await res.json();
+        console.log("Completed Courses Data:", data);
+ 
+        // Convert the array into a dictionary by course_code
+        const courseDict = {};
+        data.forEach(course => {
+            courseDict[course.course_code] = {
+                name: course.name,
+                department: course.department,
+                credits: course.credits
+            };
+        });
+ 
+        return courseDict;
+ 
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return {}; // Return empty dictionary if there's an error
+    }
+}
+ 
+ 
 function FindDocuments() {
-    let track = "AI & Data Science";
-    let PDF1path;  // Declare PDF1path variable outside the switch statement
-
+    let track = "AI & Data Science";//Hard coded for cs but code can be used in future for other majors
+    let PDF1path;  
+ 
     switch (track) {
         case "Hardware":
             PDF1path = "AIDocs/2024-2025_B.S._in_Computer_Science_-_Hardware_Degree_Planner.pdf";
             console.log("Hardware");
             break;
         case "AI & Data Science":
-            PDF1path = "AIDocs/2024-2025_Computer_Science_Degree_Planner_(4_Concentrations).pdf"; // Ensure this is a PDF path.
+            PDF1path = "AIDocs/2024-2025_Computer_Science_Degree_Planner_(4_Concentrations).pdf";
             console.log("Data Science");
             break;
         case "Cyber Security":
@@ -29,51 +70,65 @@ function FindDocuments() {
             PDF1path = "AIDocs/2024-2025_B.S._in_Computer_Science_Degree_Planner.pdf";
             console.log("Untracked");
     }
-    return PDF1path;  // Return the file path after the switch block
+    return PDF1path;  
 }
-
-const summarizePDF = async () => {
+ 
+const summarizePDF = async (courseDict) => {
+    console.log("Inside summarizePDF()...");
     const pdf1 = FindDocuments();  // First PDF
-    const pdf3 = "AIDocs/Spring2025CourseListings.pdf";  // Third PDF (Separate Content)
-
+    const pdf3 = "AIDocs\\Spring2025CourseListings.pdf";  // Third PDF (Separate Content)
+    // console.log("Calling fetchCourses...");
+    // let coursesTaken = await fetchCoursesTaken();
+    // coursesTaken = JSON.stringify(coursesTaken);
+    // console.log(coursesTaken);
+    const coursesTakenStr = JSON.stringify(courseDict, null, 2);
+ 
     try {
         // Step 1: Read and extract text from the first two PDFs (combined)
         const dataBuffer1 = fs.readFileSync(pdf1);
         const data1 = await pdfParse(dataBuffer1);
         const pdfText1 = data1.text;
-
+ 
         // Step 2: Read and extract text from the third PDF separately
         const dataBuffer3 = fs.readFileSync(pdf3);
         const data3 = await pdfParse(dataBuffer3);
         const pdfText3 = data3.text;
-
+ 
         // Step 3: Send a single request to OpenAI with both summaries
         const response = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
                 {
-                    role: "user", 
-                    content: `A student has  a Data and AI conecntration they already taken the following classes: CS 121 – Computer Science I, EN 100 – PLE Writing & Language, 
-                    FYS 100 – First Year Seminar, MA 121 – Calculus I, CS 122 - Computer Science II, MA 251 - Probability & Statistics, CS 230 - Computer Architecture, 
-                    Core Course (Humanities) - PH 263 – Societal Impacts of Computing, Artificial Intelligence, and Robotics
-                    Make a schedule for the spring. The student has 6 semesters left. The following is a document with when classes are typically offered and 
+                    role: "user",
+                    content: `A student has a Data and AI conecntration they already taken the following classes: ${coursesTakenStr}
+                    Make a schedule for the spring. The student has 6 semesters left. The following is a document with when classes are typically offered and
                     taken in addtion to what is needed to graduate. \n\nn${pdfText1}
-                    
-                   A class can only count as a prerequisite if I have explicitly stated that I have taken it. 
-                   According to department rules, prerequisites must be completed in a different semester and cannot be taken in the 
-                   same semester as the course that requires them. If a class is listed as a prerequisite for another class in the same 
-                   semester, do not include it in the schedule, and instead find another class that does not have the prerequisite 
+                   
+                   A class can only count as a prerequisite if I have explicitly stated that I have taken it.
+                   According to department rules, prerequisites must be completed in a different semester and cannot be taken in the
+                   same semester as the course that requires them. If a class is listed as a prerequisite for another class in the same
+                   semester, do not include it in the schedule, and instead find another class that does not have the prerequisite
                    requirement in the same semester.
-
+ 
                     Only include classes from the provided document.
+                    **Do not suggest any course the student has already taken.**
                     M = Monday, T = Tuesday, W = Wednesday, H = Thursday, and F = Friday.
                     A typical semester consists of four 4-credit classes.
-                    The schedule must include at least 12 credits and no more than 18 credits.
+                    The schedule must include 16 credits.
                     Ensure that class times and days do not overlap.
                     If it is not in the PDF bleow do not include that class as it is not offered.
-                    Please format the output in JSON formatting with calss code, Name, credits, day&time of class and indicate whether the prerequisite is satisfied (Yes/No) if no find a new class and do not output this class :
-
+                    Please the output with class code, Name, credits, day & time of class and indicate whether the prerequisite is satisfied (Yes/No) if no find a new class and do not output this class :
+ 
                     The input for the schedule is as follows:
+                    Common Core Requirements abberviations used in the following document are as follows :
+                    PLO Power of Language
+                    MA Mathematics
+                    CE Creative Expression
+                    WCH Western Cultural Heritage
+                    NCH Non-Western Cultural Heritage
+                    NPS Natural and Physical Sciences
+                    SSC Social Sciences
+                    HUM Humanities
                     \n\n${pdfText3}`
                 }
             ],
@@ -81,13 +136,13 @@ const summarizePDF = async () => {
         });
         console.log()
         return response.choices[0].message.content;
-
+ 
     } catch (error) {
         console.error("Error processing PDFs:", error);
         return "Error processing PDFs";
     }
 };
-
-    summarizePDF();
-
-module.exports = { summarizePDF };
+ 
+   //summarizePDF();
+ 
+module.exports = { fetchCoursesTaken, summarizePDF };
