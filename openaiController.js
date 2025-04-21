@@ -1,38 +1,41 @@
 "use strict";
-const openai = require('./server');
-const fs = require('fs');
-const pdfParse = require('pdf-parse');
- 
+// const openai = require("./server");
+// const openai = require('./openaiClient');
+const fs = require("fs");
+const pdfParse = require("pdf-parse");
+const path = require("path"); 
+const mysql = require('mysql2/promise');
+const { Connector } = require('@google-cloud/cloud-sql-connector');
+const connector = new Connector();
+let dbPool;
+
+const{ SecretManagerServiceClient } = require("@google-cloud/secret-manager");
+const OpenAI = require("openai");
+
 //a function to get the completed courses to feed to the AI from the database
-async function fetchCoursesTaken(jwt) {
-    const url = "http://localhost:8080/courses-completed";
+async function fetchCoursesTaken(userId) {
+    // const url = "http://localhost:8080/courses-completed";
  
     try {
-        const res = await fetch(url, {
-            method: "GET",
-            //credentials: "include", // <-- Make sure cookies get sent!
-            headers: {
-                "Content-Type": "application/json",
-                "Cookie": `jwt=${jwt}`
-            }
-        });
- 
-        console.log("Response Status:", res.status);
- 
-        if (!res.ok) {
-            throw new Error(`Response not ok: ${res.status}`);
-        }
- 
-        const data = await res.json();
-        console.log("Completed Courses Data:", data);
- 
-        // Convert the array into a dictionary by course_code
+        const db = await getDbPool();
+        const [rows] = await db.query(
+            `SELECT DISTINCT
+            c.course_code,
+            c.name,
+            c.department,
+            c.credits
+            FROM completed_course cc
+            JOIN course c ON cc.course_id = c.id
+            WHERE cc.user_id = ?`,
+            [userId]
+        );
+        
         const courseDict = {};
-        data.forEach(course => {
+        rows.forEach(course => {
             courseDict[course.course_code] = {
-                name: course.name,
-                department: course.department,
-                credits: course.credits
+            name:       course.name,
+            department: course.department,
+            credits:    course.credits
             };
         });
  
@@ -55,7 +58,7 @@ function FindDocuments() {
             console.log("Hardware");
             break;
         case "AI & Data Science":
-            PDF1path = "AIDocs/2024-2025_Computer_Science_Degree_Planner_(4_Concentrations).pdf";
+            PDF1path = path.join(__dirname, "AIDocs", "2024-2025_Computer_Science_Degree_Planner_(4_Concentrations).pdf");
             console.log("Data Science");
             break;
         case "Cyber Security":
@@ -72,16 +75,27 @@ function FindDocuments() {
     }
     return PDF1path;  
 }
+
+async function getOpenAIKey() {
+    const client = new SecretManagerServiceClient();
+    const [version] = await client.accessSecretVersion({
+        name: "projects/477922637599/secrets/openai-api-key/versions/latest"
+    });
+    return version.payload.data.toString("utf8").trim(); // New line character somehow
+}
  
-const summarizePDF = async (courseDict) => {
+const summarizePDF = async (courseDict, openai) => {
     console.log("Inside summarizePDF()...");
     const pdf1 = FindDocuments();  // First PDF
-    const pdf3 = "AIDocs\\Spring2025CourseListings.pdf";  // Third PDF (Separate Content)
+    const pdf3 = path.join(__dirname, "AIDocs", "Spring2025CourseListings.pdf");  // Third PDF (Separate Content)
     // console.log("Calling fetchCourses...");
     // let coursesTaken = await fetchCoursesTaken();
     // coursesTaken = JSON.stringify(coursesTaken);
     // console.log(coursesTaken);
     const coursesTakenStr = JSON.stringify(courseDict, null, 2);
+
+    // const apiKey = await getOpenAIKey();
+    // const openai = new OpenAI({apiKey});
  
     try {
         // Step 1: Read and extract text from the first two PDFs (combined)
@@ -143,6 +157,25 @@ const summarizePDF = async (courseDict) => {
     }
 };
  
+async function createDbPool() {
+    const clientOpts = await connector.getOptions({
+      instanceConnectionName: process.env.INSTANCE_CONNECTION_NAME,
+      ipType: 'PUBLIC'
+    });
+    return mysql.createPool({
+      ...clientOpts,
+      user:     process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: process.env.DB_NAME,
+    });
+  }
+
+  async function getDbPool() {
+    if (!dbPool) {
+      dbPool = await createDbPool();
+    }
+    return dbPool;
+  }
    //summarizePDF();
  
-module.exports = { fetchCoursesTaken, summarizePDF };
+module.exports = { getOpenAIKey, fetchCoursesTaken, summarizePDF };

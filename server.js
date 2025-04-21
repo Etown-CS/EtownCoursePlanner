@@ -13,12 +13,12 @@ const cookieParser = require("cookie-parser");
 const fs = require('fs'); // For img buffer
 const readline = require("readline");
 const OpenAI = require("openai");
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//     apiKey: process.env.OPENAI_API_KEY,
+// });
 
-module.exports = openai;
-
+// module.exports = openai;
+const { getOpenAIKey, fetchCoursesTaken, summarizePDF } = require('./openaiController');
 //const { generateMeta } = require('./openaiController')
 // const dbPath = 'course_planner.db';
 const PORT = process.env.PORT || 8080;
@@ -1030,21 +1030,38 @@ app.listen(PORT, () => {
 });
 
 
-//get the AI response
-const { fetchCoursesTaken, summarizePDF } = require('./openaiController.js');
 
+//get the AI response
 app.get('/summarize-pdf', async (req, res) => {
     try {
-        const jwt = req.cookies.jwt;
-        if (!jwt) return res.status(400).send("Not logged in.");
-        // Fetch completed courses dict 
-        const courseDict = await fetchCoursesTaken(jwt);
-        // Generate schedule
-        const summary = await summarizePDF(courseDict);
+        const token = req.cookies.jwt;
+        if (!token) {
+            return res.status(400).json({message: "User not logged in."});
+        }
+
+        // Verify token
+        const decoded = jwt.verify(token, jwtSecret);
+        if (!decoded || !decoded.email) {
+            return res.status(400).json({message: "Invalid token."});
+        }
+
+        const user = await getUser(decoded.email);
+        const user_id = user[0].id;
+        if (!user_id) {
+            return res.status(400).json({ message: "User not found." });
+        }
+        const apiKey = await getOpenAIKey();
+        const openai = new OpenAI({ apiKey });
+        // Get completed courses straight from your DB
+        const courseDict = await fetchCoursesTaken(user_id);
+
+        // Generate
+        const summary = await summarizePDF(courseDict, openai);
         res.json({ summary });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to summarize PDF" });
-    }
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+      }
 });
 
 //yipieee go me
