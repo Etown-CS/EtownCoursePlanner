@@ -279,6 +279,8 @@ blockquote {
 }
 
 #save-btn {
+  background-color: red;
+  color: white;
   display: block;
   margin: auto;
   margin-top: 10px;
