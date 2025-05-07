@@ -184,27 +184,6 @@ Javascript Style Guide - https://google.github.io/styleguide/jsguide.html
 
 ---
 
-## 📊 Evaluation & Testing Features
-- End-to-end usability testing with real users
-- Unit and integration testing for reliability
-- Interface reviewed for clarity, consistency, and accessibility
-
----
-
-## 📂 Database Design (MySQL)
-- Tables include: `user`, `advisor`, `course`, `course_instance`, `completed_course`, `prerequisite`, `schedule`, `schedule_course`, `recommended_plan`, `user_plan`
-- Designed to reflect real academic data and planning structures
-
----
-
-## 🛠️ Development Tools
-- Node Package Manager (NPM)
-- Custom APIs for frontend-backend communication
-- GitHub for version control and collaboration
-- Google Cloud App Engine for deployment
-
----
-
 ## ⚠️ Limitations
 - Currently only supports Computer Science major
 - Limited to Elizabethtown College
