@@ -184,10 +184,29 @@ Javascript Style Guide - https://google.github.io/styleguide/jsguide.html
 
 ---
 
-## ⚠️ Limitations
-- Currently only supports Computer Science major
-- Limited to Elizabethtown College
-- Requires internet access
+---
+
+## ⚠️ Limitations & Future Improvements
+
+### 🚧 Current Limitations
+- **Major Coverage**: Only supports the Computer Science major; other majors and minors are not yet implemented.
+- **Manual Data Input**: Adding new course tracks and course offerings requires manual database entry.
+- **Limited AI Context**: The GPT-generated schedules rely on uploaded PDFs and do not yet have full access to real-time course data or historical offerings.
+- **Prerequisite Complexity**: Handles most direct prerequisites but does not yet support complex conditional requirements (e.g., "take 2 of the following 3 courses").
+- **No Mobile App**: Accessible via web browser only; lacks a dedicated mobile app for offline planning.
+- **Single-School Scope**: Tailored for Elizabethtown College and not easily adaptable to other institutions without customization.
+- **Accessibility Compliance**: Basic support exists, but full WCAG 2.1 compliance has not yet been validated.
+
+### 🚀 Planned Improvements
+- **Multi-Major Support**: Expand to include additional majors and minors across departments.
+- **Dynamic Course Data Integration**: Automate course and requirement updates via API from the college’s registrar or catalog.
+- **Enhanced AI Scheduling**: Allow multi-semester optimization and handle special constraints (study abroad, dual majors, etc.).
+- **Advanced Prerequisite Logic**: Support for conditional and grouped prerequisites.
+- **Mobile App Development**: Build a cross-platform app version for iOS and Android using frameworks like React Native.
+- **Custom Advisor Dashboards**: Allow advisors to view, comment on, and edit student plans directly.
+- **Analytics & Insights**: Provide students with progress forecasting, GPA calculators, and course difficulty insights.
+- **Accessibility Overhaul**: Conduct full audit and redesign for WCAG compliance and keyboard/screen reader navigation.
+
 
 
 
