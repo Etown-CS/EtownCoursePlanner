@@ -121,6 +121,97 @@ of your VSCode window. This will open an external window with the website.
 HTML/CSS Style Guide - https://google.github.io/styleguide/htmlcssguide.html <br>
 Javascript Style Guide - https://google.github.io/styleguide/jsguide.html 
 
+# Features
+## 🌐 General Features
+- Web-based academic planning tool
+- Built with Node.js, JavaScript, MySQL, and ChatGPT
+- Hosted on Google Cloud Platform (GCP) with Cloud SQL
+- Responsive design using HTML5, Bootstrap 5, and CSS
+- Adheres to Elizabethtown College branding
+
+---
+
+## 🔐 User Accounts
+- Secure user login and registration system
+- Editable academic profile (major, minor, completed courses, etc.)
+- Session storage for personalized experience
+
+---
+
+## 🗓️ Four-Year Plan Grid
+- Automatically generates an 8-semester plan based on major
+- Editable course selections with dropdown menus
+- Add/remove semesters for study abroad, part-time, or accelerated paths
+- Save and personalize plans for future use
+
+---
+
+## 📅 Schedule Builder
+- Manually build class and event schedules
+- Assign days, times, titles, and colors to events
+- Unlimited schedules with sorting (Newest to Oldest, etc.)
+- Save, download, and manage schedules on the "My Schedules" page
+
+---
+
+## 🤖 AI Scheduling Assistant
+- Integrates OpenAI GPT-4o-mini API
+- Parses uploaded course track PDFs (using pdf-parse)
+- Generates optimized semester schedules based on user data
+- Ensures prerequisite satisfaction and no time conflicts
+- Offers insights about courses and requirements
+
+---
+
+## 💬 Advisor Messaging System
+- Built-in communication with advisors using Brevo API
+- Auto-retrieves advisor contact info from session storage
+- Send messages without leaving the platform
+
+---
+
+## 📈 Degree Progress Tracker
+- Visual display of progress through major, minor, and core requirements
+- Shows completion percentages
+- Detailed breakdown of completed and remaining courses
+
+---
+
+## ✅ Prerequisite and Conflict Tracking
+- Automatically tracks completed prerequisites
+- Prevents selection of unavailable/ineligible courses
+- Highlights course conflicts and unfulfilled requirements
+
+---
+
+## 📊 Evaluation & Testing Features
+- End-to-end usability testing with real users
+- Unit and integration testing for reliability
+- Interface reviewed for clarity, consistency, and accessibility
+
+---
+
+## 📂 Database Design (MySQL)
+- Tables include: `user`, `advisor`, `course`, `course_instance`, `completed_course`, `prerequisite`, `schedule`, `schedule_course`, `recommended_plan`, `user_plan`
+- Designed to reflect real academic data and planning structures
+
+---
+
+## 🛠️ Development Tools
+- Node Package Manager (NPM)
+- Custom APIs for frontend-backend communication
+- GitHub for version control and collaboration
+- Google Cloud App Engine for deployment
+
+---
+
+## ⚠️ Limitations
+- Currently only supports Computer Science major
+- Limited to Elizabethtown College
+- Requires internet access
+
+
+
 # Authors
 
 Isabel Mattivi - pachecomattivii@etown.edu <br>
